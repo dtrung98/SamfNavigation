@@ -2,6 +2,7 @@ package com.ldt.navigation;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by burt on 2016. 5. 24..
+ * Updated by dtrung98
  */
 public abstract class NavigationFragment extends Fragment {
     private static final String TAG ="NavigationFragment";
@@ -79,7 +81,6 @@ public abstract class NavigationFragment extends Fragment {
 
     }
 
-
     public FragNavigationController getNavigationController() {
         if(weakFragmentNaviagationController == null)
             return null;
@@ -123,7 +124,6 @@ public abstract class NavigationFragment extends Fragment {
     @Nullable
     @Override
     final public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreateView");
         View v = onCreateView(inflater, container);
         if(v == null) return v;
         contentView = v;
@@ -132,12 +132,17 @@ public abstract class NavigationFragment extends Fragment {
         return innerRootLayout;
     }
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         presentStyle = PresentStyle.get(defaultTransition());
         onSetStatusBarMargin(getStatusHeight(getResources()));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        StatusHeight = -1;
     }
 
     public static int StatusHeight = -1;
@@ -169,7 +174,7 @@ public abstract class NavigationFragment extends Fragment {
     }
 
     /**
-     * This is the layout-view which is definded by user.
+     * This is the layout-view which is defined by user.
      * @return content view
      */
     public View getContentView() {

@@ -22,33 +22,51 @@ import java.util.Stack;
 @SuppressLint("ValidFragment")
 public class FragNavigationController extends NavigationFragment {
 
-    private FragmentManager fragmentManager = null;
-    private Stack<NavigationFragment> fragmentStack = new Stack<>();
+    private static final String TAG = "FragNavigationController";
+    private FragmentManager mFragManager = null;
+    private Stack<NavigationFragment> mFragStack = new Stack<>();
     private @IdRes
     int containerViewId;
-    private Object sync = new Object();
+    private final Object sync = new Object();
+    private final String mTag = nextNavigationControllerTag();
+    private Stack<String> mTagStack = new Stack<>();
+    private static int sIdCount = 1;
+    private static int nextId() {
+        return ++sIdCount;
+    }
+
+    private static String nextNavigationControllerTag() {
+        return "navigation.fragment:"+nextId()+".controller";
+    }
+
+    private static String nextNavigationFragmentTag() {
+        return "navigation.fragment:"+nextId();
+    }
 
     private TimeInterpolator interpolator = new LinearInterpolator();
+    public final NavigationFragment getFragmentAt(int i) {
+        return mFragStack.get(i);
+    }
 
     public static FragNavigationController navigationController(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
         return new FragNavigationController(fragmentManager, containerViewId);
     }
 
-    private FragNavigationController(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
-        setRetainInstance(true);
+    private FragNavigationController(@NonNull FragmentManager mFragManager, @IdRes int containerViewId) {
         this.containerViewId = containerViewId;
-        this.fragmentManager = fragmentManager;
+        this.mFragManager = mFragManager;
 
         synchronized (sync) {
             // 자기 자신을 넣는다.
-            fragmentManager
+            mFragManager
                     .beginTransaction()
-                    .replace(containerViewId, this, "navigation-controller")
+                    .replace(containerViewId, this, mTag)
                     .commit();
         }
     }
+
     public NavigationFragment getTopFragment() {
-        if(fragmentStack.size()!=0)return  fragmentStack.lastElement();
+        if(mFragStack.size() != 0)return  mFragStack.lastElement();
         return null;
     }
 
@@ -59,15 +77,11 @@ public class FragNavigationController extends NavigationFragment {
     }
 
     public int getFragmentCount() {
-        return fragmentStack.size();
+        return mFragStack.size();
     }
-
-
     public void setInterpolator(TimeInterpolator interpolator) {
         this.interpolator = interpolator;
     }
-
-
     TimeInterpolator getInterpolator() {
         return interpolator;
     }
@@ -87,17 +101,17 @@ public class FragNavigationController extends NavigationFragment {
 
     public void presentFragment(NavigationFragment fragment, boolean withAnimation) {
 
-        if(fragmentManager == null) return;
+        if(mFragManager == null) return;
 
         synchronized (sync) {
-
-            if (fragmentStack.size() == 0) {
+            String eTag = nextNavigationFragmentTag();
+            if (mFragStack.size() == 0) {
                 fragment.setNavigationController(this);
                 fragment.setAnimatable(false);
-                fragmentManager
+                mFragManager
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(containerViewId, fragment, "root")
+                        .replace(containerViewId, fragment, eTag)
                         .commit();
 
             } else {
@@ -112,16 +126,17 @@ public class FragNavigationController extends NavigationFragment {
 
                 fragment.setAnimatable(withAnimation);
                 // hide last fragment and add new fragment
-                NavigationFragment hideFragment = fragmentStack.peek();
+                NavigationFragment hideFragment = mFragStack.peek();
                 hideFragment.onHideFragment();
-                fragmentManager
+                mFragManager
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .hide(hideFragment)
-                        .add(containerViewId, fragment, fragment.getClass().getName())
+                        .add(containerViewId, fragment, eTag)
                         .commit();
             }
-            fragmentStack.add(fragment);
+            mFragStack.add(fragment);
+            mTagStack.add(eTag);
         }
     }
     private boolean mIsAbleToPopRoot = false;
@@ -134,22 +149,22 @@ public class FragNavigationController extends NavigationFragment {
     }
 
     public boolean dismissFragment(boolean withAnimation) {
-        if(mIsAbleToPopRoot) return dismissFragmentIncludingRoot(withAnimation);
-        else return dismissFragmentWithoutRoot(withAnimation);
+        if(mIsAbleToPopRoot) return innerDismissFragment(withAnimation);
+        else return dismissNonRootFragment(withAnimation);
     }
 
-    public boolean dismissFragmentIncludingRoot(boolean withAnimation) {
+    protected boolean innerDismissFragment(boolean withAnimation) {
 
-        if(fragmentManager == null) return false;
+        if(mFragManager == null) return false;
 
-        // fragmentStack only has root fragment
-        if(fragmentStack.size() == 1) {
+        // mFragStack only has root fragment
+        if(mFragStack.size() == 1) {
 
             // remove root
-            NavigationFragment fragmentToRemove= fragmentStack.pop();
+            NavigationFragment fragmentToRemove= mFragStack.pop();
             fragmentToRemove.setNavigationController(this);
             fragmentToRemove.setAnimatable(withAnimation);
-            fragmentManager
+            mFragManager
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(this)
@@ -157,18 +172,20 @@ public class FragNavigationController extends NavigationFragment {
                     .commit();
             return true;
         }
-        else if(fragmentStack.size()==0) return false;
+        else if(mFragStack.size()==0) return false;
 
         synchronized (sync) {
 
-            NavigationFragment fragmentToRemove = fragmentStack.pop();
+            NavigationFragment fragmentToRemove = mFragStack.pop();
+            String eTagRemove = mTagStack.pop();
             fragmentToRemove.setNavigationController(this);
             fragmentToRemove.setAnimatable(withAnimation);
 
-            NavigationFragment fragmentToShow = fragmentStack.peek();
+            NavigationFragment fragmentToShow = mFragStack.peek();
+            String eTagShow = mTagStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
-            fragmentManager
+            mFragManager
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(fragmentToShow)
@@ -178,18 +195,18 @@ public class FragNavigationController extends NavigationFragment {
         }
         return true;
     }
-    public boolean dismissFragmentWithoutRoot(boolean withAnimation) {
+    public boolean dismissNonRootFragment(boolean withAnimation) {
 
-        if(fragmentManager == null) return false;
+        if(mFragManager == null) return false;
 
-        // fragmentStack only has root fragment
-        if(fragmentStack.size() == 1) {
+        // mFragStack only has root fragment
+        if(mFragStack.size() == 1) {
 
             // show the root fragment
-            NavigationFragment fragmentToShow = fragmentStack.peek();
+            NavigationFragment fragmentToShow = mFragStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
-            fragmentManager
+            mFragManager
                     .beginTransaction()
                     .show(fragmentToShow)
                     .commit();
@@ -198,14 +215,14 @@ public class FragNavigationController extends NavigationFragment {
 
         synchronized (sync) {
 
-            NavigationFragment fragmentToRemove = fragmentStack.pop();
+            NavigationFragment fragmentToRemove = mFragStack.pop();
             fragmentToRemove.setNavigationController(this);
             fragmentToRemove.setAnimatable(withAnimation);
 
-            NavigationFragment fragmentToShow = fragmentStack.peek();
+            NavigationFragment fragmentToShow = mFragStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
-            fragmentManager
+            mFragManager
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(fragmentToShow)
@@ -216,17 +233,17 @@ public class FragNavigationController extends NavigationFragment {
         return true;
     }
 
-    public void popToRootFragment() {
+    public void dissmissToRootFragment() {
 
-        while (fragmentStack.size() >= 2) {
+        while (mFragStack.size() >= 2) {
             dismissFragment();
         }
     }
-    public void popAllFragments() {
+    public void dismissAllFragments() {
         if(!mIsAbleToPopRoot) {
-            popToRootFragment();
+            dissmissToRootFragment();
         } else {
-            while (fragmentStack.size()>=1)
+            while (mFragStack.size()>=1)
                 dismissFragment();
         }
     }

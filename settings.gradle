@@ -1,2 +1,2 @@
 include ':app', ':navigationcontroller'
-rootProject.name='Sample Support Navigation'
+rootProject.name='NavigationController'
