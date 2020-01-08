@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,16 @@ public class SamplePage extends NavigationFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
+       root = view;
+    }
+    View root;
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        View v = getContentView();
+        if(root.equals(v)) Toast.makeText(getContext(),"content view",Toast.LENGTH_SHORT).show();
+        else Toast.makeText(getContext(),"not content view", Toast.LENGTH_SHORT).show();
     }
 
     int p = -1;

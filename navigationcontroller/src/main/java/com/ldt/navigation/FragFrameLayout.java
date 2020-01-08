@@ -7,26 +7,26 @@ import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
-class FragmentFrameLayout extends FrameLayout {
+class FragFrameLayout extends FrameLayout {
     private float yFraction = 0;
     private float xFraction = 0;
     private ViewTreeObserver.OnPreDrawListener preDrawListener = null;
 
-    public FragmentFrameLayout(Context context) {
+    public FragFrameLayout(Context context) {
         super(context);
     }
 
-    public FragmentFrameLayout(Context context, AttributeSet attrs) {
+    public FragFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FragmentFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FragFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FragmentFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FragFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

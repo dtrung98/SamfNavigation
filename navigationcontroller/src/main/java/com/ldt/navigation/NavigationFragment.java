@@ -27,10 +27,10 @@ public abstract class NavigationFragment extends Fragment {
 
     private WeakReference<FragNavigationController> weakFragmentNaviagationController = null;
     protected boolean animatable = true;
-    private FragmentFrameLayout innerRootLayout = null;
-    private View contentView = null;
+    private FragFrameLayout innerRootLayout = null;
     private PresentStyle presentStyle = null;
     private PresentStyle exitPresentStyle = null;
+    protected View mContentView = null;
 
     /**
      *  Cài đặt hiệu ứng cho Fragment cũ
@@ -125,10 +125,15 @@ public abstract class NavigationFragment extends Fragment {
     @Override
     final public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = onCreateView(inflater, container);
-        if(v == null) return v;
-        contentView = v;
-        innerRootLayout = new FragmentFrameLayout(getActivity());
-        innerRootLayout.addView(contentView);
+        if(v == null) return null;
+
+        if(innerRootLayout==null)
+        innerRootLayout = new FragFrameLayout(getActivity());
+        else
+        innerRootLayout.removeAllViews();
+
+        mContentView = v;
+        innerRootLayout.addView(v);
         return innerRootLayout;
     }
 
@@ -169,7 +174,7 @@ public abstract class NavigationFragment extends Fragment {
      * This is the layout for wrapping contentView
      * @return AndroidFragmentFrameLayout
      */
-    public FragmentFrameLayout getRootLayout() {
+    public FragFrameLayout getRootLayout() {
         return innerRootLayout;
     }
 
@@ -178,7 +183,7 @@ public abstract class NavigationFragment extends Fragment {
      * @return content view
      */
     public View getContentView() {
-        return contentView;
+        return mContentView;
     }
 
     @Override
