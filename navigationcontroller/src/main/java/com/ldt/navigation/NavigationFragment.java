@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,7 +29,7 @@ public abstract class NavigationFragment extends Fragment {
 
     private WeakReference<FragNavigationController> weakFragmentNaviagationController = null;
     protected boolean animatable = true;
-    private FragFrameLayout innerRootLayout = null;
+    private FrameLayout mWrapperRootLayout = null;
     private PresentStyle presentStyle = null;
     private PresentStyle exitPresentStyle = null;
     protected View mContentView = null;
@@ -73,7 +75,7 @@ public abstract class NavigationFragment extends Fragment {
         if(controller!=null)
             controller.presentFragment(fragment);
     }
-    ;
+
     public boolean isWhiteTheme() {
         return true;
     }
@@ -123,18 +125,18 @@ public abstract class NavigationFragment extends Fragment {
 
     @Nullable
     @Override
-    final public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = onCreateView(inflater, container);
+    final public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = onCreateContentView(inflater, container, savedInstanceState);
         if(v == null) return null;
 
-        if(innerRootLayout==null)
-        innerRootLayout = new FragFrameLayout(getActivity());
+        if(mWrapperRootLayout ==null)
+        mWrapperRootLayout = new FragFrameLayout(container.getContext());
         else
-        innerRootLayout.removeAllViews();
+        mWrapperRootLayout.removeAllViews();
 
         mContentView = v;
-        innerRootLayout.addView(v);
-        return innerRootLayout;
+        mWrapperRootLayout.addView(v);
+        return mWrapperRootLayout;
     }
 
     @Override
@@ -168,14 +170,14 @@ public abstract class NavigationFragment extends Fragment {
     }
 
     @Nullable
-    abstract protected View onCreateView(LayoutInflater inflater, ViewGroup container);
+    abstract protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     /**
      * This is the layout for wrapping contentView
      * @return AndroidFragmentFrameLayout
      */
-    public FragFrameLayout getRootLayout() {
-        return innerRootLayout;
+    public FrameLayout getRootLayout() {
+        return mWrapperRootLayout;
     }
 
     /**
@@ -241,6 +243,7 @@ public abstract class NavigationFragment extends Fragment {
             animator.setDuration(defaultDuration());
         }
 
+        if(animator!=null)
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {

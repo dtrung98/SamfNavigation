@@ -33,7 +33,7 @@ public class SamplePageThree extends NavigationFragment {
 
     @Nullable
     @Override
-    protected View onCreateView(LayoutInflater inflater, ViewGroup container) {
+    protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.sample_page,container,false);
     }
 

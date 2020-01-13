@@ -30,7 +30,6 @@ class FragFrameLayout extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-
     public void setAccordionPivotZero(float value) {
         setAlpha(1.0f);
         setScaleX(value);

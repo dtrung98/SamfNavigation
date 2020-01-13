@@ -2,6 +2,7 @@ package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class FragNavigationController extends NavigationFragment {
 
     @Nullable
     @Override
-    protected View onCreateView(LayoutInflater inflater, ViewGroup container) {
+    protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return null;
     }
 
@@ -133,7 +134,7 @@ public class FragNavigationController extends NavigationFragment {
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .hide(hideFragment)
                         .add(containerViewId, fragment, eTag)
-                        .commit();
+                        .commitNow();
             }
             mFragStack.add(fragment);
             mTagStack.add(eTag);
@@ -233,7 +234,7 @@ public class FragNavigationController extends NavigationFragment {
         return true;
     }
 
-    public void dissmissToRootFragment() {
+    public void dismissToRootFragment() {
 
         while (mFragStack.size() >= 2) {
             dismissFragment();
@@ -241,7 +242,7 @@ public class FragNavigationController extends NavigationFragment {
     }
     public void dismissAllFragments() {
         if(!mIsAbleToPopRoot) {
-            dissmissToRootFragment();
+            dismissToRootFragment();
         } else {
             while (mFragStack.size()>=1)
                 dismissFragment();

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationFragment;
@@ -37,6 +38,12 @@ public class SamplePage extends NavigationFragment {
         } catch (Exception e) {
             presentFragment(new SamplePageTwo());
         }
+
+     /*   getFragmentManager()
+                .beginTransaction()
+                .add(R.id.container,new SamplePage())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        .setCustomAnimations(R.animator.rotatedown_left_in,R.animator.slide_fragment_horizontal_left_in).commit();*/
     }
 
     @BindView(R.id.edit_text)
@@ -44,7 +51,7 @@ public class SamplePage extends NavigationFragment {
 
     @Nullable
     @Override
-    protected View onCreateView(LayoutInflater inflater, ViewGroup container) {
+    protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.sample_page,container,false);
     }
 
@@ -59,9 +66,6 @@ public class SamplePage extends NavigationFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        View v = getContentView();
-        if(root.equals(v)) Toast.makeText(getContext(),"content view",Toast.LENGTH_SHORT).show();
-        else Toast.makeText(getContext(),"not content view", Toast.LENGTH_SHORT).show();
     }
 
     int p = -1;
