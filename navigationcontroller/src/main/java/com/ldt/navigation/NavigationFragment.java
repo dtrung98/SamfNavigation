@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by burt on 2016. 5. 24..
- * Updated by dtrung98
+ * Updated by dtrung98 on 2019. 12
  */
 public abstract class NavigationFragment extends Fragment {
     private static final String TAG ="NavigationFragment";
