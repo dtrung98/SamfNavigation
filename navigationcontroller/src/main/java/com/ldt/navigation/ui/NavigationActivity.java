@@ -1,6 +1,5 @@
 package com.ldt.navigation.ui;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import com.ldt.navigation.FragNavigationController;
 import com.ldt.navigation.NavigationFragment;
+import androidx.fragment.app.Fragment;
+import android.widget.Toast;
 
 public class NavigationActivity extends AppCompatActivity {
     private static final String TAG = "NavigationActivity";
@@ -47,8 +48,8 @@ private FragNavigationController mNavigationController;
     public void checkInstance(FragmentManager fm, String tag) {
       Fragment saved = fm.findFragmentByTag(tag);
         if(saved != null) {
-        Toasty.normal(this,"found saved navigation instance").show();
-      } else Toasty.normal(this, "no instance").show();
+        Toast.makeText(this,"found saved navigation instance", Toast.LENGTH_SHORT).show();
+      } else Toast.makeText(this, "no navigation instance", Toast.LENGTH_SHORT).show();
     }
 
     protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
