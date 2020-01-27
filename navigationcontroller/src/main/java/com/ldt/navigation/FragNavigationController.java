@@ -29,7 +29,7 @@ public class FragNavigationController extends NavigationFragment {
     private @IdRes
     int containerViewId;
     private final Object sync = new Object();
-    private final String mTag = nextNavigationControllerTag();
+    public final String mTag;
     private Stack<String> mTagStack = new Stack<>();
     private static int sIdCount = 1;
     private static int nextId() {
@@ -37,7 +37,7 @@ public class FragNavigationController extends NavigationFragment {
     }
 
     private static String nextNavigationControllerTag() {
-        return "navigation.fragment:"+nextId()+".controller";
+        return "navigation.fragment:"+nextId()+"-controller";
     }
 
     private static String nextNavigationFragmentTag() {
@@ -49,13 +49,14 @@ public class FragNavigationController extends NavigationFragment {
         return mFragStack.get(i);
     }
 
-    public static FragNavigationController navigationController(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
-        return new FragNavigationController(fragmentManager, containerViewId);
+    public static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+        return new FragNavigationController(fragmentManager, containerViewId, String tag);
     }
 
-    private FragNavigationController(@NonNull FragmentManager mFragManager, @IdRes int containerViewId) {
+    private FragNavigationController(@NonNull FragmentManager mFragManager, @IdRes int containerViewId, String tag) {
         this.containerViewId = containerViewId;
         this.mFragManager = mFragManager;
+        this.mTag = tag;
 
         synchronized (sync) {
             // 자기 자신을 넣는다.

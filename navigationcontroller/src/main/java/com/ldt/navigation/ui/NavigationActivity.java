@@ -1,15 +1,14 @@
 package com.ldt.navigation.ui;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.animation.AccelerateDecelerateInterpolator;
-
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-
 import com.ldt.navigation.FragNavigationController;
 import com.ldt.navigation.NavigationFragment;
 
@@ -36,17 +35,26 @@ private FragNavigationController mNavigationController;
         }
     }
 
-    protected void initNavigation(Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
+    protected void initNavigation(String tag, Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
-        mNavigationController = FragNavigationController.navigationController(fm, container);
+        checkInstance(fm, tag);
+        mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
-        NavigationFragment mainFragment = null;
+       
         mNavigationController.presentFragment(startUpFragment);
     }
+    
+    public void checkInstance(FragmentManager fm, String tag) {
+      Fragment saved = fm.findFragmentByTag(tag);
+        if(saved != null) {
+        Toasty.normal(this,"found saved navigation instance").show();
+      } else Toasty.normal(this, "no instance").show();
+    }
 
-    protected void initNavigation(Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
+    protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        mNavigationController = FragNavigationController.navigationController(fm, container);
+        checkInstance(fm, tag);
+        mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
         NavigationFragment mainFragment = null;
         try {
