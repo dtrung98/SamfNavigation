@@ -50,7 +50,7 @@ public class FragNavigationController extends NavigationFragment {
     }
 
     public static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
-        return new FragNavigationController(fragmentManager, containerViewId, String tag);
+        return new FragNavigationController(fragmentManager, containerViewId, tag);
     }
 
     private FragNavigationController(@NonNull FragmentManager mFragManager, @IdRes int containerViewId, String tag) {
