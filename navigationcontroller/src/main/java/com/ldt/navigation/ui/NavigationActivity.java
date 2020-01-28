@@ -36,7 +36,7 @@ private FragNavigationController mNavigationController;
         }
     }
 
-    protected void initNavigation(String tag, Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
+    protected void initNavigation(String tag, @NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
         //checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.getInstance(fm, container, tag);
@@ -47,19 +47,8 @@ private FragNavigationController mNavigationController;
         }
     }
     
-    public void checkInstance(FragmentManager fm,Bundle savedState, String tag) {
-      Fragment saved = fm.findFragmentByTag(tag);
-      if(savedState!= null)
-      Toast.makeText(this,"config changed", Toast.LENGTH_SHORT).show();
-        //if(saved != null) {
-        //Toast.makeText(this,"found saved navigation instance", Toast.LENGTH_SHORT).show();
-     // } 
-     else Toast.makeText(this, "new create", Toast.LENGTH_SHORT).show();
-    }
-
-    protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
+    protected void initNavigation(String tag, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        //checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.getInstance(fm, container, tag);
         if(mNavigationController.getFragmentCount()==0) {
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());

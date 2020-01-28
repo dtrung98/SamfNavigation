@@ -60,6 +60,7 @@ public class FragNavigationController extends NavigationFragment {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    if(savedInstanceState!=null) {
     	containerViewId = savedInstanceState.getInt("container-view-id",-1);
     	mTag = savedInstanceState.getString("controller-tag");
     
@@ -68,6 +69,7 @@ public class FragNavigationController extends NavigationFragment {
       if(list!=null)
       mTagStack.clear();
       mTagStack.addAll(list);
+      }
     }
     
     public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
