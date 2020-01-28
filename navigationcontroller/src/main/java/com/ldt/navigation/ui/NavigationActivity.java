@@ -49,9 +49,10 @@ private FragNavigationController mNavigationController;
       Fragment saved = fm.findFragmentByTag(tag);
       if(savedState!= null)
       Toast.makeText(this,"config changed", Toast.LENGTH_SHORT).show();
-        if(saved != null) {
-        Toast.makeText(this,"found saved navigation instance", Toast.LENGTH_SHORT).show();
-      } else Toast.makeText(this, "no navigation instance", Toast.LENGTH_SHORT).show();
+        //if(saved != null) {
+        //Toast.makeText(this,"found saved navigation instance", Toast.LENGTH_SHORT).show();
+     // } 
+     else Toast.makeText(this, "new create", Toast.LENGTH_SHORT).show();
     }
 
     protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
