@@ -1,4 +1,4 @@
-package com.ldt.nav.sample.activity;
+&package com.ldt.nav.sample.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,7 +22,7 @@ public class MainActivity extends NavigationActivity {
         Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller");
         
         Toast.makeText(this,"finding fragment: "+ (f != null), Toast.LENGTH_SHORT).show();
-        if(f==null)
+        if(savedInstanceState==null)
         initNavigation("navigation-controller",savedInstanceState,R.id.container, new SamplePage());
         //if(savedInstanceState==null) {
         //getSupportFragmentManager().beginTransaction().replace(R.id.container,new SamplePage(),"sample-page").commit();

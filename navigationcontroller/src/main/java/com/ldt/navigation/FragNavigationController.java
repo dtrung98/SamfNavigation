@@ -107,7 +107,7 @@ public class FragNavigationController extends NavigationFragment {
                 fragment.setNavigationController(this);
                 fragment.setAnimatable(false);
                 mFragManager
-                        .beginTransaction()
+                        .beginTransaction():
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .replace(containerViewId, fragment, eTag)
                         .commit();
