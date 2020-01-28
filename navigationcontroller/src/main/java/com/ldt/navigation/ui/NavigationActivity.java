@@ -3,7 +3,7 @@ package com.ldt.navigation.ui;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.animation.AccelerateDecelerateInterpolator;
+
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,9 +19,10 @@ public class NavigationActivity extends AppCompatActivity {
 private FragNavigationController mNavigationController;
     @Override
     public void onBackPressed() {
-        if(mNavigationController.getTopFragment().onBackPressed())
-            if(!(isNavigationControllerInit() && mNavigationController.dismissFragment(true)))
-                super.onBackPressed();
+    if(mNavigationController!=null && !mNavigationController.onBackPressed())
+    return false;
+    
+    return super.onBackPressed();
     }
 
     private boolean isNavigationControllerInit() {
@@ -36,6 +37,7 @@ private FragNavigationController mNavigationController;
         }
     }
 
+/*
     protected void initNavigation(String tag, @NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
         //checkInstance(fm, savedState, tag);
@@ -46,21 +48,11 @@ private FragNavigationController mNavigationController;
         mNavigationController.presentFragment(startUpFragment);
         }
     }
+    */
     
     protected void initNavigation(String tag, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        mNavigationController = FragNavigationController.getInstance(fm, container, tag);
-        if(mNavigationController.getFragmentCount()==0) {
-        mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
-        NavigationFragment mainFragment = null;
-        try {
-             mainFragment = startUpFragmentCls.newInstance();
-        } catch (Exception ignored) {
-            Log.d(TAG,"Unable to create new instance of start up fragment");
-        }
-        if(mainFragment!=null)
-        mNavigationController.presentFragment(mainFragment);
-        }
+        mNavigationController = FragNavigationController.getInstance(fm, container, tag, startUpFragmentCls);
     }
 
     public void dismiss() {
@@ -83,7 +75,7 @@ private FragNavigationController mNavigationController;
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                dismiss();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

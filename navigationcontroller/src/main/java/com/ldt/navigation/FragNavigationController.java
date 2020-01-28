@@ -45,7 +45,7 @@ public class FragNavigationController extends NavigationFragment {
         return "navigation.fragment:"+nextId();
     }
 
-    private TimeInterpolator interpolator = new LinearInterpolator();
+    private TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
     public final NavigationFragment getFragmentAt(int i) {
         return mFragStack.get(i);
     }
@@ -93,9 +93,9 @@ public class FragNavigationController extends NavigationFragment {
       }
     }
     
-    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
       FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
-      if(f==null) f = newInstance(fragmentManager, containerViewId, tag);
+      if(f==null) f = newInstance(fragmentManager, containerViewId, tag, startUpFragmentCls);
       return f;
     }    
     
@@ -114,7 +114,7 @@ public class FragNavigationController extends NavigationFragment {
       return f;
     }
 
-    protected static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+    protected static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragNavigationController f = new FragNavigationController();
         f.containerViewId = containerViewId;
         f.mFragManager = fragmentManager;
@@ -126,6 +126,16 @@ public class FragNavigationController extends NavigationFragment {
                     .beginTransaction()
                     .add(f, tag).commit();
         }
+      
+        NavigationFragment mainFragment = null;
+        try {
+             mainFragment = startUpFragmentCls.newInstance();
+        } catch (Exception ignored) {
+            Log.e(TAG,"Unable to create new instance of start up fragment");
+        }
+        if(mainFragment!=null)
+        presentFragment(mainFragment);
+        
         return f;
     }
     
@@ -231,7 +241,6 @@ public class FragNavigationController extends NavigationFragment {
             mFragManager
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                    .show(this)
                     .remove(fragmentToRemove)
                     .commit();
             return true;
@@ -310,6 +319,18 @@ public class FragNavigationController extends NavigationFragment {
             while (mFragStack.size()>=1)
                 dismissFragment();
         }
+    }
+    
+    @Override
+     public boolean onBackPressed(){
+     
+	Fragment f = getTopFragment();
+	if(f == null) return true;
+	else 
+	return 
+	 f.onBackPressed() &&
+	 dismissFragment &&
+	 getFragmentCount() == 1;
     }
 
 }
