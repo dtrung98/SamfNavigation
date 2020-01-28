@@ -20,9 +20,9 @@ private FragNavigationController mNavigationController;
     @Override
     public void onBackPressed() {
     if(mNavigationController!=null && !mNavigationController.onBackPressed())
-    return false;
+    return;
     
-    return super.onBackPressed();
+    super.onBackPressed();
     }
 
     private boolean isNavigationControllerInit() {

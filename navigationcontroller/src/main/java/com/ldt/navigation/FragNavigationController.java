@@ -3,6 +3,7 @@ package com.ldt.navigation;
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -324,12 +325,12 @@ public class FragNavigationController extends NavigationFragment {
     @Override
      public boolean onBackPressed(){
      
-	Fragment f = getTopFragment();
+	NavigationFragment f = getTopFragment();
 	if(f == null) return true;
 	else 
 	return 
 	 f.onBackPressed() &&
-	 dismissFragment &&
+	 dismissFragment() &&
 	 getFragmentCount() == 1;
     }
 
