@@ -19,11 +19,11 @@ public class MainActivity extends NavigationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
    
-        Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller");
+        Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller-1");
         
         Toast.makeText(this,"finding fragment: "+ (f != null), Toast.LENGTH_SHORT).show();
-        if(savedInstanceState==null)
-        initNavigation("navigation-controller",savedInstanceState,R.id.container, new SamplePage());
+        //if(savedInstanceState==null)
+        initNavigation("navigation-controller-1",savedInstanceState,R.id.container, SamplePage.class);
         //if(savedInstanceState==null) {
         //getSupportFragmentManager().beginTransaction().replace(R.id.container,new SamplePage(),"sample-page").commit();
                         

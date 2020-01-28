@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.ldt.navigation.FragNavigationController;
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -46,8 +48,45 @@ public class FragNavigationController extends NavigationFragment {
     public final NavigationFragment getFragmentAt(int i) {
         return mFragStack.get(i);
     }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	outState.putInt("container-view-id", containerViewId);
+    	outState.putString("controller-tag", mTag);
+        ArrayList list = new ArrayList<>(mTagList);
+        outState.putStringArrayList("fragment-navigation-tags", list);
+        super.onSaveInstanceState(outState);
+    }
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	containerViewId = savedInstanceState.getInt("container-view-id",-1);
+    	mTag = savedInstanceState.getString("controller-tag");
+    
+      ArrayList list;
+      list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
+      if(list!=null)
+      mTagStack.clear();
+      mTagStack.addAll(list);
+    }
+    
+    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
+      if(f==null) f = newInstance(fragmentManager, containerViewId, tag);
+      return f;
+    }    
+    
+    protected static FragNavigationController restoreInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+      // restore fragment stack from restored tag stack
+      FragNavigationController f = (FragNavigationController)fragmentManager.findFragmentByTag(tag);
+      if(f!=null) {
+        if(f.containerViewId==-1) f.containerViewId = containerViewId;
+        if(f.mTag==null || f.mTag.isEmpty()) f.mTag = tag;
+      }
+      return f;
+    }
 
-    public static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+    protected static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
         FragNavigationController f = new FragNavigationController();
         f.containerViewId = containerViewId;
         f.mFragManager = fragmentManager;

@@ -39,10 +39,12 @@ private FragNavigationController mNavigationController;
     protected void initNavigation(String tag, Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
         //checkInstance(fm, savedState, tag);
-        mNavigationController = FragNavigationController.newInstance(fm, container, tag);
+        mNavigationController = FragNavigationController.getInstance(fm, container, tag);
+        
+        if(mNavigationController.getFragmentCount()==0) {
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
-       
         mNavigationController.presentFragment(startUpFragment);
+        }
     }
     
     public void checkInstance(FragmentManager fm,Bundle savedState, String tag) {
@@ -58,7 +60,8 @@ private FragNavigationController mNavigationController;
     protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
         //checkInstance(fm, savedState, tag);
-        mNavigationController = FragNavigationController.newInstance(fm, container, tag);
+        mNavigationController = FragNavigationController.getInstance(fm, container, tag);
+        if(mNavigationController.getFragmentCount()==0) {
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
         NavigationFragment mainFragment = null;
         try {
@@ -68,6 +71,7 @@ private FragNavigationController mNavigationController;
         }
         if(mainFragment!=null)
         mNavigationController.presentFragment(mainFragment);
+        }
     }
 
     public void dismiss() {
