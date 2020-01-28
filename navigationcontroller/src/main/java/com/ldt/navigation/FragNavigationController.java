@@ -27,7 +27,7 @@ public class FragNavigationController extends NavigationFragment {
     private @IdRes
     int containerViewId;
     private final Object sync = new Object();
-    public final String mTag;
+    public String mTag;
     private Stack<String> mTagStack = new Stack<>();
     private static int sIdCount = 1;
     private static int nextId() {
@@ -54,13 +54,13 @@ public class FragNavigationController extends NavigationFragment {
         f.mTag = tag;
        // this.setRetainInstance(true);
 
-        synchronized (sync) {
-            // 자기 자신을 넣는다.
-            mFragManager
+        synchronized (f.sync) {
+            f.mFragManager
                     .beginTransaction()
                     .replace(containerViewId, f, tag)
                     .commit();
         }
+        return f;
     }
     
     public NavigationFragment getTopFragment() {
