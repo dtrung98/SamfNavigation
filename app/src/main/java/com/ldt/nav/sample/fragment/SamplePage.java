@@ -31,21 +31,21 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button)
     void goToSomeWhere() {
-    /*
+    
         String text = mEditText.getText().toString();
         int value = -1; try {
         value = Integer.parseInt(text);
         presentFragment(SamplePageTwo.newInstance(value));     } catch (Exception e) {
             presentFragment(new SamplePageTwo());
         }
-        */
-
+        
+        /*
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container,new SamplePageTwo(),"sample-page-2")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-       // .setCustomAnimations(R.animator.rotatedown_left_in,R.animator.slide_fragment_horizontal_left_in)
-       .commit();
+       .commit()
+       */
     }
 
     @BindView(R.id.edit_text)
