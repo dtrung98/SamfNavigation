@@ -27,7 +27,7 @@ public class MainActivity extends NavigationActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container,new SamplePage(),"sample-page").commit();
-                }                
+                        
                 }
     }
 }
