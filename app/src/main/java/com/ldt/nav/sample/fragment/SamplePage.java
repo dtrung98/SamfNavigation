@@ -41,7 +41,7 @@ public class SamplePage extends NavigationFragment {
 
      /*   getFragmentManager()
                 .beginTransaction()
-                .add(R.id.container,new SamplePage())
+                .replace(R.id.container,new SamplePage(),"sample-page")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         .setCustomAnimations(R.animator.rotatedown_left_in,R.animator.slide_fragment_horizontal_left_in).commit();*/
     }

@@ -18,6 +18,11 @@ public class MainActivity extends NavigationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initNavigation("navigation_1",savedInstanceState,R.id.container, SamplePage.class);
+        //initNavigation("navigation_1",savedInstanceState,R.id.container, SamplePage.class);
+        if(savedInstanceState==null) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container,new SamplePage(),"sample-page").commit();
+                } 
     }
 }
