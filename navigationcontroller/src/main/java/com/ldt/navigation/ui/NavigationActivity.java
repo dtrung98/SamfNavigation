@@ -38,15 +38,17 @@ private FragNavigationController mNavigationController;
 
     protected void initNavigation(String tag, Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
-        checkInstance(fm, tag);
+        checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
        
         mNavigationController.presentFragment(startUpFragment);
     }
     
-    public void checkInstance(FragmentManager fm, String tag) {
+    public void checkInstance(FragmentManager fm,Bundle savedState, String tag) {
       Fragment saved = fm.findFragmentByTag(tag);
+      if(savedState!= null)
+      Toast.makeText(this,"config changed", Toast.LENGTH_SHORT).show();
         if(saved != null) {
         Toast.makeText(this,"found saved navigation instance", Toast.LENGTH_SHORT).show();
       } else Toast.makeText(this, "no navigation instance", Toast.LENGTH_SHORT).show();
@@ -54,7 +56,7 @@ private FragNavigationController mNavigationController;
 
     protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        checkInstance(fm, tag);
+        checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
         NavigationFragment mainFragment = null;
