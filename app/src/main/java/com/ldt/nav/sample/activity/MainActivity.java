@@ -1,4 +1,4 @@
-&package com.ldt.nav.sample.activity;
+package com.ldt.nav.sample.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
