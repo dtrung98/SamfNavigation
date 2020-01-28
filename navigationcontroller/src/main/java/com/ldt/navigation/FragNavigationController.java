@@ -81,13 +81,15 @@ public class FragNavigationController extends NavigationFragment {
       if(mFragManager==null) return;
       int size = mTagStack.size();
       String t;
-      Fragment f;
+      NavigationFragment f;
       mFragStack.clear();
       for(int i = 0; i < size; i++) {
         t = mTagStack.elementAt(i);
-        f = mFragManager.findFragmentByTag(t);
-        if(f instanceof NavigationFragment)
-        mFragStack.push((NavigationFragment)f);
+        f = (NavigationFragment)mFragManager.findFragmentByTag(t);
+        if(f != null) {
+        f.setNavigationController(this);
+        mFragStack.push(f);
+        }
       }
     }
     
@@ -107,7 +109,7 @@ public class FragNavigationController extends NavigationFragment {
         f.mFragManager = fragmentManager;
        // restore fragment stack from restored tag stack
        
-       
+       f.restoreFragmentStack();
       }
       return f;
     }
