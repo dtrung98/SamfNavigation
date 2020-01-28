@@ -50,10 +50,10 @@ public class FragNavigationController extends NavigationFragment {
     }
     
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
     	outState.putInt("container-view-id", containerViewId);
     	outState.putString("controller-tag", mTag);
-        ArrayList list = new ArrayList<>(mTagList);
+        ArrayList list = new ArrayList<>(mTagStack);
         outState.putStringArrayList("fragment-navigation-tags", list);
         super.onSaveInstanceState(outState);
     }
