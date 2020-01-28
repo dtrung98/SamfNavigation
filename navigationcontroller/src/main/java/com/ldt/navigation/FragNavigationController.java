@@ -11,6 +11,7 @@ import android.view.animation.LinearInterpolator;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.ldt.navigation.FragNavigationController;
@@ -59,6 +60,8 @@ public class FragNavigationController extends NavigationFragment {
         
     }
     
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -74,6 +77,20 @@ public class FragNavigationController extends NavigationFragment {
       }
     }
     
+    protected void restoreFragmentStack() {
+      if(mFragManager==null) return;
+      int size = mTagStack.size();
+      String t;
+      Fragment f;
+      mFragStack.clear();
+      for(int i = 0; i < size; i++) {
+        t = mTagStack.elementAt(i);
+        f = mFragManager.findFragmentByTag(t);
+        if(f instanceof NavigationFragment)
+        mFragStack.push((NavigationFragment)f);
+      }
+    }
+    
     public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
       FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
       if(f==null) f = newInstance(fragmentManager, containerViewId, tag);
@@ -81,11 +98,16 @@ public class FragNavigationController extends NavigationFragment {
     }    
     
     protected static FragNavigationController restoreInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
-      // restore fragment stack from restored tag stack
+      
+      // find restored controller if any
       FragNavigationController f = (FragNavigationController)fragmentManager.findFragmentByTag(tag);
       if(f!=null) {
         if(f.containerViewId==-1) f.containerViewId = containerViewId;
         if(f.mTag==null || f.mTag.isEmpty()) f.mTag = tag;
+        f.mFragManager = fragmentManager;
+       // restore fragment stack from restored tag stack
+       
+       
       }
       return f;
     }
@@ -100,8 +122,7 @@ public class FragNavigationController extends NavigationFragment {
         synchronized (f.sync) {
             f.mFragManager
                     .beginTransaction()
-                    .add(f, tag)
-                    .commit();
+                    .add(f, tag).commit();
         }
         return f;
     }
