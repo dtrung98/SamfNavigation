@@ -22,7 +22,8 @@ public class MainActivity extends NavigationActivity {
         Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller");
         
         Toast.makeText(this,"finding fragment: "+ (f != null), Toast.LENGTH_SHORT).show();
-        initNavigation("navigation_controller",savedInstanceState,R.id.container, new SamplePage());
+        if(f==null})
+        initNavigation("navigation-controller",savedInstanceState,R.id.container, new SamplePage());
         //if(savedInstanceState==null) {
         //getSupportFragmentManager().beginTransaction().replace(R.id.container,new SamplePage(),"sample-page").commit();
                         
