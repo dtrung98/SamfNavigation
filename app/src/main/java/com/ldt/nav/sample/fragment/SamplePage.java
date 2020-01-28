@@ -31,10 +31,11 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button)
     void goToSomeWhere() {
+    /*
         String text = mEditText.getText().toString();
         int value = -1; try {
         value = Integer.parseInt(text);
-       /* presentFragment(SamplePageTwo.newInstance(value));     } catch (Exception e) {
+        presentFragment(SamplePageTwo.newInstance(value));     } catch (Exception e) {
             presentFragment(new SamplePageTwo());
         }
         */
