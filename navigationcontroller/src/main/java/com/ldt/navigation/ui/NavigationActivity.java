@@ -38,7 +38,7 @@ private FragNavigationController mNavigationController;
 
     protected void initNavigation(String tag, Bundle savedState,@NonNull @IdRes int container,@NonNull NavigationFragment startUpFragment) {
         FragmentManager fm = getSupportFragmentManager();
-        checkInstance(fm, savedState, tag);
+        //checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
        
@@ -57,7 +57,7 @@ private FragNavigationController mNavigationController;
 
     protected void initNavigation(String tag, Bundle savedState, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        checkInstance(fm, savedState, tag);
+        //checkInstance(fm, savedState, tag);
         mNavigationController = FragNavigationController.newInstance(fm, container, tag);
         mNavigationController.setInterpolator(new AccelerateDecelerateInterpolator());
         NavigationFragment mainFragment = null;

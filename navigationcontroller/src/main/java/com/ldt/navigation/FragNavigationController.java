@@ -1,4 +1,4 @@
-package com.ldt.navigation;
+]package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
@@ -8,14 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import java.util.Stack;
+import null.FragNavigationController;
 
 /**
  * Created by burt on 2016. 5. 24..
@@ -50,24 +49,21 @@ public class FragNavigationController extends NavigationFragment {
     }
 
     public static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
-        return new FragNavigationController(fragmentManager, containerViewId, tag);
-    }
-
-    private FragNavigationController(@NonNull FragmentManager mFragManager, @IdRes int containerViewId, String tag) {
-        this.containerViewId = containerViewId;
-        this.mFragManager = mFragManager;
-        this.mTag = tag;
+        FragNavigationController f = new FragNavigationController();
+        f.containerViewId = containerViewId;
+        f.mFragManager = fragmentManager;
+        f.mTag = tag;
        // this.setRetainInstance(true);
 
         synchronized (sync) {
             // 자기 자신을 넣는다.
             mFragManager
                     .beginTransaction()
-                    .replace(containerViewId, this, mTag)
+                    .replace(containerViewId, f, tag)
                     .commit();
         }
     }
-
+    
     public NavigationFragment getTopFragment() {
         if(mFragStack.size() != 0)return  mFragStack.lastElement();
         return null;

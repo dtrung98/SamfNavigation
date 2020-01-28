@@ -42,9 +42,10 @@ public class SamplePage extends NavigationFragment {
 
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container,new SamplePage(),"sample-page-2")
+                .replace(R.id.container,new SamplePageTwo(),"sample-page-2")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        .setCustomAnimations(R.animator.rotatedown_left_in,R.animator.slide_fragment_horizontal_left_in).commit();
+       // .setCustomAnimations(R.animator.rotatedown_left_in,R.animator.slide_fragment_horizontal_left_in)
+       .commit();
     }
 
     @BindView(R.id.edit_text)
