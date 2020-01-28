@@ -1,4 +1,4 @@
-]package com.ldt.navigation;
+package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
