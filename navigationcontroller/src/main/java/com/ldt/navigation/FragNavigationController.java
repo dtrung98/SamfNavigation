@@ -57,6 +57,7 @@ public class FragNavigationController extends NavigationFragment {
         this.containerViewId = containerViewId;
         this.mFragManager = mFragManager;
         this.mTag = tag;
+        this.setRetainInstance(true);
 
         synchronized (sync) {
             // 자기 자신을 넣는다.
