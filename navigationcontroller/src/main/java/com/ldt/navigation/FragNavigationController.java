@@ -57,7 +57,7 @@ public class FragNavigationController extends NavigationFragment {
         synchronized (f.sync) {
             f.mFragManager
                     .beginTransaction()
-                    .replace(containerViewId, f, tag)
+                    .add(f, tag)
                     .commit();
         }
         return f;
