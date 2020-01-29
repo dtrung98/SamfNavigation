@@ -1,4 +1,4 @@
-package com.ldt.navigation;
+)package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
@@ -135,7 +135,7 @@ public class FragNavigationController extends NavigationFragment {
             Log.e(TAG,"Unable to create new instance of start up fragment");
         }
         if(mainFragment!=null)
-        presentFragment(mainFragment);
+        f.presentFragment(mainFragment);
         
         return f;
     }
