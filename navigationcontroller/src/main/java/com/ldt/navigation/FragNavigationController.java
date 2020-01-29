@@ -38,12 +38,12 @@ public class FragNavigationController extends NavigationFragment {
         return ++sIdCount;
     }
 
-    private static String nextNavigationControllerTag() {
-        return "navigation.fragment:"+nextId()+"-controller";
+    public static String retrieveControllerTag(String tag) {
+        return "com.ldt.navigation.fragment:"+"-controller";
     }
 
     private static String nextNavigationFragmentTag() {
-        return "navigation.fragment:"+nextId();
+        return "com.ldt.navigation.fragment:"+nextId();
     }
 
     private TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
@@ -95,7 +95,8 @@ public class FragNavigationController extends NavigationFragment {
     }
     
     public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
-      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
+      String afterTag = retrieveControllerTag(tag);
+      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, afterTag);
       if(f==null) f = newInstance(fragmentManager, containerViewId, tag, startUpFragmentCls);
       return f;
     }    
