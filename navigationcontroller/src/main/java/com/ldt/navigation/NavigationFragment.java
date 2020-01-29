@@ -119,7 +119,7 @@ public abstract class NavigationFragment extends Fragment {
      * <br>      false to ignore the dismissed.
      * <br> To dismiss the fragment, you need to call method <i>getNavigationController().dismiss()</i> directly
      */
-    public boolean onBackPressed(){
+    public boolean onNavigateBack(){
         return true;
     }
 

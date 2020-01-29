@@ -1,32 +1,45 @@
 package com.ldt.nav.sample.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import butterknife.ButterKnife;
 import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.ui.NavigationActivity;
+import com.ldt.navigation.FragNavigationController;
+import com.ldt.navigation.SingleHolder;
 
-import butterknife.ButterKnife;
-import androidx.fragment.app.Fragment;
-import android.widget.Toast;
+public class MainActivity extends AppCompatActivity implements SingleHolder {
+    private FragNavigationController mNavigationController;
 
-public class MainActivity extends NavigationActivity {
+    @Override
+    public FragNavigationController getNavigationController() {
+        return mNavigationController;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-   
+
         Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller-1");
-        
-        Toast.makeText(this,"finding fragment: "+ (f != null), Toast.LENGTH_SHORT).show();
-        //if(savedInstanceState==null)
-        initNavigation("navigation-controller-1" ,R.id.container, SamplePage.class);
-        //if(savedInstanceState==null) {
-        //getSupportFragmentManager().beginTransaction().replace(R.id.container,new SamplePage(),"sample-page").commit();
-                        
-            //    }
+
+        Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
+
+        mNavigationController =
+                FragNavigationController.getInstance(
+                        "navigation-controller-1",
+                        getSupportFragmentManager(),
+                        R.id.container,
+                        SamplePage.class);
+    }
+    
+    @Override
+    public void onBackPressed() {
+    if(onNavigateBack())
+    return;
+    
+    super.onBackPressed();
     }
 }

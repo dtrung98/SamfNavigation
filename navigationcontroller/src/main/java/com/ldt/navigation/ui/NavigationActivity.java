@@ -19,7 +19,7 @@ public class NavigationActivity extends AppCompatActivity {
 private FragNavigationController mNavigationController;
     @Override
     public void onBackPressed() {
-    if(mNavigationController!=null && !mNavigationController.onBackPressed())
+    if(mNavigationController!=null && mNavigationController.onNavigateBack())
     return;
     
     super.onBackPressed();
@@ -52,7 +52,7 @@ private FragNavigationController mNavigationController;
     
     protected void initNavigation(String tag, @IdRes int container, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragmentManager fm = getSupportFragmentManager();
-        mNavigationController = FragNavigationController.getInstance(fm, container, tag, startUpFragmentCls);
+        mNavigationController = FragNavigationController.getInstance(tag, fm, container, startUpFragmentCls);
     }
 
     public void dismiss() {

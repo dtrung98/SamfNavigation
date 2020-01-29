@@ -94,14 +94,14 @@ public class FragNavigationController extends NavigationFragment {
       }
     }
     
-    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, @NonNull String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
+    public static FragNavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
      
-      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
-      if(f==null) f = newInstance(fragmentManager, containerViewId, tag, startUpFragmentCls);
+      FragNavigationController f = restoreInstance(tag, fragmentManager, containerViewId);
+      if(f==null) f = newInstance(tag, fragmentManager, containerViewId, startUpFragmentCls);
       return f;
     }    
     
-    protected static FragNavigationController restoreInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag) {
+    protected static FragNavigationController restoreInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
       
       // find restored controller if any
       FragNavigationController f = (FragNavigationController)fragmentManager.findFragmentByTag(tag);
@@ -116,7 +116,7 @@ public class FragNavigationController extends NavigationFragment {
       return f;
     }
 
-    protected static FragNavigationController newInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
+    protected static FragNavigationController newInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
         FragNavigationController f = new FragNavigationController();
         f.containerViewId = containerViewId;
         f.mFragManager = fragmentManager;
@@ -326,15 +326,17 @@ public class FragNavigationController extends NavigationFragment {
     }
     
     @Override
-     public boolean onBackPressed(){
-     
+     public boolean onNavigateBack(){
+     // true khi handle
+     // false khi ko handle
 	NavigationFragment f = getTopFragment();
-	if(f == null) return true;
-	else 
+	
+	// nếu top fragment null -> ko handle -> false
+	// nếu top fragment ko back được -> ko dismiss dc fragment -> bỏ qua lệnh navigate -> true
+	// nếu top fragment dc dismiss -> handle, ngược lại thì false
 	return 
-	 f.onBackPressed() &&
-	 !dismissFragment() &&
-	 getFragmentCount() == 1;
+	 f!=null && f.onNavigateBack() &&
+	 !dismissFragment();
     }
 
 }
