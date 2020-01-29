@@ -276,14 +276,16 @@ public class FragNavigationController extends NavigationFragment {
         // mFragStack only has root fragment
         if(mFragStack.size() == 1) {
 
-            // show the root fragment
+            // dismiss whole navigation
+            
+            /*
             NavigationFragment fragmentToShow = mFragStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
             mFragManager
                     .beginTransaction()
                     .show(fragmentToShow)
-                    .commit();
+                    .commit(); */
             return false;
         }
 
@@ -330,7 +332,7 @@ public class FragNavigationController extends NavigationFragment {
 	else 
 	return 
 	 f.onBackPressed() &&
-	 dismissFragment() &&
+	 !dismissFragment() &&
 	 getFragmentCount() == 1;
     }
 
