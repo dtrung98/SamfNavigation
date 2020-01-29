@@ -94,9 +94,9 @@ public class FragNavigationController extends NavigationFragment {
       }
     }
     
-    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
-      String afterTag = retrieveControllerTag(tag);
-      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, afterTag);
+    public static FragNavigationController getInstance(@NonNull FragmentManager fragmentManager, @IdRes int containerViewId, @NonNull String tag, Class<? extends NavigationFragment> startUpFragmentCls) {
+     
+      FragNavigationController f = restoreInstance(fragmentManager, containerViewId, tag);
       if(f==null) f = newInstance(fragmentManager, containerViewId, tag, startUpFragmentCls);
       return f;
     }    
