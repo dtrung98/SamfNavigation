@@ -22,7 +22,6 @@ default boolean isNavigationAvailable() {
 default boolean dismissFragment(boolean animated) {
         return isNavigationAvailable() &&
         getNavigationController().dismissFragment(animated);
-        }
     }
 
 default void presentFragment(NavigationFragment fragment) {
