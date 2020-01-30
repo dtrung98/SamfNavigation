@@ -11,7 +11,7 @@ default boolean onNavigateBack() {
   return isNavigationAvailable() && getNavigationController().onNavigateBack();
 }
 
-default void dismissFragment() {
+default boolean dismissFragment() {
   return dismissFragment(true);
 }
 
