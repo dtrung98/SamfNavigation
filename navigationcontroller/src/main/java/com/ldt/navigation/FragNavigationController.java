@@ -335,8 +335,8 @@ public class FragNavigationController extends NavigationFragment {
 	// nếu top fragment ko back được -> ko dismiss dc fragment -> bỏ qua lệnh navigate -> true
 	// nếu top fragment dc dismiss -> handle, ngược lại thì false
 	return 
-	 f!=null && f.onNavigateBack() &&
-	 !dismissFragment();
+	 f!=null && (!f.onNavigateBack() ||
+	 dismissFragment();
     }
 
 }
