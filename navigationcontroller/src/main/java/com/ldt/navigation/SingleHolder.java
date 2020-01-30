@@ -7,7 +7,7 @@ import com.ldt.navigation.NavigationFragment;
 public interface SingleHolder {
 FragNavigationController getNavigationController();
 
-default bool onNavigateBack() {
+default boolean onNavigateBack() {
   return isNavigationAvailable() && getNavigationController().onNavigateBack();
 }
 
@@ -15,11 +15,11 @@ default void dismissFragment() {
   return dismissFragment(true);
 }
 
-default bool isNavigationAvailable() {
+default boolean isNavigationAvailable() {
   return null != getNavigationController();
 }
 
-default bool dismissFragment(boolean animated) {
+default boolean dismissFragment(boolean animated) {
         return isNavigationAvailable() &&
         getNavigationController().dismissFragment(animated);
         }
