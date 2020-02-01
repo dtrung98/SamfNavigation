@@ -21,7 +21,6 @@ import java.util.Stack;
 /**
  * Created by burt on 2016. 5. 24..
  */
-@SuppressLint("ValidFragment")
 public class NavigationController extends NavigationFragment {
 
     private static final String TAG = "NavigationController";
