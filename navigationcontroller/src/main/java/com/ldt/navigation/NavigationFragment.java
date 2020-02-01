@@ -64,9 +64,9 @@ public abstract class NavigationFragment extends Fragment {
         savedTheme = b;
     }
 
-    public void navigateBack() {
+    public boolean navigateBack() {
         NavigationController controller = getNavigationController();
-        if(controller!=null)
+        return controller != null &&
         controller.navigateBack();
     }
 
