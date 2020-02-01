@@ -26,7 +26,7 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.back_button)
     void back() {
-        dismiss();
+        navigateBack();
     }
 
     @OnClick(R.id.button)
