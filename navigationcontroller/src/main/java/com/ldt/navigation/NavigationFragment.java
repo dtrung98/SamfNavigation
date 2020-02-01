@@ -27,7 +27,7 @@ public abstract class NavigationFragment extends Fragment {
     private static final int DEFAULT_DURATION = 275;
     public static int PRESENT_STYLE_DEFAULT = PresentStyle.ACCORDION_LEFT;
 
-    private WeakReference<FragNavigationController> weakFragmentNaviagationController = null;
+    private WeakReference<NavigationController> weakNavigationController = null;
     protected boolean animatable = true;
     private FrameLayout mWrapperRootLayout = null;
     private PresentStyle presentStyle = null;
@@ -64,16 +64,16 @@ public abstract class NavigationFragment extends Fragment {
         savedTheme = b;
     }
 
-    public void dismiss() {
-        FragNavigationController controller = getNavigationController();
+    public void navigateBack() {
+        NavigationController controller = getNavigationController();
         if(controller!=null)
-        controller.dismissFragment();
+        controller.navigateBack();
     }
 
-    public void presentFragment(NavigationFragment fragment) {
-        FragNavigationController controller = getNavigationController();
+    public void navigateTo(NavigationFragment fragment) {
+        NavigationController controller = getNavigationController();
         if(controller!=null)
-            controller.presentFragment(fragment);
+            controller.navigateTo(fragment);
     }
 
     public boolean isWhiteTheme() {
@@ -83,14 +83,14 @@ public abstract class NavigationFragment extends Fragment {
 
     }
 
-    public FragNavigationController getNavigationController() {
-        if(weakFragmentNaviagationController == null)
+    public NavigationController getNavigationController() {
+        if(weakNavigationController == null)
             return null;
-        return weakFragmentNaviagationController.get();
+        return weakNavigationController.get();
     }
 
-    protected void setNavigationController(FragNavigationController fragNavigationController) {
-        weakFragmentNaviagationController = new WeakReference<>(fragNavigationController);
+    protected void setNavigationController(NavigationController navigationController) {
+        weakNavigationController = new WeakReference<>(navigationController);
     }
 
     protected void setAnimatable(boolean animatable) {
@@ -115,9 +115,9 @@ public abstract class NavigationFragment extends Fragment {
 
     /**
      *  This method is called when user press the back button
-     * @return true to allow the fragment to be dismissed
-     * <br>      false to ignore the dismissed.
-     * <br> To dismiss the fragment, you need to call method <i>getNavigationController().dismiss()</i> directly
+     * @return true to allow the fragment to be navigateBacked
+     * <br>      false to ignore the navigateBacked.
+     * <br> To navigateBack the fragment, you need to call method <i>getNavigationController().navigateBack()</i> directly
      */
     public boolean onNavigateBack(){
         return true;
@@ -130,7 +130,7 @@ public abstract class NavigationFragment extends Fragment {
         if(v == null) return null;
 
         if(mWrapperRootLayout ==null)
-        mWrapperRootLayout = new FragFrameLayout(container.getContext());
+        mWrapperRootLayout = new EffectFrameLayout(container.getContext());
         else
         mWrapperRootLayout.removeAllViews();
 
@@ -195,7 +195,7 @@ public abstract class NavigationFragment extends Fragment {
             return null;
         }
 
-        FragNavigationController nav =  getNavigationController();
+        NavigationController nav =  getNavigationController();
         if(nav == null) {
             return null; //no animatable
         }

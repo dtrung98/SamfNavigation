@@ -23,11 +23,11 @@ public class SamplePageTwo extends NavigationFragment {
 
     @OnClick(R.id.back_button)
     void back() {
-        dismiss();
+        navigateBack();
     }
     @OnClick(R.id.button)
     void goToSomeWhere() {
-        presentFragment(new SamplePageThree());
+        navigateTo(new SamplePageThree());
     }
 
     @BindView(R.id.root)

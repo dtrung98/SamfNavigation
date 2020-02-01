@@ -1,35 +1,35 @@
 package com.ldt.navigation;
-import com.ldt.navigation.FragNavigationController;
+import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 /**
  * Created by dtrung98 on 2020. 1. 30
  */
 public interface SingleHolder {
-FragNavigationController getNavigationController();
+NavigationController getNavigationController();
 
 default boolean onNavigateBack() {
   return isNavigationAvailable() && getNavigationController().onNavigateBack();
 }
 
-default boolean dismissFragment() {
-  return dismissFragment(true);
+default boolean navigateBack() {
+  return navigateBack(true);
 }
 
 default boolean isNavigationAvailable() {
   return null != getNavigationController();
 }
 
-default boolean dismissFragment(boolean animated) {
+default boolean navigateBack(boolean animated) {
         return isNavigationAvailable() &&
-        getNavigationController().dismissFragment(animated);
+        getNavigationController().navigateBack(animated);
     }
 
-default void presentFragment(NavigationFragment fragment) {
-  presentFragment(fragment, true);
+default void navigateTo(NavigationFragment fragment) {
+  navigateTo(fragment, true);
 }
 
-default void presentFragment(NavigationFragment fragment, boolean animated) {
-  if(isNavigationAvailable()) getNavigationController().presentFragment(fragment, animated);
+default void navigateTo(NavigationFragment fragment, boolean animated) {
+  if(isNavigationAvailable()) getNavigationController().navigateTo(fragment, animated);
 }
 
 }

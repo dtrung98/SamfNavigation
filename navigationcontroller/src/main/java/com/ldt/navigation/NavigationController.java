@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.ldt.navigation.FragNavigationController;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -23,9 +22,9 @@ import java.util.Stack;
  * Created by burt on 2016. 5. 24..
  */
 @SuppressLint("ValidFragment")
-public class FragNavigationController extends NavigationFragment {
+public class NavigationController extends NavigationFragment {
 
-    private static final String TAG = "FragNavigationController";
+    private static final String TAG = "NavigationController";
     private FragmentManager mFragManager = null;
     private Stack<NavigationFragment> mFragStack = new Stack<>();
     private @IdRes
@@ -94,17 +93,17 @@ public class FragNavigationController extends NavigationFragment {
       }
     }
     
-    public static FragNavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
+    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
      
-      FragNavigationController f = restoreInstance(tag, fragmentManager, containerViewId);
+      NavigationController f = restoreInstance(tag, fragmentManager, containerViewId);
       if(f==null) f = newInstance(tag, fragmentManager, containerViewId, startUpFragmentCls);
       return f;
     }    
     
-    protected static FragNavigationController restoreInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
+    protected static NavigationController restoreInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
       
       // find restored controller if any
-      FragNavigationController f = (FragNavigationController)fragmentManager.findFragmentByTag(tag);
+      NavigationController f = (NavigationController)fragmentManager.findFragmentByTag(tag);
       if(f!=null) {
         if(f.containerViewId==-1) f.containerViewId = containerViewId;
         if(f.mTag==null || f.mTag.isEmpty()) f.mTag = tag;
@@ -116,8 +115,8 @@ public class FragNavigationController extends NavigationFragment {
       return f;
     }
 
-    protected static FragNavigationController newInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
-        FragNavigationController f = new FragNavigationController();
+    protected static NavigationController newInstance(String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
+        NavigationController f = new NavigationController();
         f.containerViewId = containerViewId;
         f.mFragManager = fragmentManager;
         f.mTag = tag;
@@ -136,7 +135,7 @@ public class FragNavigationController extends NavigationFragment {
             Log.e(TAG,"Unable to create new instance of start up fragment");
         }
         if(mainFragment!=null)
-        f.presentFragment(mainFragment);
+        f.navigateTo(mainFragment);
         
         return f;
     }
@@ -164,18 +163,18 @@ public class FragNavigationController extends NavigationFragment {
 
     public void pushFragment(NavigationFragment fragment) {
         setInterpolator(new AccelerateDecelerateInterpolator());
-        presentFragment(fragment);
+        navigateTo(fragment);
     }
 
     public void popFragment() {
-        dismissFragment();
+        navigateBack();
     }
 
-    public void presentFragment(NavigationFragment fragment) {
-        presentFragment(fragment, true);
+    public void navigateTo(NavigationFragment fragment) {
+        navigateTo(fragment, true);
     }
 
-    public void presentFragment(NavigationFragment fragment, boolean withAnimation) {
+    public void navigateTo(NavigationFragment fragment, boolean withAnimation) {
 
         if(mFragManager == null) return;
 
@@ -220,16 +219,12 @@ public class FragNavigationController extends NavigationFragment {
         mIsAbleToPopRoot = able;
     }
 
-    public boolean dismissFragment() {
-        return dismissFragment(true);
+    public boolean navigateBack() {
+        return navigateBack(true);
     }
 
-    public boolean dismissFragment(boolean withAnimation) {
-        if(mIsAbleToPopRoot) return innerDismissFragment(withAnimation);
-        else return dismissNonRootFragment(withAnimation);
-    }
-
-    protected boolean innerDismissFragment(boolean withAnimation) {
+/*
+    protected boolean navigateBackAbsolutely(boolean withAnimation) {
 
         if(mFragManager == null) return false;
 
@@ -270,14 +265,15 @@ public class FragNavigationController extends NavigationFragment {
         }
         return true;
     }
-    public boolean dismissNonRootFragment(boolean withAnimation) {
+    */
+    public boolean navigateBack(boolean withAnimation) {
 
         if(mFragManager == null) return false;
 
         // mFragStack only has root fragment
         if(mFragStack.size() == 1) {
 
-            // dismiss whole navigation
+            // navigateBack whole navigation
             
             /*
             NavigationFragment fragmentToShow = mFragStack.peek();
@@ -310,18 +306,18 @@ public class FragNavigationController extends NavigationFragment {
         return true;
     }
 
-    public void dismissToRootFragment() {
+    public void navigateBackToRootFragment() {
 
         while (mFragStack.size() >= 2) {
-            dismissFragment();
+            navigateBack();
         }
     }
-    public void dismissAllFragments() {
+    public void navigateBackAllFragments() {
         if(!mIsAbleToPopRoot) {
-            dismissToRootFragment();
+            navigateBackToRootFragment();
         } else {
             while (mFragStack.size()>=1)
-                dismissFragment();
+                navigateBack();
         }
     }
     
@@ -332,11 +328,11 @@ public class FragNavigationController extends NavigationFragment {
 	NavigationFragment f = getTopFragment();
 	
 	// nếu top fragment null -> ko handle -> false
-	// nếu top fragment ko back được -> ko dismiss dc fragment -> bỏ qua lệnh navigate -> true
-	// nếu top fragment dc dismiss -> handle, ngược lại thì false
+	// nếu top fragment ko back được -> ko navigateBack dc fragment -> bỏ qua lệnh navigate -> true
+	// nếu top fragment dc navigateBack -> handle, ngược lại thì false
 	return 
 	 f!=null && (!f.onNavigateBack() ||
-	 dismissFragment());
+	 navigateBack());
     }
 
 }

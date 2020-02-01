@@ -7,14 +7,14 @@ import androidx.fragment.app.Fragment;
 import butterknife.ButterKnife;
 import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.FragNavigationController;
+import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.SingleHolder;
 
 public class MainActivity extends AppCompatActivity implements SingleHolder {
-    private FragNavigationController mNavigationController;
+    private NavigationController mNavigationController;
 
     @Override
-    public FragNavigationController getNavigationController() {
+    public NavigationController getNavigationController() {
         return mNavigationController;
     }
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements SingleHolder {
         Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
 
         mNavigationController =
-                FragNavigationController.getInstance(
+                NavigationController.getInstance(
                         "navigation-controller-1",
                         getSupportFragmentManager(),
                         R.id.container,

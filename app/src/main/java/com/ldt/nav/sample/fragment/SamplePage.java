@@ -35,8 +35,8 @@ public class SamplePage extends NavigationFragment {
         String text = mEditText.getText().toString();
         int value = -1; try {
         value = Integer.parseInt(text);
-        presentFragment(SamplePageTwo.newInstance(value));     } catch (Exception e) {
-            presentFragment(new SamplePageTwo());
+        navigateTo(SamplePageTwo.newInstance(value));     } catch (Exception e) {
+            navigateTo(new SamplePageTwo());
         }
         
         /*

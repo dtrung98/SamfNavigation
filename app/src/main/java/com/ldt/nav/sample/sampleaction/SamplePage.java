@@ -33,9 +33,9 @@ public class SamplePage extends BaseFragment {
         String text = mEditText.getText().toString();
         int value = -1; try {
         value = Integer.parseInt(text);
-        presentFragment(SamplePageTwo.newInstance(value));
+        navigateTo(SamplePageTwo.newInstance(value));
         } catch (Exception e) {
-            presentFragment(new SamplePageTwo());
+            navigateTo(new SamplePageTwo());
         }
     }
 
