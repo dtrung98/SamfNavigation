@@ -28,7 +28,7 @@ public class SamplePageThree extends BaseFragment {
     }
     @OnClick(R.id.button)
     void goToSomeWhere() {
-        navigateTo(new SamplePage());
+        presentFragment(new SamplePage());
     }
     @BindView(R.id.root)
     View mRoot;
