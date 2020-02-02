@@ -33,9 +33,11 @@ public class SamplePage extends NavigationFragment {
     void goToSomeWhere() {
     
         String text = mEditText.getText().toString();
-        int value = -1; try {
+        int value = -1;
+        try {
         value = Integer.parseInt(text);
-        navigateTo(SamplePageTwo.newInstance(value));     } catch (Exception e) {
+        navigateTo(SamplePageTwo.newInstance(value));
+        } catch (Exception e) {
             navigateTo(new SamplePageTwo());
         }
         
@@ -44,7 +46,7 @@ public class SamplePage extends NavigationFragment {
                 .beginTransaction()
                 .replace(R.id.container,new SamplePageTwo(),"sample-page-2")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-       .commit()
+       .commit();
        */
     }
 
@@ -73,10 +75,12 @@ public class SamplePage extends NavigationFragment {
     int p = -1;
     @Override
     public int defaultTransition() {
+      
         if(p==-1) {
             Random r = new Random();
             p = r.nextInt(39) + 1; //exclude NONE present style
         }
+        
         return p;
     }
 }

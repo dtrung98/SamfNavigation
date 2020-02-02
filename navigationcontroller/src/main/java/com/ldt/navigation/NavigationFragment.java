@@ -72,7 +72,7 @@ public abstract class NavigationFragment extends Fragment {
 
     public void navigateTo(NavigationFragment fragment) {
         NavigationController controller = getNavigationController();
-        if(controller!=null)
+        if(controller != null)
             controller.navigateTo(fragment);
     }
 
@@ -97,7 +97,7 @@ public abstract class NavigationFragment extends Fragment {
         this.animatable = animatable;
     }
 
- /*  protected void setPresentStyle(PresentStyle presentStyle) {
+ /*  protected voild setPresentStyle(PresentStyle presentStyle) {
         this.presentStyle = presentStyle;
     }*/
 
