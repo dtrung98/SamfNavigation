@@ -26,6 +26,7 @@ public interface EffectView {
     
     void setRotationX(float value);
     void setRotationY(float value);
+    void setRotation(float value);
     
     void setPivotY(float value);
     void setPivotX(float value);
@@ -159,19 +160,19 @@ public interface EffectView {
     }
 
     default void setYFraction(float fraction) {
-        this.getEffectSaver().yFraction = fraction;
+        getEffectSaver().yFraction = fraction;
         if (getHeight() == 0) {
-            if (preDrawListener == null) {
-                preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+            if (getEffectSaver().preDrawListener == null) {
+                getEffectSaver().preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
                         getViewTreeObserver().removeOnPreDrawListener(
-                                preDrawListener);
-                        setYFraction(this.getEffectSaver().yFraction);
+                                getEffectSaver().preDrawListener);
+                        setYFraction(getEffectSaver().yFraction);
                         return true;
                     }
                 };
-                getViewTreeObserver().addOnPreDrawListener(preDrawListener);
+                getViewTreeObserver().addOnPreDrawListener(getEffectSaver().preDrawListener);
             }
             return;
         }
@@ -180,19 +181,19 @@ public interface EffectView {
     }
 
     default void setXFraction(float fraction) {
-        this.getEffectSaver().xFraction = fraction;
+        getEffectSaver().xFraction = fraction;
         if (getWidth() == 0) {
             if (getEffectSaver().preDrawListener == null) {
                 getEffectSaver().preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
                         getViewTreeObserver().removeOnPreDrawListener(
-                                preDrawListener);
+                                getEffectSaver().preDrawListener);
                         setXFraction(this.getEffectSaver().xFraction);
                         return true;
                     }
                 };
-                getViewTreeObserver().addOnPreDrawListener(preDrawListener);
+                getViewTreeObserver().addOnPreDrawListener(getEffectSaver().preDrawListener);
             }
             return;
         }
