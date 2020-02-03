@@ -20,6 +20,7 @@ import java.util.Stack;
 
 /**
  * Created by burt on 2016. 5. 24..
+ * Updated by dtrung98
  */
 public class NavigationController extends NavigationFragment {
 
@@ -58,8 +59,6 @@ public class NavigationController extends NavigationFragment {
         outState.putStringArrayList("fragment-navigation-tags", list);
         
     }
-    
-    
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
