@@ -11,7 +11,7 @@ public interface EffectView {
   public static class EffectSaver {
     public float yFraction = 0;
     public float xFraction = 0;
-    public VieeTreeObserver.OnPreDrawListener preDrawListener = null;
+    public ViewTreeObserver.OnPreDrawListener preDrawListener = null;
   }
   
   EffectSaver getEffectSaver();
@@ -55,31 +55,31 @@ public interface EffectView {
     }
     */
 
-    public void setAccordionPivotZero(float value) {
+    default void setAccordionPivotZero(float value) {
         setAlpha(1.0f);
         setScaleX(value);
         setPivotX(0);
     }
 
-    public void setAccordionPivotWidth(float value) {
+    default void setAccordionPivotWidth(float value) {
         setAlpha(1.0f);
         setScaleX(value);
         setPivotX(getWidth());
     }
 
-    public void setAccordionVerticalPivotZero(float value) {
+    default void setAccordionVerticalPivotZero(float value) {
         setAlpha(1.0f);
         setScaleY(value);
         setPivotY(0);
     }
 
-    public void setAccordionPivotHeight(float value) {
+    default void setAccordionPivotHeight(float value) {
         setAlpha(1.0f);
         setScaleY(value);
         setPivotY(getHeight());
     }
 
-    public void setCube(float fraction) {
+    default void setCube(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotationY(90 * fraction);
@@ -87,7 +87,7 @@ public interface EffectView {
         setPivotY(getHeight() / 2);
     }
 
-    public void setCubeVertical(float fraction) {
+    default void setCubeVertical(float fraction) {
         float translationY = getHeight() * fraction;
         setTranslationY(translationY);
         setRotationX(-90 * fraction);
@@ -95,7 +95,7 @@ public interface EffectView {
         setPivotX(getWidth() / 2);
     }
 
-    public void setCubeBack(float fraction) {
+    default void setCubeBack(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotationY(90 * fraction);
@@ -103,7 +103,7 @@ public interface EffectView {
         setPivotX(getWidth());
     }
 
-    public void setCubeVerticalBack(float fraction) {
+    default void setCubeVerticalBack(float fraction) {
         float translationY = getHeight() * fraction;
         setTranslationY(translationY);
         setRotationX(-90 * fraction);
@@ -111,14 +111,14 @@ public interface EffectView {
         setPivotY(getHeight());
     }
 
-    public void setGlide(float fraction) {
+    default void setGlide(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotationY(90 * fraction);
         setPivotX(0);
     }
 
-    public void setGlideBack(float fraction) {
+    default void setGlideBack(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotationY(90 * fraction);
@@ -126,7 +126,7 @@ public interface EffectView {
         setPivotY(getHeight() / 2);
     }
 
-    public void setRotateDown(float fraction) {
+    default void setRotateDown(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotation(20 * fraction);
@@ -134,7 +134,7 @@ public interface EffectView {
         setPivotX(getWidth() / 2);
     }
 
-    public void setRotateUp(float fraction) {
+    default void setRotateUp(float fraction) {
         float translationX = getWidth() * fraction;
         setTranslationX(translationX);
         setRotation(-20 * fraction);
@@ -142,7 +142,7 @@ public interface EffectView {
         setPivotX(getWidth() / 2);
     }
 
-    public void setRotateLeft(float fraction) {
+    default void setRotateLeft(float fraction) {
         float translationY = getHeight() * fraction;
         setTranslationY(translationY);
         setRotation(20 * fraction);
@@ -150,7 +150,7 @@ public interface EffectView {
         setPivotY(getHeight() / 2);
     }
 
-    public void setRotateRight(float fraction) {
+    default void setRotateRight(float fraction) {
         float translationY = getHeight() * fraction;
         setTranslationY(translationY);
         setRotation(-20 * fraction);
@@ -158,7 +158,7 @@ public interface EffectView {
         setPivotY(getHeight() / 2);
     }
 
-    public void setYFraction(float fraction) {
+    default void setYFraction(float fraction) {
         this.getEffectSaver().yFraction = fraction;
         if (getHeight() == 0) {
             if (preDrawListener == null) {
@@ -179,7 +179,7 @@ public interface EffectView {
         setTranslationY(translationY);
     }
 
-    public void setXFraction(float fraction) {
+    default void setXFraction(float fraction) {
         this.getEffectSaver().xFraction = fraction;
         if (getWidth() == 0) {
             if (getEffectSaver().preDrawListener == null) {
@@ -200,65 +200,65 @@ public interface EffectView {
         setTranslationX(translationX);
     }
 
-    public void setTableHorizontalPivotZero(float fraction) {
+    default void setTableHorizontalPivotZero(float fraction) {
         setRotationY(90 * fraction);
         setPivotX(0);
         setPivotY(getHeight() / 2);
     }
 
-    public void setTableHorizontalPivotWidth(float fraction) {
+    default void setTableHorizontalPivotWidth(float fraction) {
         setRotationY(-90 * fraction);
         setPivotX(getWidth());
         setPivotY(getHeight() / 2);
     }
 
-    public void setTableVerticalPivotZero(float fraction) {
+    default void setTableVerticalPivotZero(float fraction) {
         setRotationX(-90 * fraction);
         setPivotX(getWidth() / 2);
         setPivotY(0);
     }
 
-    public void setTableVerticalPivotHeight(float fraction) {
+    default void setTableVerticalPivotHeight(float fraction) {
         setRotationX(90 * fraction);
         setPivotX(getWidth() / 2);
         setPivotY(getHeight());
     }
 
-    public void setZoomFromCornerPivotHG(float fraction) {
+    default void setZoomFromCornerPivotHG(float fraction) {
         setScaleX(fraction);
         setScaleY(fraction);
         setPivotX(getWidth());
         setPivotY(getHeight());
     }
 
-    public void setZoomFromCornerPivotZero(float fraction) {
+    default void setZoomFromCornerPivotZero(float fraction) {
         setScaleX(fraction);
         setScaleY(fraction);
         setPivotX(0);
         setPivotY(0);
     }
 
-    public void setZoomFromCornerPivotWidth(float fraction) {
+    default void setZoomFromCornerPivotWidth(float fraction) {
         setScaleX(fraction);
         setScaleY(fraction);
         setPivotX(getWidth());
         setPivotY(0);
     }
 
-    public void setZoomFromCornerPivotHeight(float fraction) {
+    default void setZoomFromCornerPivotHeight(float fraction) {
         setScaleX(fraction);
         setScaleY(fraction);
         setPivotX(0);
         setPivotY(getHeight());
     }
 
-    public void setZoomSlideHorizontal(float fraction) {
+    default void setZoomSlideHorizontal(float fraction) {
         setTranslationX(getWidth() * fraction);
         setPivotX(getWidth() / 2);
         setPivotY(getHeight() / 2);
     }
 
-    public void setZoomSlideVertical(float fraction) {
+    default void setZoomSlideVertical(float fraction) {
         setTranslationY(getHeight() * fraction);
         setPivotX(getWidth() / 2);
         setPivotY(getHeight() / 2);
