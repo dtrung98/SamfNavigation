@@ -7,23 +7,11 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 public class EffectFrameLayout extends FrameLayout implements EffectView {
-    private final EffectSaver effectSaver;
+    private final EffectSaver effectSaver = new EffectSaver();
     
     @Override 
     public EffectSaver getEffectSaver() {
       return effectSaver;
-    }
-
-    public EffectFrameLayout(Context context) {
-        super(context);
-    }
-
-    public EffectFrameLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public EffectFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
