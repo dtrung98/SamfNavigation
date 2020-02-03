@@ -10,7 +10,7 @@ public class EffectFrameLayout extends FrameLayout implements EffectView {
     private final EffectSaver effectSaver;
     
     @Override 
-    EffectSaver getEffectSaver() {
+    public EffectSaver getEffectSaver() {
       return effectSaver;
     }
 
