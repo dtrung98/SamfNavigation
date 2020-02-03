@@ -189,7 +189,7 @@ public interface EffectView {
                     public boolean onPreDraw() {
                         getViewTreeObserver().removeOnPreDrawListener(
                                 getEffectSaver().preDrawListener);
-                        setXFraction(this.getEffectSaver().xFraction);
+                        setXFraction(getEffectSaver().xFraction);
                         return true;
                     }
                 };
