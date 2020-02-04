@@ -64,6 +64,11 @@ public class SamplePage extends NavigationFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
        root = view;
+       
+       int w = context.getResources().getInteger(R.integer.width_qualifier);
+       
+       int h = context.getResources().getInteger(R.integer.height_qualifier);
+               mEditText.setText("("+w+"; "+h+" )");
     }
     View root;
 

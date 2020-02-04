@@ -47,9 +47,6 @@ public class SamplePage extends BaseFragment {
     public View createView(Context context) {
         View view = LayoutInflater.from(context).inflate(R.layout.sample_page, null, false);
         ButterKnife.bind(this, view);
-        int w = view.getContext().getResources().getInt(R.integer.width_qualifier);
-        int h = view.getContext().getResources().getInt(R.integer.height_qualifier);
-        mEditText.setText("("+w+"; "+h+" )");
         return view;
     }
 }
