@@ -9,6 +9,7 @@ import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.SingleHolder;
+import com.ldt.navigation.uicontainer.FlexContainer;
 
 public class MainActivity extends AppCompatActivity implements SingleHolder {
     private NavigationController mNavigationController;
@@ -23,16 +24,17 @@ public class MainActivity extends AppCompatActivity implements SingleHolder {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Fragment f = getSupportFragmentManager().findFragmentByTag("navigation-controller-1");
+        Fragment f = getSupportFragmentManager().findFragmentByTag("main-navigation-controller");
 
-        Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
 
         mNavigationController =
                 NavigationController.getInstance(
-                        "navigation-controller-1",
+                        "main-navigation-controller",
                         getSupportFragmentManager(),
                         R.id.container,
-                        SamplePage.class);
+                        SamplePage.class,
+                        FlexContainer.class);
     }
     
     @Override

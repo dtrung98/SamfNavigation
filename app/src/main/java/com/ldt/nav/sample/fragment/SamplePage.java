@@ -69,6 +69,7 @@ public class SamplePage extends NavigationFragment {
        
        int h = view.getContext().getResources().getInteger(R.integer.height_qualifier);
                mEditText.setText("("+w+"; "+h+" )");
+        Toast.makeText(mEditText.getContext(),"("+w+"; "+h+" )", Toast.LENGTH_SHORT).show();
     }
     View root;
 

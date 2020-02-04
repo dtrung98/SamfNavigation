@@ -1,7 +1,6 @@
 package com.ldt.navigation.action;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -19,7 +18,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     private ArrayList<BaseFragment> mainFragmentsStack = new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        AndroidUtilities.density = getResources().getDimension(R.dimen.oneDP);
+        AndroidUtilities.density = getResources().getDimension(R.dimen.dpUnit);
         super.onCreate(savedInstanceState);
         mFrameLayout = new FrameLayout(this);
         actionBarLayout = new ActionBarLayout(this);

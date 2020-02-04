@@ -1,18 +1,15 @@
 package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
@@ -41,7 +38,8 @@ public class NavigationController extends NavigationFragment {
         return ++sIdCount;
     }
     
-    private UIContainer uiContainer = null;
+    private UIContainer mUiContainer = null;
+    private Class<? extends NavigationFragment> mStartUpFragmentCls = null;
     
     public FragmentManager getFragmentManagerForNavigation() {
       return getChildFragmentManager();
@@ -67,13 +65,10 @@ public class NavigationController extends NavigationFragment {
     	
     	outState.putInt("sub-container-id", subContainerId);
     	
-    	// create ui container instance
-    	
-    	
     	outState.putString("controller-tag", mTag);
         ArrayList list = new ArrayList<>(mTagStack);
         outState.putStringArrayList("fragment-navigation-tags", list);
-        
+        UIContainer.save(mTag, mUiContainer.getClass());
     }
     
     @Override
@@ -83,17 +78,45 @@ public class NavigationController extends NavigationFragment {
     	navContainerId = savedInstanceState.getInt("nav-container-id",-1);
     	subContainerId = savedInstanceState.getInt("sub-container-id", R.id.sub_container);
     	mTag = savedInstanceState.getString("controller-tag");
-    	
-    	
-    
+
+    	mUiContainer = UIContainer.instantiate(getContext(), mTag);
+    	if(mUiContainer ==null) mUiContainer = new ExpandContainer();
+
       ArrayList list;
       list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
       if(list!=null)
       mTagStack.clear();
       mTagStack.addAll(list);
       }
+
+        int w = getContext().getResources().getInteger(R.integer.width_qualifier);
+
+        int h = getContext().getResources().getInteger(R.integer.height_qualifier);
+
+        float dpUnit = getContext().getResources().getDimension(R.dimen.dpUnit);
+        mUiContainer.provideConfig(w, h, dpUnit);
+        mUiContainer.attach(this);
     }
-    
+
+    private void showStartupFragmentIfNeed() {
+        if(mStartUpFragmentCls !=null && mTagStack.isEmpty()) {
+            NavigationFragment mainFragment = null;
+            try {
+                mainFragment = mStartUpFragmentCls.newInstance();
+            } catch (Exception ignored) {
+                Log.e(TAG,"Unable to create new instance of start up fragment");
+            }
+            if(mainFragment!=null)
+                navigateTo(mainFragment);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        mUiContainer.detach();
+        super.onDestroy();
+    }
+
     protected void restoreFragmentStack() {
       FragmentManager fm = getFragmentManagerForNavigation();
       
@@ -112,17 +135,17 @@ public class NavigationController extends NavigationFragment {
       }
     }
     
-    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerViewId, Class<? extends NavigationFragment> startUpFragmentCls) {
-      return getInstance(tag, fragmentController, containerId, startUpFragmentCls, null);
+    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls) {
+      return getInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, null);
     }
     
-    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int containerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
-      NavigationController f = restoreInstance(tag, containerViewId);
-            if(f==null) f = newInstance(tag, fragmentManager, containerViewId, startUpFragmentCls, uiContainerCls);
+    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
+      NavigationController f = restoreInstance(tag, fragmentManager, navContainerId);
+            if(f==null) f = newInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, uiContainerCls);
             return f;
       }
     
-    protected static NavigationController restoreInstance(String tag, @IdRes int containerViewId) {
+    protected static NavigationController restoreInstance(String tag,@NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
       
       // find restored controller if any
       NavigationController f = (NavigationController)fragmentManager.findFragmentByTag(tag);
@@ -152,26 +175,18 @@ public class NavigationController extends NavigationFragment {
         }
         if(uic == null) uic = new ExpandContainer();
         
-        f.uiContainer = uic;
+        f.mUiContainer = uic;
         
-        
+        f.mStartUpFragmentCls = startUpFragmentCls;
        // this.setRetainInstance(true);
 
         synchronized (f.sync) {
             fragmentManager
                     .beginTransaction()
-                    .add(navContainerId ,f , tag).commit();
+                    .add(navContainerId ,f , tag)
+                    .commit();
         }
-      
-        NavigationFragment mainFragment = null;
-        try {
-             mainFragment = startUpFragmentCls.newInstance();
-        } catch (Exception ignored) {
-            Log.e(TAG,"Unable to create new instance of start up fragment");
-        }
-        if(mainFragment!=null)
-        f.navigateTo(mainFragment);
-        
+
         return f;
     }
     
@@ -183,7 +198,13 @@ public class NavigationController extends NavigationFragment {
     @Nullable
     @Override
     protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return null;
+        return mUiContainer.provideLayout(getContext(), inflater, container, subContainerId);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        showStartupFragmentIfNeed();
     }
 
     public int getFragmentCount() {
@@ -221,7 +242,7 @@ public class NavigationController extends NavigationFragment {
             // nếu stack rỗng
             if (mFragStack.size() == 0) {
                 fragment.setAnimatable(false);
-                mFragManager
+                getFragmentManagerForNavigation()
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .replace(subContainerId, fragment, eTag)
@@ -239,7 +260,7 @@ public class NavigationController extends NavigationFragment {
                 // hide last fragment and add new fragment
                 NavigationFragment hideFragment = mFragStack.peek();
                 hideFragment.onHideFragment();
-                mFragManager
+                getFragmentManagerForNavigation()
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .hide(hideFragment)
@@ -304,8 +325,6 @@ public class NavigationController extends NavigationFragment {
     */
     public boolean navigateBack(boolean withAnimation) {
 
-        if(mFragManager == null) return false;
-
         // mFragStack only has root fragment
         if(mFragStack.size() == 1) {
 
@@ -331,7 +350,7 @@ public class NavigationController extends NavigationFragment {
             NavigationFragment fragmentToShow = mFragStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
-            mFragManager
+            getFragmentManagerForNavigation()
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(fragmentToShow)

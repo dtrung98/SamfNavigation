@@ -14,8 +14,9 @@ public class FlexContainer implements UIContainer {
     if(hq>=400) subContainer = new DialogContainer();
     else subContainer = new ExpandContainer();
   }
-  
+
+  @Override
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
-  return subContainer.provideLayout(context, inflater, viewGroup, subContainerId)
-}
+  return subContainer.provideLayout(context, inflater, viewGroup, subContainerId);
+  }
 }
