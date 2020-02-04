@@ -177,9 +177,14 @@ public class NavigationController extends NavigationFragment {
         if(mFragManager == null) return;
 
         synchronized (sync) {
+          
+          fragment.setNavigationController(this);
+          
+          // phát sinh tag
             String eTag = nextNavigationFragmentTag();
+            
+            // nếu stack rỗng
             if (mFragStack.size() == 0) {
-                fragment.setNavigationController(this);
                 fragment.setAnimatable(false);
                 mFragManager
                         .beginTransaction()
@@ -188,8 +193,6 @@ public class NavigationController extends NavigationFragment {
                         .commit();
 
             } else {
-
-                fragment.setNavigationController(this);
 
                 int openExit = fragment.defaultOpenExitTransition();
                 if(openExit==PresentStyle.SAME_AS_OPEN)
