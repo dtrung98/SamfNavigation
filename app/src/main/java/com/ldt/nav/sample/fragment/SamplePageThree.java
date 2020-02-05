@@ -1,5 +1,6 @@
 package com.ldt.nav.sample.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
+import com.ldt.nav.sample.activity.MainActivity;
 import com.ldt.navigation.NavigationFragment;
 
 import java.util.Random;
@@ -51,5 +53,12 @@ public class SamplePageThree extends NavigationFragment {
             p = r.nextInt(39) + 1; //exclude NONE present style
         }
         return p;
+    }
+
+    @OnClick(R.id.button_2)
+    void openSetting() {
+        Activity activity = getActivity();
+        if(activity instanceof MainActivity)
+            ((MainActivity)activity).showSetting();
     }
 }

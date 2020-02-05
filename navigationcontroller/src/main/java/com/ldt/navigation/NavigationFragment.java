@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.ldt.navigation.holder.Navigable;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -121,6 +123,11 @@ public abstract class NavigationFragment extends Fragment {
      */
     public boolean onNavigateBack(){
         return true;
+    }
+
+    public boolean requestBack() {
+        NavigationController controller = getNavigationController();
+        return controller != null && controller.onNavigateBack();
     }
 
     @Nullable

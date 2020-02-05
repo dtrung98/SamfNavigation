@@ -59,14 +59,14 @@ public class NavigationController extends NavigationFragment {
     }
     
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
     	super.onSaveInstanceState(outState);
     	outState.putInt("nav-container-id", navContainerId);
     	
     	outState.putInt("sub-container-id", subContainerId);
     	
     	outState.putString("controller-tag", mTag);
-        ArrayList list = new ArrayList<>(mTagStack);
+        ArrayList<String> list = new ArrayList<>(mTagStack);
         outState.putStringArrayList("fragment-navigation-tags", list);
         UIContainer.save(mTag, mUiContainer.getClass());
     }
@@ -75,19 +75,20 @@ public class NavigationController extends NavigationFragment {
     public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if(savedInstanceState!=null) {
-    	navContainerId = savedInstanceState.getInt("nav-container-id",-1);
-    	subContainerId = savedInstanceState.getInt("sub-container-id", R.id.sub_container);
-    	mTag = savedInstanceState.getString("controller-tag");
+        navContainerId = savedInstanceState.getInt("nav-container-id", -1);
+        subContainerId = savedInstanceState.getInt("sub-container-id", R.id.sub_container);
+        mTag = savedInstanceState.getString("controller-tag");
 
-    	mUiContainer = UIContainer.instantiate(getContext(), mTag);
-    	if(mUiContainer ==null) mUiContainer = new ExpandContainer();
+        mUiContainer = UIContainer.instantiate(getContext(), mTag);
+        if (mUiContainer == null) mUiContainer = new ExpandContainer();
 
-      ArrayList list;
-      list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
-      if(list!=null)
-      mTagStack.clear();
-      mTagStack.addAll(list);
-      }
+        ArrayList<String> list;
+        list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
+        if (list != null) {
+            mTagStack.clear();
+            mTagStack.addAll(list);
+        }
+    }
 
         int w = getContext().getResources().getInteger(R.integer.width_qualifier);
 
@@ -139,13 +140,19 @@ public class NavigationController extends NavigationFragment {
       return getInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, null);
     }
     
-    public static NavigationController getInstance(@NonNull String tag, @NonNull FragmentManager fragmentManager, @IdRes int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
-      NavigationController f = restoreInstance(tag, fragmentManager, navContainerId);
+    public static NavigationController getInstance(
+            @NonNull String tag,
+            @NonNull FragmentManager fragmentManager,
+            @IdRes int navContainerId,
+            Class<? extends NavigationFragment> startUpFragmentCls,
+            Class<? extends UIContainer> uiContainerCls)
+    {
+      NavigationController f = restoreInstance(tag, fragmentManager);
             if(f==null) f = newInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, uiContainerCls);
             return f;
       }
     
-    protected static NavigationController restoreInstance(String tag,@NonNull FragmentManager fragmentManager, @IdRes int containerViewId) {
+    public static NavigationController restoreInstance(String tag,@NonNull FragmentManager fragmentManager) {
       
       // find restored controller if any
       NavigationController f = (NavigationController)fragmentManager.findFragmentByTag(tag);
@@ -183,11 +190,31 @@ public class NavigationController extends NavigationFragment {
         synchronized (f.sync) {
             fragmentManager
                     .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .add(navContainerId ,f , tag)
                     .commit();
         }
 
         return f;
+    }
+
+    public boolean isControllerAvailable() {
+        return !isControllerQuit;
+    }
+
+    private boolean isControllerQuit = false;
+
+    public void quit() {
+        if(isControllerQuit) return;
+        isControllerQuit = true;
+        synchronized (sync) {
+           FragmentManager fragmentManager = getFragmentManager();
+           if(fragmentManager!=null)
+                    fragmentManager.beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .remove(this)
+                    .commit();
+        }
     }
     
     public NavigationFragment getTopFragment() {
@@ -204,6 +231,7 @@ public class NavigationController extends NavigationFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mUiContainer.bindLayout(view);
         showStartupFragmentIfNeed();
     }
 
@@ -390,4 +418,8 @@ public class NavigationController extends NavigationFragment {
 	 navigateBack());
     }
 
+    @Override
+    public boolean requestBack() {
+        return onNavigateBack();
+    }
 }

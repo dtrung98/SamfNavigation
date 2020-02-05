@@ -1,5 +1,6 @@
 package com.ldt.nav.sample.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.ldt.nav.sample.R;
+import com.ldt.nav.sample.activity.MainActivity;
 import com.ldt.navigation.NavigationFragment;
 
 import java.util.Random;
@@ -49,6 +51,14 @@ public class SamplePage extends NavigationFragment {
        .commit();
        */
     }
+
+    @OnClick(R.id.button_2)
+    void openSetting() {
+        Activity activity = getActivity();
+        if(activity instanceof MainActivity)
+            ((MainActivity)activity).showSetting();
+    }
+
 
     @BindView(R.id.edit_text)
     EditText mEditText;

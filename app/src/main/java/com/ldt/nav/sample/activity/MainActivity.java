@@ -1,24 +1,19 @@
 package com.ldt.nav.sample.activity;
 
 import android.os.Bundle;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import butterknife.ButterKnife;
+
 import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.NavigationController;
-import com.ldt.navigation.SingleHolder;
-import com.ldt.navigation.uicontainer.FlexContainer;
+import com.ldt.navigation.holder.NavigationRouter;
+import com.ldt.navigation.holder.RouterSaver;
+import com.ldt.navigation.uicontainer.ExpandContainer;
+import com.ldt.navigation.uicontainer.FlowContainer;
 
-public class MainActivity extends AppCompatActivity implements SingleHolder {
-    private NavigationController mNavigationController;
-
-    @Override
-    public NavigationController getNavigationController() {
-        return mNavigationController;
-    }
-
+public class MainActivity extends AppCompatActivity implements NavigationRouter {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,14 +22,29 @@ public class MainActivity extends AppCompatActivity implements SingleHolder {
         Fragment f = getSupportFragmentManager().findFragmentByTag("main-navigation-controller");
 
         //Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
-
-        mNavigationController =
-                NavigationController.getInstance(
+        restoreRouterState(savedInstanceState, getSupportFragmentManager());
+        obtainController(
                         "main-navigation-controller",
                         getSupportFragmentManager(),
                         R.id.container,
                         SamplePage.class,
-                        FlexContainer.class);
+                        ExpandContainer.class);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        saveRouterState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    public void showSetting() {
+        obtainController(
+                "setting-navigation-controller",
+                getSupportFragmentManager(),
+                R.id.container,
+                SamplePage.class,
+                FlowContainer.class);
     }
     
     @Override
@@ -43,5 +53,12 @@ public class MainActivity extends AppCompatActivity implements SingleHolder {
     return;
     
     super.onBackPressed();
+    }
+
+    private final RouterSaver mRouterSaver = new RouterSaver();
+
+    @Override
+    public RouterSaver getRouterSaver() {
+        return mRouterSaver;
     }
 }
