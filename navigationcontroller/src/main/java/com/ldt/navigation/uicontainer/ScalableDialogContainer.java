@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+/**
+ *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
+ *  dialog to ra theo kích cỡ màn hình
+ */
 public class ScalableDialogContainer implements UIContainer, View.OnClickListener {
   private int w;
   private int h;

@@ -5,7 +5,6 @@ import android.animation.AnimatorInflater;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.ldt.navigation.holder.Navigable;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -27,10 +24,19 @@ import java.lang.ref.WeakReference;
 public abstract class NavigationFragment extends Fragment {
     private static final String TAG ="NavigationFragment";
     private static final int DEFAULT_DURATION = 275;
-    public static int PRESENT_STYLE_DEFAULT = PresentStyle.ACCORDION_LEFT;
+    public static final String ANIMATABLE = "animatable";
+    public static final int PRESENT_STYLE_DEFAULT = PresentStyle.ACCORDION_LEFT;
 
     private WeakReference<NavigationController> weakNavigationController = null;
-    protected boolean animatable = true;
+    protected boolean mAnimatable = true;
+    protected boolean mIsOnConfigurationAnimation = false;
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ANIMATABLE, mAnimatable);
+    }
+
     private FrameLayout mWrapperRootLayout = null;
     private PresentStyle presentStyle = null;
     private PresentStyle exitPresentStyle = null;
@@ -46,24 +52,9 @@ public abstract class NavigationFragment extends Fragment {
         return PresentStyle.SAME_AS_OPEN;
     }
 
-    public boolean isWhiteTheme(boolean current) {
-        saveTheme(current);
-        return true;
-    }
-
     public final PresentStyle getPresentStyle() {
         if(presentStyle==null) presentStyle = PresentStyle.get(defaultTransition());
         return presentStyle;
-    }
-
-    public boolean getSavedTheme() {
-        return savedTheme;
-    }
-
-    protected boolean savedTheme = true;
-    public void saveTheme(boolean b) {
-        Log.d(TAG, "saveTheme: b = " +b);
-        savedTheme = b;
     }
 
     public boolean navigateBack() {
@@ -78,12 +69,7 @@ public abstract class NavigationFragment extends Fragment {
             controller.navigateTo(fragment);
     }
 
-    public boolean isWhiteTheme() {
-        return true;
-    }
-    public void onSetStatusBarMargin(int value) {
-
-    }
+    public void onSetStatusBarMargin(int value) {}
 
     public NavigationController getNavigationController() {
         if(weakNavigationController == null)
@@ -96,7 +82,7 @@ public abstract class NavigationFragment extends Fragment {
     }
 
     protected void setAnimatable(boolean animatable) {
-        this.animatable = animatable;
+        this.mAnimatable = animatable;
     }
 
  /*  protected voild setPresentStyle(PresentStyle presentStyle) {
@@ -128,6 +114,16 @@ public abstract class NavigationFragment extends Fragment {
     public boolean requestBack() {
         NavigationController controller = getNavigationController();
         return controller != null && controller.onNavigateBack();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mAnimatable = savedInstanceState.getBoolean(ANIMATABLE, mAnimatable);
+        }
+
+        mIsOnConfigurationAnimation = savedInstanceState != null;
     }
 
     @Nullable
@@ -197,18 +193,23 @@ public abstract class NavigationFragment extends Fragment {
 
     @Override
     public Animator onCreateAnimator(final int transit, final boolean enter, int nextAnim) {
-        if(!animatable) {
-            animatable = true;
+        if(mIsOnConfigurationAnimation) {
+            mIsOnConfigurationAnimation = false;
+            return null;
+        }
+
+        if(!mAnimatable) {
+            mAnimatable = true;
             return null;
         }
 
         NavigationController nav =  getNavigationController();
         if(nav == null) {
-            return null; //no animatable
+            return null; //no mAnimatable
         }
 
         if(presentStyle == null) {
-            return null; //no animatable
+            return null; //no mAnimatable
         }
 
         Animator animator = null;

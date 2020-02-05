@@ -1,6 +1,11 @@
 package com.ldt.navigation.uicontainer;
 
-public class FlowContainer implements ComplexContainer {
+/**
+ *  Container hiển thị giao diện navigation là dialog nếu màn hình rộng,
+ *  dạng bottom sheet nếu màn hình vừa và dọc
+ *  dạng toàn màn hình nếu màn hình nhỏ
+ */
+public class NextFlowContainer implements ComplexContainer {
   private UIContainer subContainer;
 
   @Override

@@ -225,6 +225,7 @@ public class NavigationController extends NavigationFragment {
     @Nullable
     @Override
     protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        showStartupFragmentIfNeed();
         return mUiContainer.provideLayout(getContext(), inflater, container, subContainerId);
     }
 
@@ -232,7 +233,6 @@ public class NavigationController extends NavigationFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUiContainer.bindLayout(view);
-        showStartupFragmentIfNeed();
     }
 
     public int getFragmentCount() {
@@ -308,49 +308,6 @@ public class NavigationController extends NavigationFragment {
         return navigateBack(true);
     }
 
-/*
-    protected boolean navigateBackAbsolutely(boolean withAnimation) {
-
-        if(mFragManager == null) return false;
-
-        // mFragStack only has root fragment
-        if(mFragStack.size() == 1) {
-
-            // remove root
-            NavigationFragment fragmentToRemove= mFragStack.pop();
-            fragmentToRemove.setNavigationController(this);
-            fragmentToRemove.setAnimatable(withAnimation);
-            mFragManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                    .remove(fragmentToRemove)
-                    .commit();
-            return true;
-        }
-        else if(mFragStack.size()==0) return false;
-
-        synchronized (sync) {
-
-            NavigationFragment fragmentToRemove = mFragStack.pop();
-            String eTagRemove = mTagStack.pop();
-            fragmentToRemove.setNavigationController(this);
-            fragmentToRemove.setAnimatable(withAnimation);
-
-            NavigationFragment fragmentToShow = mFragStack.peek();
-            String eTagShow = mTagStack.peek();
-            fragmentToShow.setNavigationController(this);
-            fragmentToShow.setAnimatable(withAnimation);
-            mFragManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                    .show(fragmentToShow)
-                    .remove(fragmentToRemove)
-                    .commit();
-
-        }
-        return true;
-    }
-    */
     public boolean navigateBack(boolean withAnimation) {
 
         // mFragStack only has root fragment

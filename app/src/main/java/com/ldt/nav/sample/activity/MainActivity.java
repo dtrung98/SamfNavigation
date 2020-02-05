@@ -8,22 +8,21 @@ import androidx.fragment.app.Fragment;
 
 import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.holder.NavigationRouter;
+import com.ldt.navigation.holder.NavigationRouters;
 import com.ldt.navigation.holder.RouterSaver;
 import com.ldt.navigation.uicontainer.ExpandContainer;
-import com.ldt.navigation.uicontainer.FlowContainer;
+import com.ldt.navigation.uicontainer.NextFlowContainer;
 
-public class MainActivity extends AppCompatActivity implements NavigationRouter {
+public class MainActivity extends AppCompatActivity implements NavigationRouters {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Fragment f = getSupportFragmentManager().findFragmentByTag("main-navigation-controller");
-
+        //Fragment f = getSupportFragmentManager().findFragmentByTag("main-navigation-controller");
         //Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
-        restoreRouterState(savedInstanceState, getSupportFragmentManager());
-        obtainController(
+        restoreRoutersState(savedInstanceState, getSupportFragmentManager());
+        obtainRouter(
                         "main-navigation-controller",
                         getSupportFragmentManager(),
                         R.id.container,
@@ -39,12 +38,12 @@ public class MainActivity extends AppCompatActivity implements NavigationRouter 
     }
 
     public void showSetting() {
-        obtainController(
+        obtainRouter(
                 "setting-navigation-controller",
                 getSupportFragmentManager(),
                 R.id.container,
                 SamplePage.class,
-                FlowContainer.class);
+                NextFlowContainer.class);
     }
     
     @Override

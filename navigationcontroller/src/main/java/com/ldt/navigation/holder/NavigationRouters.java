@@ -12,17 +12,17 @@ import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.util.ArrayList;
 
-public interface NavigationRouter extends Navigable<NavigationFragment> {
+public interface NavigationRouters extends Navigable<NavigationFragment> {
 
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
     RouterSaver getRouterSaver();
 
-    default NavigationController obtainController(@NonNull String tag,
-                                                  @NonNull FragmentManager fragmentManager,
-                                                  @IdRes int navContainerId,
-                                                  Class<? extends NavigationFragment> startUpFragmentCls,
-                                                  Class<? extends UIContainer> uiContainerCls) {
+    default NavigationController obtainRouter(@NonNull String tag,
+                                              @NonNull FragmentManager fragmentManager,
+                                              @IdRes int navContainerId,
+                                              Class<? extends NavigationFragment> startUpFragmentCls,
+                                              Class<? extends UIContainer> uiContainerCls) {
         RouterSaver saver = getRouterSaver();
         NavigationController controller = saver.findController(tag);
         if(controller != null) return controller;
@@ -39,7 +39,7 @@ public interface NavigationRouter extends Navigable<NavigationFragment> {
         outState.putStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER,list);
     }
 
-    default void restoreRouterState(Bundle bundle, @NonNull FragmentManager fragmentManager) {
+    default void restoreRoutersState(Bundle bundle, @NonNull FragmentManager fragmentManager) {
         // restore all controller tags
         RouterSaver saver = getRouterSaver();
         if(bundle!=null) {
