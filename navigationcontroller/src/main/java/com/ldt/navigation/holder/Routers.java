@@ -60,7 +60,6 @@ public interface Routers extends Router {
             list = bundle.getStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER);
             if(list!=null) {
                 saver.clear();
-                saver.clear();
 
                 // restore controllers stack
                 int size = list.size();
@@ -72,6 +71,7 @@ public interface Routers extends Router {
                     f = NavigationController.restoreInstance(t, fragmentManager);
                     if(f != null) {
                         saver.push(f);
+                        f.setRouter(this);
                     }
                 }
 
@@ -98,7 +98,7 @@ public interface Routers extends Router {
         if(!result) {
             saver.pop();
             if(saver.count() != 0) {
-                controller.quit();
+                controller.finish();
                 return true;
             } else return false;
         }

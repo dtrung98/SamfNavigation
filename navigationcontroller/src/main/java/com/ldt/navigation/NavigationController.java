@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import com.ldt.navigation.holder.Router;
+import com.ldt.navigation.holder.Routers;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 
@@ -40,13 +41,33 @@ public class NavigationController extends NavigationFragment {
     private static int nextId() {
         return ++sIdCount;
     }
-    
+
+    public UIContainer getUiContainer() {
+        return mUiContainer;
+    }
+
     private UIContainer mUiContainer = null;
 
     private WeakReference<Router> mWeakRouter;
     public Router getRouter() {
         if(mWeakRouter==null) return null;
         return mWeakRouter.get();
+    }
+
+    public NavigationController obtainRouter(String tag, Class<? extends NavigationFragment> startUpFragmentCls,  Class<? extends UIContainer> uiContainerCls) {
+        Router router = getRouter();
+        if(router instanceof Routers && getFragmentManager() != null) {
+            return ((Routers) router).obtainRouter(tag, getFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
+        }
+        return null;
+    }
+
+    public NavigationController obtainRouter(String tag, Class<? extends NavigationFragment> startUpFragmentCls, int navContainerId,  Class<? extends UIContainer> uiContainerCls) {
+        Router router = getRouter();
+        if(router instanceof Routers && getFragmentManager() != null) {
+            return ((Routers) router).obtainRouter(tag, getFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
+        }
+        return null;
     }
 
     public void setRouter(Router router) {

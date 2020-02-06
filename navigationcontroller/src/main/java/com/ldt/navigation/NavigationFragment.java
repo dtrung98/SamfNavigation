@@ -15,6 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.ldt.navigation.holder.Router;
+import com.ldt.navigation.holder.Routers;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -153,6 +156,12 @@ public abstract class NavigationFragment extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         StatusHeight = -1;
+    }
+
+    public Router getRouter() {
+        NavigationController controller = getNavigationController();
+        if(controller == null) return null;
+            return controller.getRouter();
     }
 
     public static int StatusHeight = -1;
