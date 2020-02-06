@@ -6,19 +6,19 @@ package com.ldt.navigation.uicontainer;
  *  dạng toàn màn hình nếu màn hình nhỏ
  */
 public class NextFlowContainer implements ComplexContainer {
-  private UIContainer subContainer;
+  protected UIContainer mSubContainer;
 
   @Override
   public UIContainer getSubContainer() {
-    return subContainer;
+    return mSubContainer;
   }
 
   @Override
   public void provideConfig(int wq, int hq, float dpUnit) {
 
-    if(hq>=432&&wq>=432) subContainer = new ScalableDialogContainer();
-    else if(hq>=300&&(float)hq/wq >=4f/3) subContainer = new BottomSheetContainer();
-    else subContainer = new ExpandContainer();
-    subContainer.provideConfig(wq, hq, dpUnit);
+    if(hq>=432&&wq>=432) mSubContainer = new ScalableDialogContainer();
+    else if(hq>=300&&(float)hq/wq >=4f/3) mSubContainer = new BottomSheetContainer();
+    else mSubContainer = new ExpandContainer();
+    mSubContainer.provideConfig(wq, hq, dpUnit);
   }
 }

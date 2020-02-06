@@ -104,9 +104,9 @@ public class NavigationController extends NavigationFragment {
         }
     }
 
-        int w = getContext().getResources().getInteger(R.integer.width_qualifier);
+        int w = getContext().getResources().getConfiguration().screenWidthDp;
 
-        int h = getContext().getResources().getInteger(R.integer.height_qualifier);
+        int h = getContext().getResources().getConfiguration().screenHeightDp;
 
         float dpUnit = getContext().getResources().getDimension(R.dimen.dpUnit);
         mUiContainer.provideConfig(w, h, dpUnit);

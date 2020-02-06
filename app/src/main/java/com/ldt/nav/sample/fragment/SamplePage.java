@@ -111,9 +111,9 @@ public class SamplePage extends NavigationFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
 
-       int w = view.getContext().getResources().getInteger(R.integer.width_qualifier);
+       int w = view.getContext().getResources().getConfiguration().screenWidthDp;//getInteger(R.integer.width_qualifier);
        
-       int h = view.getContext().getResources().getInteger(R.integer.height_qualifier);
+       int h = view.getContext().getResources().getConfiguration().screenHeightDp;//.getInteger(R.integer.height_qualifier);
 
         if(mIndex == 0&& getNavigationController() !=null ) {
             //mBackButton.setImageResource(R.drawable.ic_home_24dp);
