@@ -1,11 +1,12 @@
 package com.ldt.navigation.holder;
 
+import com.ldt.navigation.NavigationFragment;
 
-public interface Navigable<T> {
+public interface Navigable {
     boolean onNavigateBack();
     boolean navigateBack();
     boolean navigateBack(boolean animated);
-    void navigateTo(T nav);
-    void navigateTo(T nav, boolean animated);
+    void navigateTo(NavigationFragment nav);
+    void navigateTo(NavigationFragment nav, boolean animated);
     boolean requestBack();
 }

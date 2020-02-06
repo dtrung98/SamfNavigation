@@ -10,7 +10,7 @@ import java.util.Stack;
 public class RouterSaver {
         private Stack<NavigationController> mControllers = new Stack<>();
         public int count() {
-            updateLast();
+            //updateLast();
             return mControllers.size();
         }
 
@@ -23,7 +23,7 @@ public class RouterSaver {
         }
 
         public NavigationController controllerTop() {
-            updateLast();
+            //updateLast();
             if(mControllers.isEmpty()) return  null;
             return mControllers.lastElement();
         }
@@ -42,7 +42,7 @@ public class RouterSaver {
         }
 
         public NavigationController findController(@NonNull String tag) {
-            updateLast();
+            //updateLast();
             int index = -1;
             int size = mControllers.size();
             for (int i = size - 1; i >= 0 ; i--) {
@@ -71,4 +71,8 @@ public class RouterSaver {
         public void push(NavigationController controller) {
             if(mControllers.indexOf(controller)==-1) mControllers.push(controller);
         }
+
+    public void remove(NavigationController controller) {
+        mControllers.remove(controller);
     }
+}

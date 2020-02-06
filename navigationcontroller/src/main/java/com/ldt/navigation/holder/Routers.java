@@ -12,7 +12,7 @@ import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.util.ArrayList;
 
-public interface NavigationRouters extends Navigable<NavigationFragment> {
+public interface Routers extends Router {
 
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
@@ -25,11 +25,24 @@ public interface NavigationRouters extends Navigable<NavigationFragment> {
                                               Class<? extends UIContainer> uiContainerCls) {
         RouterSaver saver = getRouterSaver();
         NavigationController controller = saver.findController(tag);
-        if(controller != null) return controller;
 
-        controller = NavigationController.getInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, uiContainerCls);
-        saver.push(controller);
+        if(controller == null) {
+            controller = NavigationController.getInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, uiContainerCls);
+            saver.push(controller);
+        }
+
+        controller.setRouter(this);
         return controller;
+    }
+
+    @Override
+    default void finishController(@NonNull NavigationController controller) {
+        RouterSaver saver = getRouterSaver();
+        saver.remove(controller);
+
+        if(saver.count() != 0)
+        controller.finish();
+        else finish();
     }
 
     default void saveRouterState(Bundle outState) {

@@ -1,5 +1,6 @@
 package com.ldt.navigation.uicontainer;
 
+import android.os.Bundle;
 import android.view.View;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -38,6 +39,6 @@ View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup
 default void bindLayout(View view) {}
 default void attach(NavigationController controller) {}
 default void detach() {}
-default void saveState() {}
-default void restoreState() {}
+default void saveState(Bundle bundle) {}
+default void restoreState(Bundle bundle) {}
 }

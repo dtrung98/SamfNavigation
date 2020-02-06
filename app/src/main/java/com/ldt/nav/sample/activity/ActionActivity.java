@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import com.ldt.nav.sample.fragment.SampleActionPage;
 import com.ldt.nav.sample.sampleaction.SamplePage;
 import com.ldt.navigation.action.LaunchActivity;
 

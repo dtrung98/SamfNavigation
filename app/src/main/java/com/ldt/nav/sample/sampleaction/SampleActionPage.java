@@ -1,4 +1,4 @@
-package com.ldt.nav.sample.fragment;
+package com.ldt.nav.sample.sampleaction;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,6 +1,7 @@
 package com.ldt.navigation.uicontainer;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +38,14 @@ public interface ComplexContainer extends UIContainer {
   }
 
   @Override
-  default void saveState() {
+  default void saveState(Bundle bundle) {
     UIContainer subContainer = getSubContainer();
-    if(subContainer!=null) subContainer.saveState();
+    if(subContainer!=null) subContainer.saveState(bundle);
   }
 
   @Override
-  default void restoreState() {
+  default void restoreState(Bundle bundle) {
     UIContainer subContainer = getSubContainer();
-    if(subContainer!=null) subContainer.saveState();
+    if(subContainer!=null) subContainer.saveState(bundle);
   }
 }

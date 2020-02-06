@@ -12,9 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import com.ldt.navigation.holder.Router;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 
@@ -39,6 +42,17 @@ public class NavigationController extends NavigationFragment {
     }
     
     private UIContainer mUiContainer = null;
+
+    private WeakReference<Router> mWeakRouter;
+    public Router getRouter() {
+        if(mWeakRouter==null) return null;
+        return mWeakRouter.get();
+    }
+
+    public void setRouter(Router router) {
+        mWeakRouter = new WeakReference<>(router);
+    }
+
     private Class<? extends NavigationFragment> mStartUpFragmentCls = null;
     
     public FragmentManager getFragmentManagerForNavigation() {
@@ -199,22 +213,28 @@ public class NavigationController extends NavigationFragment {
     }
 
     public boolean isControllerAvailable() {
-        return !isControllerQuit;
+        return !isControllerRemoved;
     }
 
-    private boolean isControllerQuit = false;
+    private boolean isControllerRemoved = false;
+
+    public void finish() {
+        if(isControllerRemoved) return;
+        isControllerRemoved = true;
+
+        synchronized (sync) {
+            FragmentManager fragmentManager = getFragmentManager();
+            if(fragmentManager!=null)
+                fragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .remove(this)
+                        .commit();
+        }
+    }
 
     public void quit() {
-        if(isControllerQuit) return;
-        isControllerQuit = true;
-        synchronized (sync) {
-           FragmentManager fragmentManager = getFragmentManager();
-           if(fragmentManager!=null)
-                    fragmentManager.beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .remove(this)
-                    .commit();
-        }
+        Router router = getRouter();
+        if(router != null) router.finishController(this);
     }
     
     public NavigationFragment getTopFragment() {

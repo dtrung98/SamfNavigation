@@ -4,16 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.ldt.nav.sample.R;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.holder.NavigationRouters;
+import com.ldt.navigation.holder.Routers;
 import com.ldt.navigation.holder.RouterSaver;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.NextFlowContainer;
 
-public class MainActivity extends AppCompatActivity implements NavigationRouters {
+public class MainActivity extends AppCompatActivity implements Routers {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

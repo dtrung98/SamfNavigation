@@ -4,7 +4,7 @@ import com.ldt.navigation.NavigationFragment;
 /**
  * Created by dtrung98 on 2020. 1. 30
  */
-public interface SingleRouter extends Navigable<NavigationFragment> {
+public interface SingleRouter extends Router {
     NavigationController getNavigationController();
 
     @Override

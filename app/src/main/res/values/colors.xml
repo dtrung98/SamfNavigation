@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">@color/focusGreen</color>
+    <color name="colorPrimaryDark">@color/focusGreen</color>
+    <color name="colorAccent">@color/FlatOrange</color>
     <item name="FlatWhite" type="color">#F5F5F5</item>
     <color name="HeavyPurple">#162EA6</color>
     <color name="FlatPurple">#5856D6</color>
     <color name="FlatOrange">#FF9500</color>
     <color name="FlatGreen">#4CD964</color>
 
+    <color name="focusGreen">#50C89E</color>
+    <color name="focusBlue">#4facfe</color>
+    <color name="focusYellowColor">#D97F68</color>
 </resources>
