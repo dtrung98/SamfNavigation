@@ -41,7 +41,7 @@ public interface Routers extends Router {
         saver.remove(controller);
 
         if(saver.count() != 0)
-        controller.finish();
+        controller.removeFromFragmentManager();
         else finish();
     }
 
@@ -98,7 +98,7 @@ public interface Routers extends Router {
         if(!result) {
             saver.pop();
             if(saver.count() != 0) {
-                controller.finish();
+                controller.removeFromFragmentManager();
                 return true;
             } else return false;
         }

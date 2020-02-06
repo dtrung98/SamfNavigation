@@ -239,7 +239,7 @@ public class NavigationController extends NavigationFragment {
 
     private boolean isControllerRemoved = false;
 
-    public void finish() {
+    public void removeFromFragmentManager() {
         if(isControllerRemoved) return;
         isControllerRemoved = true;
 
