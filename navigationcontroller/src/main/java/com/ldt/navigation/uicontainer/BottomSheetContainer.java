@@ -9,10 +9,6 @@ import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.R;
 
 public class BottomSheetContainer implements UIContainer, View.OnClickListener {
-  @Override
-  public void provideConfig(int wQualifier, int hQualifier, float dpUnit) {
-
-  }
 
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
   View v = inflater.inflate(R.layout.bottom_sheet_container, viewGroup, false);
@@ -29,12 +25,12 @@ public class BottomSheetContainer implements UIContainer, View.OnClickListener {
   private NavigationController mController;
 
   @Override
-  public void attach(NavigationController controller) {
+  public void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
     mController = controller;
   }
 
   @Override
-  public void detach() {
+  public void destroy() {
     mController = null;
   }
 

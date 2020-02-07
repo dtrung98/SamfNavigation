@@ -136,7 +136,7 @@ public abstract class NavigationFragment extends Fragment {
         if(v == null) return null;
 
         if(mWrapperRootLayout ==null)
-        mWrapperRootLayout = new EffectFrameLayout(container.getContext());
+        mWrapperRootLayout = new EffectFrameLayout(inflater.getContext());
         else
         mWrapperRootLayout.removeAllViews();
 

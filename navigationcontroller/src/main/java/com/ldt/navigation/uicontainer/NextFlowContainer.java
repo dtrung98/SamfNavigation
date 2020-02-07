@@ -1,5 +1,7 @@
 package com.ldt.navigation.uicontainer;
 
+import com.ldt.navigation.NavigationController;
+
 /**
  *  Container hiển thị giao diện navigation là dialog nếu màn hình rộng,
  *  dạng bottom sheet nếu màn hình vừa và dọc
@@ -14,11 +16,11 @@ public class NextFlowContainer implements ComplexContainer {
   }
 
   @Override
-  public void provideConfig(int wq, int hq, float dpUnit) {
+  public void provideController(NavigationController controller, int wq, int hq, float dpUnit) {
 
     if(hq>=432&&wq>=432) mSubContainer = new ScalableDialogContainer();
     else if(hq>=300&&(float)hq/wq >=4f/3) mSubContainer = new BottomSheetContainer();
     else mSubContainer = new ExpandContainer();
-    mSubContainer.provideConfig(wq, hq, dpUnit);
+    mSubContainer.provideController(controller, wq, hq, dpUnit);
   }
 }

@@ -1,6 +1,7 @@
 package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -103,7 +104,9 @@ public class NavigationController extends NavigationFragment {
     	outState.putString("controller-tag", mTag);
         ArrayList<String> list = new ArrayList<>(mTagStack);
         outState.putStringArrayList("fragment-navigation-tags", list);
+
         UIContainer.save(mTag, mUiContainer.getClass());
+        mUiContainer.saveState(outState);
     }
     
     @Override
@@ -115,7 +118,7 @@ public class NavigationController extends NavigationFragment {
         mTag = savedInstanceState.getString("controller-tag");
 
         mUiContainer = UIContainer.instantiate(getContext(), mTag);
-        if (mUiContainer == null) mUiContainer = new ExpandContainer();
+
 
         ArrayList<String> list;
         list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
@@ -130,8 +133,11 @@ public class NavigationController extends NavigationFragment {
         int h = getContext().getResources().getConfiguration().screenHeightDp;
 
         float dpUnit = getContext().getResources().getDimension(R.dimen.dpUnit);
-        mUiContainer.provideConfig(w, h, dpUnit);
-        mUiContainer.attach(this);
+        if (mUiContainer == null) mUiContainer = new ExpandContainer();
+        mUiContainer.provideController(this, w, h, dpUnit);
+
+        mUiContainer.created(savedInstanceState);
+        mUiContainer.restoreState(savedInstanceState);
     }
 
     private void showStartupFragmentIfNeed() {
@@ -148,9 +154,56 @@ public class NavigationController extends NavigationFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mUiContainer.resume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mUiContainer.start();
+    }
+
+    @Override
+    public void onPause() {
+        mUiContainer.pause();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        mUiContainer.stop();
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy() {
-        mUiContainer.detach();
+        mUiContainer.destroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mUiContainer.destroyView();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mUiContainer.activityCreated(savedInstanceState);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @NonNull
+    @Override
+    public LayoutInflater getLayoutInflater(@Nullable Bundle savedFragmentState) {
+        if(mUiContainer != null) {
+            LayoutInflater inflater = mUiContainer.provideLayoutInflater(savedFragmentState);
+            if(inflater!=null) return inflater;
+        }
+        return super.getLayoutInflater(savedFragmentState);
     }
 
     protected void restoreFragmentStack() {
@@ -222,15 +275,33 @@ public class NavigationController extends NavigationFragment {
         f.mStartUpFragmentCls = startUpFragmentCls;
        // this.setRetainInstance(true);
 
-        synchronized (f.sync) {
-            fragmentManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .add(navContainerId ,f , tag)
-                    .commit();
-        }
+        f.addToFragmentManager(fragmentManager);
 
         return f;
+    }
+
+    private void addToFragmentManager(FragmentManager fragmentManager) {
+        synchronized (sync) {
+            if(mUiContainer.shouldAttachToContainerView())
+                addToContainerView(fragmentManager);
+            else addWithoutContainerView(fragmentManager);
+        }
+    }
+
+    private void addToContainerView(FragmentManager fragmentManager) {
+        fragmentManager
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(navContainerId ,this , mTag)
+                .commit();
+    }
+
+    private void addWithoutContainerView(FragmentManager fragmentManager) {
+        fragmentManager
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(this , mTag)
+                .commit();
     }
 
     public boolean isControllerAvailable() {

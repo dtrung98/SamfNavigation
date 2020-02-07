@@ -11,7 +11,7 @@ import androidx.collection.SimpleArrayMap;
 import com.ldt.navigation.NavigationController;
 
 public interface UIContainer {
- static final SimpleArrayMap<String, Class<?>> sClassMap =
+ SimpleArrayMap<String, Class<?>> sClassMap =
          new SimpleArrayMap<>();
 
  static UIContainer instantiate(Context context, String name) {
@@ -34,11 +34,52 @@ public interface UIContainer {
   if(sClassMap.get(name)==null) sClassMap.put(name, clazz);
  }
 
- default void provideConfig(int wQualifier, int hQualifier, float dpUnit) {}
-View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId);
-default void bindLayout(View view) {}
-default void attach(NavigationController controller) {}
-default void detach() {}
-default void saveState(Bundle bundle) {}
-default void restoreState(Bundle bundle) {}
+ /**
+  * Called in onCreate in NavigationController
+  * @param wQualifier
+  * @param hQualifier
+  * @param dpUnit
+  */
+ default void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {}
+
+ /**
+  * Equal to onCreateView
+  * @param context
+  * @param inflater
+  * @param viewGroup
+  * @param subContainerId
+  * @return
+  */
+ View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId);
+
+ /**
+  * Equal to onViewCreated
+  * @param view
+  */
+ default void bindLayout(View view) {}
+
+ default NavigationController getController() {return null;}
+
+ /*
+ Call in onCreate, after provideConfig
+  */
+ default void created(Bundle bundle) {}
+
+ /**
+  * Call in onDestroyView
+  */
+ default void destroy() {}
+ default void saveState(Bundle bundle) {}
+ default void restoreState(Bundle bundle) {}
+ default void start() {};
+ default void stop() {};
+ default void resume() {};
+ default void pause() {};
+ default void destroyView() {}
+ default void activityCreated(Bundle savedInstanceState) {}
+ default LayoutInflater provideLayoutInflater(Bundle savedInstanceState) { return null;}
+
+ default boolean shouldAttachToContainerView() {
+  return true;
+ }
 }

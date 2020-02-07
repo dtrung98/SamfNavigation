@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 public class ExpandContainer implements UIContainer {
-public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
+
+  public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
   View v = inflater.inflate(R.layout.expand_container, viewGroup, false);
   v.setId(subContainerId);
   return v;

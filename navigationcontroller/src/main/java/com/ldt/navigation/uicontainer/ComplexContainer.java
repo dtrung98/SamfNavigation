@@ -12,9 +12,6 @@ public interface ComplexContainer extends UIContainer {
   UIContainer getSubContainer();
 
   @Override
-  void provideConfig(int wq, int hq, float dpUnit);
-
-  @Override
   default View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
   return getSubContainer().provideLayout(context, inflater, viewGroup, subContainerId);
   }
@@ -26,15 +23,15 @@ public interface ComplexContainer extends UIContainer {
   }
 
   @Override
-  default void attach(NavigationController controller) {
+  default void created(Bundle bundle) {
     UIContainer subContainer = getSubContainer();
-    if(subContainer!=null) subContainer.attach(controller);
+    if(subContainer!=null) subContainer.created(bundle);
   }
 
   @Override
-  default void detach() {
+  default void destroy() {
     UIContainer subContainer = getSubContainer();
-    if(subContainer!=null) subContainer.detach();
+    if(subContainer!=null) subContainer.destroy();
   }
 
   @Override
@@ -46,6 +43,56 @@ public interface ComplexContainer extends UIContainer {
   @Override
   default void restoreState(Bundle bundle) {
     UIContainer subContainer = getSubContainer();
-    if(subContainer!=null) subContainer.saveState(bundle);
+    if(subContainer!=null) subContainer.restoreState(bundle);
+  }
+
+  @Override
+  default void start() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.start();
+  }
+
+  @Override
+  default void stop() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.stop();
+  }
+
+  @Override
+  default void resume() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.resume();
+  }
+
+  @Override
+  default void pause() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.pause();
+  }
+
+  @Override
+  default void destroyView() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.destroyView();
+  }
+
+  @Override
+  default void activityCreated(Bundle savedInstanceState) {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) subContainer.activityCreated(savedInstanceState);
+  }
+
+  @Override
+  default LayoutInflater provideLayoutInflater(Bundle savedInstanceState) {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer != null) return subContainer.provideLayoutInflater(savedInstanceState);
+    return null;
+  }
+
+  @Override
+  default boolean shouldAttachToContainerView() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer != null) return subContainer.shouldAttachToContainerView();
+    return UIContainer.super.shouldAttachToContainerView();
   }
 }

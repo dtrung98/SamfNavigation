@@ -19,7 +19,8 @@ public class ScalableDialogContainer implements UIContainer, View.OnClickListene
   private int h;
   private float dpUnit;
   @Override
-  public void provideConfig(int wQualifier, int hQualifier, float dpUnit) {
+  public void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+    mController = controller;
     w = wQualifier;
     h = hQualifier;
     this.dpUnit = dpUnit;
@@ -69,12 +70,7 @@ public class ScalableDialogContainer implements UIContainer, View.OnClickListene
   private NavigationController mController;
 
   @Override
-  public void attach(NavigationController controller) {
-    mController = controller;
-  }
-
-  @Override
-  public void detach() {
+  public void destroy() {
     mController = null;
   }
 
