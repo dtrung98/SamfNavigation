@@ -5,45 +5,26 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ldt.nav.sample.R;
+import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.holder.Routers;
-import com.ldt.navigation.holder.RouterSaver;
+import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.holder.SplitRouterSaver;
+import com.ldt.navigation.holder.SplitRouter;
 import com.ldt.navigation.uicontainer.ExpandContainer;
-import com.ldt.navigation.uicontainer.NextFlowContainer;
-import com.ldt.navigation.uicontainer.ScalableDialogContainer2;
 
-public class MainActivity extends AppCompatActivity implements Routers {
+public class MainActivity extends AppCompatActivity implements SplitRouter {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //Fragment f = getSupportFragmentManager().findFragmentByTag("main-navigation-controller");
-        //Toast.makeText(this, "finding fragment: " + (f != null), Toast.LENGTH_SHORT).show();
-        restoreRoutersState(savedInstanceState, getSupportFragmentManager());
-        obtainRouter(
-                        "main-navigation-controller",
-                        getSupportFragmentManager(),
-                        R.id.container,
-                        SamplePage.class,
-                        ExpandContainer.class);
-
+        setContentView(provideLayout(this));
+        onCreateRouter(savedInstanceState, getSupportFragmentManager());
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        saveRouterState(outState);
+        onSaveRouterState(outState);
         super.onSaveInstanceState(outState);
-    }
-
-    public void showSetting() {
-        obtainRouter(
-                "setting-navigation-controller",
-                getSupportFragmentManager(),
-                R.id.container,
-                SamplePage.class,
-                NextFlowContainer.class);
     }
     
     @Override
@@ -54,10 +35,28 @@ public class MainActivity extends AppCompatActivity implements Routers {
     super.onBackPressed();
     }
 
-    private final RouterSaver mRouterSaver = new RouterSaver();
+    private final SplitRouterSaver mRouterSaver = new SplitRouterSaver("left-router","right-router");
 
     @Override
-    public RouterSaver getRouterSaver() {
+    public NavigationController presentLeftRouter(String leftControllerTag, int leftContainerViewId) {
+        return presentNavigator(leftControllerTag,
+                getSupportFragmentManager(),
+                leftContainerViewId,
+                SamplePage.class,
+                ExpandContainer.class);
+    }
+
+    @Override
+    public NavigationController presentRightRouter(String rightControllerTag, int rightContainerViewId) {
+        return /*null*/ presentNavigator(rightControllerTag,
+                getSupportFragmentManager(),
+                rightContainerViewId,
+                EmptyPage.class,
+                ExpandContainer.class);
+    }
+
+    @Override
+    public SplitRouterSaver getRouterSaver() {
         return mRouterSaver;
     }
 }

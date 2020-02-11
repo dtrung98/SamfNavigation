@@ -2,13 +2,12 @@ package com.ldt.navigation.uicontainer;
 
 import android.view.View;
 import android.content.Context;
+
 import com.ldt.navigation.NavigationController;
-import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,

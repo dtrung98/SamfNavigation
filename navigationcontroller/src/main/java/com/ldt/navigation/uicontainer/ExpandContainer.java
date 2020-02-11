@@ -2,7 +2,7 @@ package com.ldt.navigation.uicontainer;
 
 import android.view.View;
 import android.content.Context;
-import com.ldt.navigation.NavigationController;
+
 import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;

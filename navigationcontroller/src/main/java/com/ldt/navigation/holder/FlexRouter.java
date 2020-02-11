@@ -12,17 +12,16 @@ import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.util.ArrayList;
 
-public interface Routers extends Router {
-
+public interface FlexRouter extends Router {
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
     RouterSaver getRouterSaver();
 
-    default NavigationController obtainRouter(@NonNull String tag,
-                                              @NonNull FragmentManager fragmentManager,
-                                              @IdRes int navContainerId,
-                                              Class<? extends NavigationFragment> startUpFragmentCls,
-                                              Class<? extends UIContainer> uiContainerCls) {
+    default NavigationController presentNavigator(@NonNull String tag,
+                                                  @NonNull FragmentManager fragmentManager,
+                                                  @IdRes int navContainerId,
+                                                  Class<? extends NavigationFragment> startUpFragmentCls,
+                                                  Class<? extends UIContainer> uiContainerCls) {
         RouterSaver saver = getRouterSaver();
         NavigationController controller = saver.findController(tag);
 
@@ -45,37 +44,43 @@ public interface Routers extends Router {
         else finish();
     }
 
-    default void saveRouterState(Bundle outState) {
+    default void onSaveRouterState(Bundle outState) {
         // save all controller tags
         RouterSaver saver  = getRouterSaver();
         ArrayList<String> list = new ArrayList<>(saver.obtainTagList());
         outState.putStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER,list);
     }
 
-    default void restoreRoutersState(Bundle bundle, @NonNull FragmentManager fragmentManager) {
+    default void onCreateRouter(Bundle bundle, @NonNull FragmentManager fragmentManager) {
         // restore all controller tags
         RouterSaver saver = getRouterSaver();
-        if(bundle!=null) {
-            ArrayList<String> list;
-            list = bundle.getStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER);
-            if(list!=null) {
-                saver.clear();
+        if(saver.doesRouterNeedToRestore() && bundle!=null) {
+            onRestoreRouterState(bundle, fragmentManager);
+            saver.routerRestored();
+        }
+    }
 
-                // restore controllers stack
-                int size = list.size();
-                String t;
-                NavigationController f;
+    default void onRestoreRouterState(Bundle bundle, @NonNull FragmentManager fragmentManager) {
+        ArrayList<String> list;
+        RouterSaver saver = getRouterSaver();
+        list = bundle.getStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER);
+        if(list!=null) {
+            saver.clear();
 
-                for(int i = 0; i < size; i++) {
-                    t = list.get(i);
-                    f = NavigationController.restoreInstance(t, fragmentManager);
-                    if(f != null) {
-                        saver.push(f);
-                        f.setRouter(this);
-                    }
+            // restore controllers stack
+            int size = list.size();
+            String t;
+            NavigationController f;
+
+            for(int i = 0; i < size; i++) {
+                t = list.get(i);
+                f = NavigationController.findInstance(t, fragmentManager);
+                if(f != null) {
+                    saver.push(f);
+                    f.setRouter(this);
                 }
-
             }
+
         }
     }
 

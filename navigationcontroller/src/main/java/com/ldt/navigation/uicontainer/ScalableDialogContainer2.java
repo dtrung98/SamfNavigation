@@ -1,6 +1,5 @@
 package com.ldt.navigation.uicontainer;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;

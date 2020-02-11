@@ -1,20 +1,14 @@
 package com.ldt.nav.sample.sampleaction;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
-import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.action.BaseFragment;
-
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

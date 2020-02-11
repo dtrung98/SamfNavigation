@@ -1,6 +1,5 @@
 package com.ldt.nav.sample.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +7,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
-import com.ldt.nav.sample.activity.MainActivity;
+import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
+import com.ldt.navigation.uicontainer.ExpandContainer;
+import com.ldt.navigation.uicontainer.NextFlowContainer;
 
 import java.util.Random;
 
@@ -81,12 +81,18 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        Activity activity = getActivity();
-        if(activity instanceof MainActivity)
-            ((MainActivity)activity).showSetting();
+        getNavigationController().obtainRouter("setting-nav",R.id.float_container,
+                SamplePage.class, NextFlowContainer.class);
     }
 
+    @OnClick(R.id.button_view1)
+    void viewContent1() {
 
+         NavigationController controller =  NavigationController.findInstance("right-router", getNavigationController().getFragmentManager());
+                  if(controller == null) getNavigationController()
+                          .obtainRouter("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class);
+                  else controller.switchNew(new SamplePage());
+    }
     @BindView(R.id.edit_text)
     EditText mEditText;
 
@@ -173,4 +179,6 @@ public class SamplePage extends NavigationFragment {
         
         return defaultP;
     }
+
+
 }

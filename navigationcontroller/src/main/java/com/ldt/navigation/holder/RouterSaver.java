@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class RouterSaver {
-        private Stack<NavigationController> mControllers = new Stack<>();
+        private boolean mRouterNeedToRestore = true;
+        boolean doesRouterNeedToRestore() {
+            return  mRouterNeedToRestore;
+        }
+
+        void routerRestored() {
+            mRouterNeedToRestore = false;
+        }
+
+        protected Stack<NavigationController> mControllers = new Stack<>();
         public int count() {
             //updateLast();
             return mControllers.size();
-        }
-
-        private void updateLast() {
-            // check current available top fragment
-            // remove all unavailable fragment
-            while(!mControllers.isEmpty() && !mControllers.lastElement().isControllerAvailable()) {
-                mControllers.pop();
-            }
         }
 
         public NavigationController controllerTop() {
