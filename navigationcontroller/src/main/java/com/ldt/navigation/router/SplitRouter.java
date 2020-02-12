@@ -1,4 +1,4 @@
-package com.ldt.navigation.holder;
+package com.ldt.navigation.router;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -57,7 +57,7 @@ public interface SplitRouter extends FlexRouter {
                                                           FragmentManager fragmentManager,
                                                           Class<? extends NavigationFragment> startUpFragmentCls,
                                                           Class<? extends UIContainer> uiContainerCls) {
-        return presentNavigator(tag, fragmentManager, R.id.float_container, startUpFragmentCls, uiContainerCls);
+        return presentNavigator(tag, fragmentManager, R.id.floating_container, startUpFragmentCls, uiContainerCls);
     }
 
     /**
@@ -72,11 +72,32 @@ public interface SplitRouter extends FlexRouter {
 
         int screenWidthDp = context.getResources().getConfiguration().screenWidthDp;
         int screenHeightDp = context.getResources().getConfiguration().screenHeightDp;
+        float dpUnit = context.getResources().getDimension(R.dimen.dpUnit);
 
-        setUpConfig(condition, screenWidthDp, screenHeightDp);
+        onConfigureSplitRouter(condition, screenWidthDp, screenHeightDp);
         saver.setUp(condition, screenWidthDp, screenHeightDp);
 
+        saver.mLeftSubContainerId = R.id.left_container;
+        saver.mRightSubContainerId = R.id.right_container;
+        saver.mFloatingSubContainerId = R.id.floating_container;
+
         View rootView = (saver.isInSplitMode()) ? inflateSplitModeLayout(context, null) : inflateSingleModeLayout(context, null);
+
+        if(saver.isInSplitMode()) {
+            View leftContainer = rootView.findViewById(getRouterSaver().getLeftSubContainerId());
+            View rightContainer = rootView.findViewById(getRouterSaver().getRightSubContainerId());
+            if(saver.leftWide!=-1) {
+                leftContainer.getLayoutParams().width = (int) (saver.leftWide*dpUnit);
+                rightContainer.getLayoutParams().width = 0;
+            } else if(saver.rightWide !=-1) {
+                leftContainer.getLayoutParams().width = 0;
+                rightContainer.getLayoutParams().width = (int) (saver.rightWide * dpUnit);
+            } else {
+                saver.leftWide = 350;
+                leftContainer.getLayoutParams().width = (int) (saver.leftWide * dpUnit);
+                rightContainer.getLayoutParams().width = 0;
+            }
+        }
         return rootView;
     }
 
@@ -155,7 +176,7 @@ public interface SplitRouter extends FlexRouter {
         }
     }
 
-    default void setUpConfig(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
+    default void onConfigureSplitRouter(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
         splitWhen
                 .widerThan(720)
                 .tallerThan(-1)
@@ -191,16 +212,47 @@ public interface SplitRouter extends FlexRouter {
     @Override
     default boolean navigateBack(boolean animated) {
         // ở chế độ split
-        // back tới fragment root của right router rồi tới left router và không quit right router và left router
-        // khi không còn back được nữa (cả left và right đều chỉ còn root), thì trả về false
+        // back tới fragment root của right router rồi tới left router, không quit right router và left router
+        // khi cả left và right đều chỉ còn root, thì trả về false
 
 
         SplitRouterSaver saver = getRouterSaver();
-        if(!saver.isInSplitMode())
-        return FlexRouter.super.navigateBack(animated);
-        else {
-            return FlexRouter.super.navigateBack(animated);
+        if(saver.isInSplitMode()) {
+            // lấy controller hợp lệ
+            NavigationController controller;
+            int count = saver.count();
+            boolean result = true;
+
+            for(int i = count - 1; i >= 0; i--) {
+                controller = saver.controllerAt(i);
+                int fragmentCount = controller.getFragmentCount();
+                //  Chưa tới root thì cứ back thôi
+                if(fragmentCount != 1) {
+                    result = controller.navigateBack(animated);
+                    break;
+                }
+
+                if(controller.mTag.equals(saver.mRightContainerTag) || controller.mTag.equals(saver.mLeftContainerTag)) {
+                    // Tới root và nó là fragment left hoặc right
+                    if(i!=0) continue;
+
+                    // hết controller rồi, trả về false
+                    result = false;
+                    break;
+                }
+
+                // controller bình thường
+                saver.popAt(i);
+                if(i!=0) {
+                    controller.removeFromFragmentManager();
+                    result = true;
+                    break;
+                } else result = false;
+            }
+            return result;
+
         }
+        else return FlexRouter.super.navigateBack(animated);
     }
 
     /*    @Override

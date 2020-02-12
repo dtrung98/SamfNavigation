@@ -2,12 +2,14 @@ package com.ldt.navigation;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.animation.TimeInterpolator;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -15,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.ldt.navigation.holder.Router;
+import com.ldt.navigation.router.Router;
 
 import java.lang.ref.WeakReference;
 
@@ -25,9 +27,9 @@ import java.lang.ref.WeakReference;
  */
 public abstract class NavigationFragment extends Fragment {
     private static final String TAG ="NavigationFragment";
-    private static final int DEFAULT_DURATION = 275;
+    public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
-    public static final int PRESENT_STYLE_DEFAULT = PresentStyle.ACCORDION_LEFT;
+    public static final int PRESENT_STYLE_DEFAULT = PresentStyle.SLIDE_LEFT;
 
     private WeakReference<NavigationController> weakNavigationController = null;
     protected boolean mAnimatable = true;
@@ -43,21 +45,6 @@ public abstract class NavigationFragment extends Fragment {
     private PresentStyle presentStyle = null;
     private PresentStyle exitPresentStyle = null;
     protected View mContentView = null;
-
-    /**
-     *  Cài đặt hiệu ứng cho Fragment cũ
-     * @return  0 : không dùng hiệu ứng
-     * <br>  -1 : dùng cùng loại hiệu ứng với Fragment mới
-     * <br> -2 : dùng hiệu ứng biến mất của Fragment cũ
-     */
-    public int defaultOpenExitTransition() {
-        return PresentStyle.SAME_AS_OPEN;
-    }
-
-    public final PresentStyle getPresentStyle() {
-        if(presentStyle==null) presentStyle = PresentStyle.get(defaultTransition());
-        return presentStyle;
-    }
 
     public boolean navigateBack() {
         NavigationController controller = getNavigationController();
@@ -97,6 +84,21 @@ public abstract class NavigationFragment extends Fragment {
 
     public void setOpenExitPresentStyle(PresentStyle exitPresentStyle) {
         this.exitPresentStyle = exitPresentStyle;
+    }
+
+    /**
+     *  Cài đặt hiệu ứng cho Fragment cũ
+     * @return  0 : không dùng hiệu ứng
+     * <br>  -1 : dùng cùng loại hiệu ứng với Fragment mới
+     * <br> -2 : dùng hiệu ứng biến mất của Fragment cũ
+     */
+    public int defaultOpenExitTransition() {
+        return PresentStyle.SAME_AS_OPEN;
+    }
+
+    public PresentStyle getPresentStyle() {
+        if(presentStyle==null) presentStyle = PresentStyle.get(defaultTransition());
+        return presentStyle;
     }
 
     public int defaultDuration() {
@@ -147,14 +149,13 @@ public abstract class NavigationFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        presentStyle = PresentStyle.get(defaultTransition());
         onSetStatusBarMargin(getStatusHeight(getResources()));
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        StatusHeight = -1;
+        sStatusHeight = -1;
     }
 
     public Router getRouter() {
@@ -163,10 +164,16 @@ public abstract class NavigationFragment extends Fragment {
             return controller.getRouter();
     }
 
-    public static int StatusHeight = -1;
-    public static int getStatusHeight(Resources myR)
+    public TimeInterpolator getInterpolator() {
+        NavigationController controller = getNavigationController();
+        if(controller != null) return controller.getInterpolator();
+        return new AccelerateDecelerateInterpolator();
+    }
+
+    private static int sStatusHeight = -1;
+    protected static int getStatusHeight(Resources myR)
     {
-        if(StatusHeight!=-1) return StatusHeight;
+        if(sStatusHeight !=-1) return sStatusHeight;
         int height;
         int idSbHeight = myR.getIdentifier("status_bar_height", "dimen", "android");
         if (idSbHeight > 0) {
@@ -176,8 +183,8 @@ public abstract class NavigationFragment extends Fragment {
             height = 0;
             //        Toast.makeText(this,"Resources NOT found",Toast.LENGTH_LONG).show();
         }
-        StatusHeight =height;
-        return StatusHeight;
+        sStatusHeight =height;
+        return sStatusHeight;
     }
 
     @Nullable
@@ -212,24 +219,23 @@ public abstract class NavigationFragment extends Fragment {
         }
 
         NavigationController nav =  getNavigationController();
-        if(nav == null) {
-            return null; //no mAnimatable
+        if(nav == null && !(this instanceof NavigationController)) {
+            return null; //no animatable
         }
 
-        if(presentStyle == null) {
-            return null; //no mAnimatable
-        }
+        PresentStyle ps = getPresentStyle();
+        if(ps.getType() == PresentStyle.NONE) return null;
 
         Animator animator = null;
         if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
 
             if (enter) {
-                int id = presentStyle.getOpenEnterAnimatorId();
+                int id = ps.getOpenEnterAnimatorId();
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
             } else {
                 int id;
                 if(exitPresentStyle==null)
-                    id = presentStyle.getOpenExitAnimatorId();
+                    id = ps.getOpenExitAnimatorId();
                 else {
                     id = exitPresentStyle.getOpenExitAnimatorId();
                 }
@@ -241,7 +247,7 @@ public abstract class NavigationFragment extends Fragment {
             if (enter) {
                 int id;
                 if(exitPresentStyle == null)
-                id = presentStyle.getCloseEnterAnimatorId();
+                id = ps.getCloseEnterAnimatorId();
                 else {
                     id = exitPresentStyle.getCloseEnterAnimatorId();
                     exitPresentStyle = null;
@@ -250,12 +256,12 @@ public abstract class NavigationFragment extends Fragment {
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
             } else {
                 int id;
-                id = presentStyle.getCloseExitAnimatorId();
+                id = ps.getCloseExitAnimatorId();
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
             }
         }
         if(animator != null) {
-            animator.setInterpolator(nav.getInterpolator());
+            animator.setInterpolator(getInterpolator());
             animator.setDuration(defaultDuration());
         }
 

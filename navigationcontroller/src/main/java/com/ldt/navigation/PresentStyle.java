@@ -47,15 +47,29 @@ public class PresentStyle {
     public static final int ZOOM_FROM_RIGHT_TOP_CORNER   = 37;
     public static final int ZOOM_FROM_LEFT_BOTTOM_CORNER = 38;
     public static final int ZOOM_FROM_RIGHT_BOTTOM_CORNER= 39;
+    public static final int CUSTOM = 40;
 
 
     private int openEnterAnimatorId;
     private int openExitAnimatorId;
     private int closeEnterAnimatorId;
     private int closeExitAnimatorId;
+    private int type;
+    public int getType() {
+        return type;
+    }
 
+
+    public PresentStyle(int type, int openEnterAnimatorId, int openExitAnimatorId, int closeEnterAnimatorId, int closeExitAnimatorId) {
+        this.type = type;
+        this.openEnterAnimatorId = openEnterAnimatorId;
+        this.openExitAnimatorId = openExitAnimatorId;
+        this.closeEnterAnimatorId = closeEnterAnimatorId;
+        this.closeExitAnimatorId = closeExitAnimatorId;
+    }
 
     public PresentStyle(int openEnterAnimatorId, int openExitAnimatorId, int closeEnterAnimatorId, int closeExitAnimatorId) {
+        this.type = CUSTOM;
         this.openEnterAnimatorId = openEnterAnimatorId;
         this.openExitAnimatorId = openExitAnimatorId;
         this.closeEnterAnimatorId = closeEnterAnimatorId;
@@ -166,163 +180,163 @@ public class PresentStyle {
     }
 
     private static PresentStyle None() {
-        return new PresentStyle(R.animator.none, R.animator.none, R.animator.none, R.animator.none);
+        return new PresentStyle(NONE, R.animator.none, R.animator.none, R.animator.none, R.animator.none);
     }
 
     private static PresentStyle AccordionLeft() {
-        return new PresentStyle(R.animator.accordion_right_in, R.animator.accordion_left_out, R.animator.accordion_left_in, R.animator.accordion_right_out);
+        return new PresentStyle(ACCORDION_LEFT, R.animator.accordion_right_in, R.animator.accordion_left_out, R.animator.accordion_left_in, R.animator.accordion_right_out);
     }
 
     private static PresentStyle AccordionRight() {
-        return new PresentStyle(R.animator.accordion_left_in, R.animator.accordion_right_out, R.animator.accordion_right_in, R.animator.accordion_left_out);
+        return new PresentStyle(ACCORDION_RIGHT, R.animator.accordion_left_in, R.animator.accordion_right_out, R.animator.accordion_right_in, R.animator.accordion_left_out);
     }
 
     private static PresentStyle AccordionUp() {
-        return new PresentStyle(R.animator.accordion_vertical_right_in, R.animator.accordion_vertical_left_out, R.animator.accordion_vertical_left_in, R.animator.accordion_vertical_right_out);
+        return new PresentStyle(ACCORDION_UP, R.animator.accordion_vertical_right_in, R.animator.accordion_vertical_left_out, R.animator.accordion_vertical_left_in, R.animator.accordion_vertical_right_out);
     }
 
     private static PresentStyle AccordionDown() {
-        return new PresentStyle(R.animator.accordion_vertical_left_in, R.animator.accordion_vertical_right_out, R.animator.accordion_vertical_right_in, R.animator.accordion_vertical_left_out);
+        return new PresentStyle(ACCORDION_DOWN, R.animator.accordion_vertical_left_in, R.animator.accordion_vertical_right_out, R.animator.accordion_vertical_right_in, R.animator.accordion_vertical_left_out);
     }
 
     private static PresentStyle Fade() {
-        return new PresentStyle(R.animator.fade_in, R.animator.fade_out, R.animator.fade_in, R.animator.fade_out);
+        return new PresentStyle(FADE, R.animator.fade_in, R.animator.fade_out, R.animator.fade_in, R.animator.fade_out);
     }
 
     private static PresentStyle CubeLeft() {
-        return new PresentStyle(R.animator.cube_right_in, R.animator.cube_left_out, R.animator.cube_left_in, R.animator.cube_right_out);
+        return new PresentStyle(CUBE_LEFT, R.animator.cube_right_in, R.animator.cube_left_out, R.animator.cube_left_in, R.animator.cube_right_out);
     }
 
     private static PresentStyle CubeRight() {
-        return new PresentStyle(R.animator.cube_left_in, R.animator.cube_right_out, R.animator.cube_right_in, R.animator.cube_left_out);
+        return new PresentStyle(CUBE_RIGHT, R.animator.cube_left_in, R.animator.cube_right_out, R.animator.cube_right_in, R.animator.cube_left_out);
     }
 
     private static PresentStyle CubeUp() {
-        return new PresentStyle(R.animator.cube_vertical_right_in, R.animator.cube_vertical_left_out, R.animator.cube_vertical_left_in, R.animator.cube_vertical_right_out);
+        return new PresentStyle(CUBE_UP, R.animator.cube_vertical_right_in, R.animator.cube_vertical_left_out, R.animator.cube_vertical_left_in, R.animator.cube_vertical_right_out);
     }
 
     private static PresentStyle CubeDown() {
-        return new PresentStyle(R.animator.cube_vertical_left_in, R.animator.cube_vertical_right_out, R.animator.cube_vertical_right_in, R.animator.cube_vertical_left_out);
+        return new PresentStyle(CUBE_DOWN, R.animator.cube_vertical_left_in, R.animator.cube_vertical_right_out, R.animator.cube_vertical_right_in, R.animator.cube_vertical_left_out);
     }
 
     private static PresentStyle CardFlipLeft() {
-        return new PresentStyle(R.animator.card_flip_horizontal_right_in, R.animator.card_flip_horizontal_left_out, R.animator.card_flip_horizontal_left_in, R.animator.card_flip_horizontal_right_out);
+        return new PresentStyle(CARD_FLIP_LEFT, R.animator.card_flip_horizontal_right_in, R.animator.card_flip_horizontal_left_out, R.animator.card_flip_horizontal_left_in, R.animator.card_flip_horizontal_right_out);
     }
 
     private static PresentStyle CardFlipRight() {
-        return new PresentStyle(R.animator.card_flip_horizontal_left_in, R.animator.card_flip_horizontal_right_out, R.animator.card_flip_horizontal_right_in, R.animator.card_flip_horizontal_left_out);
+        return new PresentStyle(CUBE_RIGHT, R.animator.card_flip_horizontal_left_in, R.animator.card_flip_horizontal_right_out, R.animator.card_flip_horizontal_right_in, R.animator.card_flip_horizontal_left_out);
     }
 
     private static PresentStyle CardFlipDown() {
-        return new PresentStyle(R.animator.card_flip_vertical_right_in, R.animator.card_flip_vertical_left_out, R.animator.card_flip_vertical_left_in, R.animator.card_flip_vertical_right_out);
+        return new PresentStyle(CARD_FLIP_DOWN, R.animator.card_flip_vertical_right_in, R.animator.card_flip_vertical_left_out, R.animator.card_flip_vertical_left_in, R.animator.card_flip_vertical_right_out);
     }
 
     private static PresentStyle CardFlipUp() {
-        return new PresentStyle(R.animator.card_flip_vertical_left_in, R.animator.card_flip_vertical_right_out, R.animator.card_flip_vertical_right_in, R.animator.card_flip_vertical_left_out);
+        return new PresentStyle(CARD_FLIP_UP, R.animator.card_flip_vertical_left_in, R.animator.card_flip_vertical_right_out, R.animator.card_flip_vertical_right_in, R.animator.card_flip_vertical_left_out);
     }
 
     private static PresentStyle Glide() {
-        return new PresentStyle(R.animator.glide_fragment_horizontal_in, R.animator.accordion_left_out, R.animator.accordion_left_in, R.animator.glide_fragment_horizontal_out);
+        return new PresentStyle(GLIDE, R.animator.glide_fragment_horizontal_in, R.animator.accordion_left_out, R.animator.accordion_left_in, R.animator.glide_fragment_horizontal_out);
     }
 
     private static PresentStyle RotateDownLeft() {
-        return new PresentStyle(R.animator.rotatedown_right_in, R.animator.rotatedown_left_out, R.animator.rotatedown_left_in, R.animator.rotatedown_right_out);
+        return new PresentStyle(ROTATE_DOWN_LEFT, R.animator.rotatedown_right_in, R.animator.rotatedown_left_out, R.animator.rotatedown_left_in, R.animator.rotatedown_right_out);
     }
 
     private static PresentStyle RotateDownRight() {
-        return new PresentStyle(R.animator.rotatedown_left_in, R.animator.rotatedown_right_out, R.animator.rotatedown_right_in, R.animator.rotatedown_left_out);
+        return new PresentStyle(ROTATE_DOWN_RIGHT, R.animator.rotatedown_left_in, R.animator.rotatedown_right_out, R.animator.rotatedown_right_in, R.animator.rotatedown_left_out);
     }
 
     private static PresentStyle RotateUpLeft() {
-        return new PresentStyle(R.animator.rotateup_right_in, R.animator.rotateup_left_out, R.animator.rotateup_left_in, R.animator.rotateup_right_out);
+        return new PresentStyle(ROTATE_UP_LEFT, R.animator.rotateup_right_in, R.animator.rotateup_left_out, R.animator.rotateup_left_in, R.animator.rotateup_right_out);
     }
 
     private static PresentStyle RotateUpRight() {
-        return new PresentStyle(R.animator.rotateup_left_in, R.animator.rotateup_right_out, R.animator.rotateup_right_in, R.animator.rotateup_left_out);
+        return new PresentStyle(ROTATE_UP_RIGHT, R.animator.rotateup_left_in, R.animator.rotateup_right_out, R.animator.rotateup_right_in, R.animator.rotateup_left_out);
     }
 
     private static PresentStyle RotateLeftUp() {
-        return new PresentStyle(R.animator.rotateleft_right_in, R.animator.rotateleft_left_out, R.animator.rotateleft_left_in, R.animator.rotateleft_right_out);
+        return new PresentStyle(ROTATE_LEFT_UP, R.animator.rotateleft_right_in, R.animator.rotateleft_left_out, R.animator.rotateleft_left_in, R.animator.rotateleft_right_out);
     }
 
     private static PresentStyle RotateLeftDown() {
-        return new PresentStyle(R.animator.rotateleft_left_in, R.animator.rotateleft_right_out, R.animator.rotateleft_right_in, R.animator.rotateleft_left_out);
+        return new PresentStyle(ROTATE_LEFT_DOWN, R.animator.rotateleft_left_in, R.animator.rotateleft_right_out, R.animator.rotateleft_right_in, R.animator.rotateleft_left_out);
     }
 
     private static PresentStyle RotateRightUp() {
-        return new PresentStyle(R.animator.rotateright_right_in, R.animator.rotateright_left_out, R.animator.rotateright_left_in, R.animator.rotateright_right_out);
+        return new PresentStyle(ROTATE_RIGHT_UP, R.animator.rotateright_right_in, R.animator.rotateright_left_out, R.animator.rotateright_left_in, R.animator.rotateright_right_out);
     }
 
     private static PresentStyle RotateRightDown() {
-        return new PresentStyle(R.animator.rotateright_left_in, R.animator.rotateright_right_out, R.animator.rotateright_right_in, R.animator.rotateright_left_out);
+        return new PresentStyle(ROTATE_RIGHT_DOWN, R.animator.rotateright_left_in, R.animator.rotateright_right_out, R.animator.rotateright_right_in, R.animator.rotateright_left_out);
     }
 
     private static PresentStyle ScaleX() {
-        return new PresentStyle(R.animator.scalex_enter, R.animator.scalex_exit, R.animator.scalex_enter, R.animator.scalex_exit);
+        return new PresentStyle(SCALEX, R.animator.scalex_enter, R.animator.scalex_exit, R.animator.scalex_enter, R.animator.scalex_exit);
     }
 
     private static PresentStyle ScaleY() {
-        return new PresentStyle(R.animator.scaley_enter, R.animator.scaley_exit, R.animator.scaley_enter, R.animator.scaley_exit);
+        return new PresentStyle(SCALEY, R.animator.scaley_enter, R.animator.scaley_exit, R.animator.scaley_enter, R.animator.scaley_exit);
     }
 
     private static PresentStyle ScaleXY() {
-        return new PresentStyle(R.animator.scalexy_enter, R.animator.scalexy_exit, R.animator.scalexy_enter, R.animator.scalexy_exit);
+        return new PresentStyle(SCALEXY, R.animator.scalexy_enter, R.animator.scalexy_exit, R.animator.scalexy_enter, R.animator.scalexy_exit);
     }
 
     private static PresentStyle SlideLeft() {
-        return new PresentStyle(R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_horizontal_left_out, R.animator.slide_fragment_horizontal_left_in, R.animator.slide_fragment_horizontal_right_out);
+        return new PresentStyle(SLIDE_LEFT, R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_horizontal_left_out, R.animator.slide_fragment_horizontal_left_in, R.animator.slide_fragment_horizontal_right_out);
     }
 
     private static PresentStyle SlideRight() {
-        return new PresentStyle(R.animator.slide_fragment_horizontal_left_in, R.animator.slide_fragment_horizontal_right_out, R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_horizontal_left_out);
+        return new PresentStyle(SLIDE_RIGHT, R.animator.slide_fragment_horizontal_left_in, R.animator.slide_fragment_horizontal_right_out, R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_horizontal_left_out);
     }
 
     private static PresentStyle SlideUp() {
-        return new PresentStyle(R.animator.slide_fragment_vertical_right_in, R.animator.slide_fragment_vertical_left_out, R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_vertical_right_out);
+        return new PresentStyle(SLIDE_UP, R.animator.slide_fragment_vertical_right_in, R.animator.slide_fragment_vertical_left_out, R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_vertical_right_out);
     }
 
     private static PresentStyle SlideDown() {
-        return new PresentStyle(R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_vertical_right_out, R.animator.slide_fragment_vertical_right_in, R.animator.slide_fragment_vertical_left_out);
+        return new PresentStyle(SLIDE_DOWN, R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_vertical_right_out, R.animator.slide_fragment_vertical_right_in, R.animator.slide_fragment_vertical_left_out);
     }
 
     private static PresentStyle StackLeft() {
-        return new PresentStyle(R.animator.stack_right_in, R.animator.stack_left_out, R.animator.stack_left_in, R.animator.stack_right_out);
+        return new PresentStyle(STACK_LEFT, R.animator.stack_right_in, R.animator.stack_left_out, R.animator.stack_left_in, R.animator.stack_right_out);
     }
 
     private static PresentStyle StackRight() {
-        return new PresentStyle(R.animator.stack_right_in, R.animator.slide_fragment_horizontal_right_out, R.animator.slide_fragment_horizontal_right_in, R.animator.stack_right_out);
+        return new PresentStyle(STACK_RIGHT, R.animator.stack_right_in, R.animator.slide_fragment_horizontal_right_out, R.animator.slide_fragment_horizontal_right_in, R.animator.stack_right_out);
     }
 
     private static PresentStyle TableLeft() {
-        return new PresentStyle(R.animator.table_horizontal_right_in, R.animator.table_horizontal_left_out, R.animator.table_horizontal_left_in, R.animator.table_horizontal_right_out);
+        return new PresentStyle(TABLE_LEFT, R.animator.table_horizontal_right_in, R.animator.table_horizontal_left_out, R.animator.table_horizontal_left_in, R.animator.table_horizontal_right_out);
     }
 
     private static PresentStyle TableRight() {
-        return new PresentStyle(R.animator.table_horizontal_left_in, R.animator.table_horizontal_right_out, R.animator.table_horizontal_right_in, R.animator.table_horizontal_left_out);
+        return new PresentStyle(TABLE_RIGHT, R.animator.table_horizontal_left_in, R.animator.table_horizontal_right_out, R.animator.table_horizontal_right_in, R.animator.table_horizontal_left_out);
     }
 
     private static PresentStyle TableUp() {
-        return new PresentStyle(R.animator.table_vertical_right_in, R.animator.table_vertical_left_out, R.animator.table_vertical_left_in, R.animator.table_vertical_right_out);
+        return new PresentStyle(TABLE_UP, R.animator.table_vertical_right_in, R.animator.table_vertical_left_out, R.animator.table_vertical_left_in, R.animator.table_vertical_right_out);
     }
 
     private static PresentStyle TableDown() {
-        return new PresentStyle(R.animator.table_vertical_left_in, R.animator.table_vertical_right_out, R.animator.table_vertical_right_in, R.animator.table_vertical_left_out);
+        return new PresentStyle(TABLE_DOWN, R.animator.table_vertical_left_in, R.animator.table_vertical_right_out, R.animator.table_vertical_right_in, R.animator.table_vertical_left_out);
     }
 
     private static PresentStyle ZoomFromLeftTopCorner() {
-        return new PresentStyle(R.animator.zoom_from_left_corner_right_in, R.animator.zoom_from_left_corner_left_out, R.animator.zoom_from_left_corner_left_in, R.animator.zoom_from_left_corner_right_out);
+        return new PresentStyle(ZOOM_FROM_LEFT_TOP_CORNER, R.animator.zoom_from_left_corner_right_in, R.animator.zoom_from_left_corner_left_out, R.animator.zoom_from_left_corner_left_in, R.animator.zoom_from_left_corner_right_out);
     }
 
     private static PresentStyle ZoomFromLeftBottomCorner() {
-        return new PresentStyle(R.animator.zoom_from_right_corner_left_in, R.animator.zoom_from_right_corner_right_out, R.animator.zoom_from_right_corner_right_in, R.animator.zoom_from_right_corner_left_out);
+        return new PresentStyle(ZOOM_FROM_LEFT_BOTTOM_CORNER, R.animator.zoom_from_right_corner_left_in, R.animator.zoom_from_right_corner_right_out, R.animator.zoom_from_right_corner_right_in, R.animator.zoom_from_right_corner_left_out);
     }
 
     private static PresentStyle ZoomFromRightTopCorner() {
-        return new PresentStyle(R.animator.zoom_from_right_corner_right_in, R.animator.zoom_from_right_corner_left_out, R.animator.zoom_from_right_corner_left_in, R.animator.zoom_from_right_corner_right_out);
+        return new PresentStyle(ZOOM_FROM_RIGHT_TOP_CORNER, R.animator.zoom_from_right_corner_right_in, R.animator.zoom_from_right_corner_left_out, R.animator.zoom_from_right_corner_left_in, R.animator.zoom_from_right_corner_right_out);
     }
 
     private static PresentStyle ZoomFromRightBottomCorner() {
-        return new PresentStyle(R.animator.zoom_from_left_corner_left_in, R.animator.zoom_from_left_corner_right_out, R.animator.zoom_from_left_corner_right_in, R.animator.zoom_from_left_corner_left_out);
+        return new PresentStyle(ZOOM_FROM_RIGHT_BOTTOM_CORNER, R.animator.zoom_from_left_corner_left_in, R.animator.zoom_from_left_corner_right_out, R.animator.zoom_from_left_corner_right_in, R.animator.zoom_from_left_corner_left_out);
     }
 
 }

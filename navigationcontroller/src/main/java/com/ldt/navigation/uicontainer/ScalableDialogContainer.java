@@ -8,12 +8,17 @@ import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
  *  dialog to ra theo kích cỡ màn hình
  */
 public class ScalableDialogContainer implements UIContainer, View.OnClickListener {
+  View mRootView;
+  int mSubContainerId;
+  View mSubContainerView;
+
   private int w;
   private int h;
   private float dpUnit;
@@ -57,13 +62,23 @@ public class ScalableDialogContainer implements UIContainer, View.OnClickListene
     params.width = (int)(newW*dpUnit);
     params.height = (int)(newH*dpUnit);
 
+    mSubContainerId = subContainerId;
+
   return v;
 }
 
   @Override
   public void bindLayout(View view) {
+    mRootView = view;
+    mSubContainerView = view.findViewById(mSubContainerId);
   view.findViewById(R.id.root).setOnClickListener(this);
 
+  }
+
+  @Override
+  public void start() {
+    //mSubContainerView.setTranslationY(h);
+    //mSubContainerView.animate().translationY(h/2).setInterpolator(new AccelerateDecelerateInterpolator()).start();
   }
 
   private NavigationController mController;

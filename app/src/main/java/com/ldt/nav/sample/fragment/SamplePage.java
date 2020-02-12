@@ -81,7 +81,7 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        getNavigationController().obtainRouter("setting-nav",R.id.float_container,
+        getNavigationController().obtainRouter("setting-nav",R.id.floating_container,
                 SamplePage.class, NextFlowContainer.class);
     }
 

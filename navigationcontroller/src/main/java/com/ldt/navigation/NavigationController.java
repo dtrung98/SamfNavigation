@@ -18,8 +18,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import com.ldt.navigation.holder.FlexRouter;
-import com.ldt.navigation.holder.Router;
+import com.ldt.navigation.router.FlexRouter;
+import com.ldt.navigation.router.Router;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 
@@ -372,7 +372,7 @@ public class NavigationController extends NavigationFragment {
     public void setInterpolator(TimeInterpolator interpolator) {
         this.interpolator = interpolator;
     }
-    TimeInterpolator getInterpolator() {
+    public TimeInterpolator getInterpolator() {
         return interpolator;
     }
 
@@ -520,6 +520,24 @@ public class NavigationController extends NavigationFragment {
                     .commit();
             return true;
         }
+    }
+
+    @Override
+    public int defaultDuration() {
+        if(mUiContainer != null) return mUiContainer.defaultDuration();
+        return super.defaultDuration();
+    }
+
+    @Override
+    public int defaultTransition() {
+        if(mUiContainer!=null) return mUiContainer.defaultTransition();
+        return PresentStyle.NONE;
+    }
+
+    @Override
+    public int defaultOpenExitTransition() {
+        if(mUiContainer!=null) return mUiContainer.defaultDuration();
+        return super.defaultOpenExitTransition();
     }
 
     public boolean navigateBack() {

@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ldt.navigation.NavigationController;
+
 public interface ComplexContainer extends UIContainer {
   UIContainer getSubContainer();
 
@@ -92,5 +94,40 @@ public interface ComplexContainer extends UIContainer {
     UIContainer subContainer = getSubContainer();
     if(subContainer != null) return subContainer.shouldAttachToContainerView();
     return UIContainer.super.shouldAttachToContainerView();
+  }
+
+  @Override
+  default void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null)
+    subContainer.provideController(controller, wQualifier, hQualifier, dpUnit);
+  }
+
+  @Override
+  default NavigationController getController() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) return subContainer.getController();
+    return null;
+  }
+
+  @Override
+  default int defaultDuration() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) return subContainer.defaultDuration();
+    return UIContainer.super.defaultDuration();
+  }
+
+  @Override
+  default int defaultTransition() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) return subContainer.defaultTransition();
+    return UIContainer.super.defaultTransition();
+  }
+
+  @Override
+  default int defaultOpenExitTransition() {
+    UIContainer subContainer = getSubContainer();
+    if(subContainer!=null) return subContainer.defaultOpenExitTransition();
+    return UIContainer.super.defaultOpenExitTransition();
   }
 }

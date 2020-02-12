@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <integer name="width_qualifier">0</integer>
-  <integer name="height_qualifier">0</integer>
-  <dimen name="width_qualifier_px">0</dimen>
-  <dimen name="height_qualifier_px">0</dimen>
-</resources>

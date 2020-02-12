@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
 public class BottomSheetContainer implements UIContainer, View.OnClickListener {
@@ -13,8 +16,9 @@ public class BottomSheetContainer implements UIContainer, View.OnClickListener {
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
   View v = inflater.inflate(R.layout.bottom_sheet_container, viewGroup, false);
   v.findViewById(R.id.sub_container).setId(subContainerId);
+
   return v;
-}
+  }
 
   @Override
   public void bindLayout(View view) {

@@ -1,10 +1,23 @@
-package com.ldt.navigation.holder;
+package com.ldt.navigation.router;
 
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.R;
 
 public class SplitRouterSaver extends RouterSaver {
     final String mLeftContainerTag;
     final String mRightContainerTag;
+
+    public int getLeftSubContainerId() {
+        return mLeftSubContainerId;
+    }
+
+    public int getRightSubContainerId() {
+        return mRightSubContainerId;
+    }
+
+    int mLeftSubContainerId = R.id.left_container;
+    int mRightSubContainerId = R.id.right_container;
+    int mFloatingSubContainerId = R.id.floating_container;
 
     public SplitRouterSaver(String leftRouterTag, String rightRouterTag) {
         mLeftContainerTag = leftRouterTag;
@@ -60,5 +73,9 @@ public class SplitRouterSaver extends RouterSaver {
         } else if(splitWhenTallerThan != -1) {
             return screenHeightDp >= splitWhenTallerThan;
         } else return !mInSplitScreen;
+    }
+
+    void popAt(int position) {
+        if(position < count()) mControllers.remove(position);
     }
 }

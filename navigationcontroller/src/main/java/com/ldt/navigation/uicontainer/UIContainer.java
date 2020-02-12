@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import androidx.collection.SimpleArrayMap;
 
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.PresentStyle;
+
+import static com.ldt.navigation.NavigationFragment.DEFAULT_DURATION;
+import static com.ldt.navigation.NavigationFragment.PRESENT_STYLE_DEFAULT;
 
 public interface UIContainer {
  SimpleArrayMap<String, Class<?>> sClassMap =
@@ -82,4 +86,17 @@ public interface UIContainer {
  default boolean shouldAttachToContainerView() {
   return true;
  }
+
+ default int defaultDuration() {
+  return DEFAULT_DURATION;
+ }
+
+ default int defaultTransition() {
+  return PresentStyle.NONE;
+ }
+
+ default int defaultOpenExitTransition() {
+  return PresentStyle.SAME_AS_OPEN;
+ }
+
 }
