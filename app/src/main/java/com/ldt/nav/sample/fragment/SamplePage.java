@@ -81,7 +81,7 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        getNavigationController().obtainRouter("setting-nav",R.id.floating_container,
+        getNavigationController().presentNavigator("setting-nav",R.id.floating_container,
                 SamplePage.class, NextFlowContainer.class);
     }
 
@@ -90,7 +90,7 @@ public class SamplePage extends NavigationFragment {
 
          NavigationController controller =  NavigationController.findInstance("right-router", getNavigationController().getFragmentManager());
                   if(controller == null) getNavigationController()
-                          .obtainRouter("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class);
+                          .presentNavigator("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class);
                   else controller.switchNew(new SamplePage());
     }
     @BindView(R.id.edit_text)

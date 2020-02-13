@@ -2,6 +2,7 @@ package com.ldt.navigation.router;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.ldt.navigation.uicontainer.UIContainer;
 FlexRouter quản lý giao diện phức tạp dạng 2-rows-panel ở màn hình rộng, thu gọn thành 1-rows  ở màn hình hẹp
  */
 public interface SplitRouter extends FlexRouter {
+    String TAG = "SplitRouter";
 
     String LEFT_ROUTER_TAG = "left-router-tag";
     String RIGHT_ROUTER_TAG = "right-router-tag";
@@ -105,30 +107,37 @@ public interface SplitRouter extends FlexRouter {
     default void onCreateRouter(Bundle bundle, @NonNull FragmentManager fragmentManager) {
         SplitRouterSaver saver = getRouterSaver();
         FlexRouter.super.onCreateRouter(bundle, fragmentManager);
-
+        Log.d(TAG, "onCreateRouter: with intro fragment tag:"+saver.mRightRouterIntroFragmentTag);
         // Thêm và hiển thị router trái nếu chưa có
-        presentLeftRouter(saver.mLeftContainerTag, R.id.left_container);
+        presentLeftRouter(saver.mLeftTag, R.id.left_container);
 
         // Thêm và hiển thị router phải ở giao diện split nếu chưa có
         if(saver.isInSplitMode()) {
-            NavigationController  rightRouter = presentRightRouter(saver.mRightContainerTag, R.id.right_container);
-            // Lưu lại tag của intro fragment ở lần chạy đầu tiên
-            if(rightRouter != null && bundle == null) {
-                saver.mRightRouterIntroFragmentTag = rightRouter.getFragmentTagAt(0);
-            } else if(rightRouter == null){
-                saver.mRightRouterIntroFragmentTag = null;
+            NavigationController controller = saver.findController(saver.mRightTag);
+            if(controller==null) {
+                NavigationController rightRouter = presentRightRouter(saver.mRightTag, R.id.right_container);
+                if (rightRouter != null && saver.mRightRouterHasIntro) {
+                    // start up fragment là intro fragment
+                    // nó cần bị xóa bỏ khi controller ở giao diện một cột
+                    // lưu lại tham số class type của intro fragment
+                    // dùng class type này và root fragment của right controller để lấy tag của intro fragment
+                    saver.setDefaultIntroFragmentClass(rightRouter.getStartUpFragmentClass());
+                }
             }
         } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {
             // Xóa bỏ intro fragment tự sinh ra ở giao diện split
-            NavigationController controller = saver.findController(saver.mRightContainerTag);
+            NavigationController controller = saver.findController(saver.mRightTag);
             if(controller != null) {
                 NavigationFragment introFragment = controller.findFragment(saver.mRightRouterIntroFragmentTag);
                 if(introFragment != null) {
+                    Log.d(TAG, "i mờ gô in to quýt");
                     int count = controller.getFragmentCount();
                     if(count==1) controller.quit();
                     else controller.dismissFragment(introFragment, false);
+                } else {
+                    Log.d(TAG, "not quýt");
                 }
-            }
+            } else Log.d(TAG, "right controller is null");
         }
 
         // đảm bảo thứ tự left-router là 1, right-router là 2 trong stack
@@ -143,6 +152,12 @@ public interface SplitRouter extends FlexRouter {
         int splitWhenTallerThan = -1;
         int leftWide = -1;
         int rightWide = -1;
+
+        public void setRightRouterStartUpFragmentIsIntroFragment(boolean startUpFragmentInRightRouterIsIntroFragment) {
+            this.introStartupInRightRouter = startUpFragmentInRightRouterIsIntroFragment;
+        }
+
+        boolean introStartupInRightRouter = true;
 
         public SplitCondition configAgain() {
             configOnce = false;
@@ -195,9 +210,19 @@ public interface SplitRouter extends FlexRouter {
     default void onSaveRouterState(Bundle outState) {
         FlexRouter.super.onSaveRouterState(outState);
         SplitRouterSaver saver = getRouterSaver();
-        outState.putString(LEFT_ROUTER_TAG, saver.mLeftContainerTag);
-        outState.putString(RIGHT_ROUTER_TAG, saver.mRightContainerTag);
-        outState.putString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG,saver.mRightRouterIntroFragmentTag);
+        outState.putString(LEFT_ROUTER_TAG, saver.mLeftTag);
+        outState.putString(RIGHT_ROUTER_TAG, saver.mRightTag);
+
+        if(saver.isInSplitMode()) {
+            Class<? extends NavigationFragment> introFragmentCls = saver.getIntroFragmentClass();
+            NavigationController rightController = saver.findController(saver.getRightTag());
+            if (rightController != null) {
+                NavigationFragment rootFragment = rightController.getFragmentAt(0);
+                if (rightController.getFragmentCount() == 1 && rootFragment != null && rootFragment.getClass().equals(introFragmentCls)) {
+                    outState.putString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG, rightController.getFragmentTagAt(0));
+                }
+            }
+        }
     }
 
     @Override
@@ -232,7 +257,7 @@ public interface SplitRouter extends FlexRouter {
                     break;
                 }
 
-                if(controller.mTag.equals(saver.mRightContainerTag) || controller.mTag.equals(saver.mLeftContainerTag)) {
+                if(controller.mTag.equals(saver.mRightTag) || controller.mTag.equals(saver.mLeftTag)) {
                     // Tới root và nó là fragment left hoặc right
                     if(i!=0) continue;
 
@@ -258,7 +283,7 @@ public interface SplitRouter extends FlexRouter {
     /*    @Override
     default void finishController(@NonNull NavigationController controller) {
         SplitRouterSaver saver = getRouterSaver();
-        if(!controller.mTag.equals(saver.mLeftContainerTag) && !controller.mTag.equals(saver.mRightContainerTag))
+        if(!controller.mTag.equals(saver.mLeftTag) && !controller.mTag.equals(saver.mRightTag))
         FlexRouter.super.finishController(controller);
     }*/
 }

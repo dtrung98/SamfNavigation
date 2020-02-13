@@ -1,11 +1,12 @@
 package com.ldt.navigation.router;
 
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 
 public class SplitRouterSaver extends RouterSaver {
-    final String mLeftContainerTag;
-    final String mRightContainerTag;
+    final String mLeftTag;
+    final String mRightTag;
 
     public int getLeftSubContainerId() {
         return mLeftSubContainerId;
@@ -15,18 +16,30 @@ public class SplitRouterSaver extends RouterSaver {
         return mRightSubContainerId;
     }
 
+    public String getLeftTag() {
+        return mLeftTag;
+    }
+
+    public String getRightTag() {
+        return mRightTag;
+    }
+
+    public int getFloatingSubContainerId() {
+        return mFloatingSubContainerId;
+    }
+
     int mLeftSubContainerId = R.id.left_container;
     int mRightSubContainerId = R.id.right_container;
     int mFloatingSubContainerId = R.id.floating_container;
 
     public SplitRouterSaver(String leftRouterTag, String rightRouterTag) {
-        mLeftContainerTag = leftRouterTag;
-        mRightContainerTag = rightRouterTag;
+        mLeftTag = leftRouterTag;
+        mRightTag = rightRouterTag;
     }
 
 /*    void setContainerTags(String leftTag, String rightTag) {
-        mLeftContainerTag = leftTag;
-        mRightContainerTag = rightTag;
+        mLeftTag = leftTag;
+        mRightTag = rightTag;
     }*/
 
     boolean mConfigOnce = true;
@@ -40,8 +53,9 @@ public class SplitRouterSaver extends RouterSaver {
     int rightWide = -1;
     boolean mInSplitScreen = false;
     String mRightRouterIntroFragmentTag = null;
+    boolean mRightRouterHasIntro = false;
     void sort() {
-        NavigationController controller = findController(mRightContainerTag);
+        NavigationController controller = findController(mRightTag);
         int index = mControllers.indexOf(controller);
         if(index != 1&&index !=-1) {
             mControllers.add(1, mControllers.remove(index));
@@ -57,6 +71,7 @@ public class SplitRouterSaver extends RouterSaver {
                 rightWide = condition.rightWide;
 
             mAlreadyConfig = true;
+            mRightRouterHasIntro = condition.introStartupInRightRouter;
         }
         mInSplitScreen = shouldSplitScreen(screenWidthDp, screenHeightDp);
     }
@@ -77,5 +92,14 @@ public class SplitRouterSaver extends RouterSaver {
 
     void popAt(int position) {
         if(position < count()) mControllers.remove(position);
+    }
+
+    public Class<? extends NavigationFragment> getIntroFragmentClass() {
+        return mStartUpFragmentClass;
+    }
+
+    Class<? extends NavigationFragment> mStartUpFragmentClass = null;
+    public void setDefaultIntroFragmentClass(Class<? extends NavigationFragment> startUpFragmentClass) {
+        mStartUpFragmentClass = startUpFragmentClass;
     }
 }

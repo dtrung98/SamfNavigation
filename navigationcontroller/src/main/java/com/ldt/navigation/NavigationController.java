@@ -60,7 +60,7 @@ public class NavigationController extends NavigationFragment {
         return mWeakRouter.get();
     }
 
-    public NavigationController obtainRouter(String tag, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
+    public NavigationController presentNavigator(String tag, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
         if(router instanceof FlexRouter && getFragmentManager() != null) {
             return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), mNavContainerId, startUpFragmentCls, uiContainerCls);
@@ -68,7 +68,7 @@ public class NavigationController extends NavigationFragment {
         return null;
     }
 
-    public NavigationController obtainRouter(String tag, int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
+    public NavigationController presentNavigator(String tag, int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
         if(router instanceof FlexRouter && getFragmentManager() != null) {
             return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
@@ -78,6 +78,10 @@ public class NavigationController extends NavigationFragment {
 
     public void setRouter(Router router) {
         mWeakRouter = new WeakReference<>(router);
+    }
+
+    public Class<? extends NavigationFragment> getStartUpFragmentClass() {
+        return mStartUpFragmentCls;
     }
 
     private Class<? extends NavigationFragment> mStartUpFragmentCls = null;
@@ -413,8 +417,9 @@ public class NavigationController extends NavigationFragment {
 
         FragmentTransaction ft =
                 getFragmentManagerForNavigation()
-                        .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                        .beginTransaction();
+        if(animated)
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
 
       /*  if(count == 1) {
             // phát sinh tag
@@ -424,8 +429,11 @@ public class NavigationController extends NavigationFragment {
 
         } else */{
             int pos = (positionAt > count-1) ? count - 1 : positionAt;
+            NavigationFragment removeFragment;
             for (int i = count - 1; i >= pos ; i--) {
-                ft.remove(getFragmentAt(i));
+                removeFragment = getFragmentAt(i);
+                removeFragment.setAnimatable(animated);
+                ft.remove(removeFragment);
                 mTagStack.remove(i);
                 mFragStack.remove(i);
             }
@@ -454,15 +462,14 @@ public class NavigationController extends NavigationFragment {
             fragment.setNavigationController(this);
 
             // phát sinh tag
-            String eTag = nextNavigationFragmentTag();
+            String tag = nextNavigationFragmentTag();
 
             // nếu stack rỗng
             if (mFragStack.size() == 0) {
                 fragment.setAnimatable(false);
                 getFragmentManagerForNavigation()
                         .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(mSubContainerId, fragment, eTag)
+                        .replace(mSubContainerId, fragment, tag)
                         .commit();
 
             } else {
@@ -476,16 +483,18 @@ public class NavigationController extends NavigationFragment {
                 fragment.setAnimatable(withAnimation);
                 // hide last fragment and add new fragment
                 NavigationFragment hideFragment = mFragStack.peek();
+                hideFragment.setAnimatable(withAnimation);
                 hideFragment.onHideFragment();
-                getFragmentManagerForNavigation()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .hide(hideFragment)
-                        .add(mSubContainerId, fragment, eTag)
+                FragmentTransaction ft = getFragmentManagerForNavigation()
+                        .beginTransaction();
+                if(withAnimation)
+                        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        ft.hide(hideFragment)
+                        .add(mSubContainerId, fragment, tag)
                         .commit();
             }
             mFragStack.add(fragment);
-            mTagStack.add(eTag);
+            mTagStack.add(tag);
         }
     }
     private boolean mIsAbleToPopRoot = false;
