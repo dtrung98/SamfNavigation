@@ -112,6 +112,11 @@ public class SamplePage extends NavigationFragment {
         return inflater.inflate(R.layout.sample_page,container,false);
     }
 
+    private int[] size = new int[6];
+    private void updateDescription(){
+        mDescriptionTextView.setText(getString(R.string.dimen_description, size[0], size[1], size[2], size[3], size[4], size[5]));
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -120,6 +125,9 @@ public class SamplePage extends NavigationFragment {
        int w = view.getContext().getResources().getConfiguration().screenWidthDp;//getInteger(R.integer.width_qualifier);
        
        int h = view.getContext().getResources().getConfiguration().screenHeightDp;//.getInteger(R.integer.height_qualifier);
+
+        size[0] = w;
+        size[1] = h;
 
         if(mIndex == 0&& getNavigationController() !=null ) {
             //mBackButton.setImageResource(R.drawable.ic_home_24dp);
@@ -132,8 +140,6 @@ public class SamplePage extends NavigationFragment {
             mTitleTextView.setText("Sample Page "+ mIndex);
             mQuitButton.setVisibility(View.INVISIBLE);
         }
-
-        mDescriptionTextView.setText("This screen is around "+w+"dp wide and "+h+"dp tall.");
 
         int type = mIndex % 3;
         if(type==0) {
@@ -180,8 +186,20 @@ public class SamplePage extends NavigationFragment {
         return defaultP;
     }
 
+    @BindView(R.id.status_bar)
+    View mStatusBar;
+
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
         int x = 5;
+
+        mStatusBar.getLayoutParams().height = top;
+        mStatusBar.requestLayout();
+
+        size[2] = left;
+        size[3] = top;
+        size[4] = right;
+        size[5] = bottom;
+        updateDescription();
     }
 }

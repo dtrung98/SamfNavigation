@@ -148,9 +148,12 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         return root;
     }
 
+    private boolean isAttachActivity = false;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isAttachActivity = true;
         int[] insets = NavigationController.getWindowInsets();
         onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
     }
@@ -276,5 +279,9 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+    }
+
+    public boolean attachedToActivity() {
+        return isAttachActivity;
     }
 }

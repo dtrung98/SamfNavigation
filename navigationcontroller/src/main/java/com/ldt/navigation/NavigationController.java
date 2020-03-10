@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -208,6 +207,7 @@ public class NavigationController extends NavigationFragment {
 
     @Override
     public void onDestroyView() {
+        unregisterWindowInsetsListener(mTag);
         mUiContainer.destroyView();
         super.onDestroyView();
     }
@@ -224,17 +224,21 @@ public class NavigationController extends NavigationFragment {
     //private static ArrayList<String> sControllerWICLKeys = new ArrayList<>();
 
     private static WeakReference<OnApplyWindowInsetsListener> sListener;
+    private static void unregisterWindowInsetsListener(String key) {
+        sControllerWICLs.remove(key);
+    }
+
     private static void registerWindowInsetsListener(Activity activity, String key, OnWindowInsetsChangedListener listener) {
         if(key != null && !key.isEmpty() && listener != null) sControllerWICLs.put(key, listener);
 
-        if(activity != null && (sListener==null|| sListener.get() == null)) {
+        if(activity != null) {
             OnApplyWindowInsetsListener applyListener = new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                    int top = insets.getStableInsetTop();
-                    int bottom = insets.getStableInsetBottom();
-                    int left = insets.getStableInsetLeft();
-                    int right = insets.getStableInsetRight();
+                    int left = insets.getSystemWindowInsetLeft();
+                    int top = insets.getSystemWindowInsetTop();
+                    int right = insets.getSystemWindowInsetRight();
+                    int bottom = insets.getSystemWindowInsetBottom();
 
                     if(left!=mWindowInsets[0] || top != mWindowInsets[1] || right != mWindowInsets[2] || bottom != mWindowInsets[3]) {
                         mWindowInsets[0] = left;
@@ -249,7 +253,7 @@ public class NavigationController extends NavigationFragment {
                             if (l != null) l.onWindowInsetsChanged(left, top, right, bottom);
                         }
                     }
-                    return insets;
+                    return insets;//insets.consumeSystemWindowInsets();
                 }
             };
 
@@ -273,6 +277,7 @@ public class NavigationController extends NavigationFragment {
 
         registerWindowInsetsListener(getActivity(), mTag, this);
     }
+
 
     @SuppressLint("RestrictedApi")
     @NonNull
@@ -684,6 +689,7 @@ public class NavigationController extends NavigationFragment {
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
         for (NavigationFragment f :
                 mFragStack) {
+            if(f.attachedToActivity())
             f.onWindowInsetsChanged(left, top, right, bottom);
         }
     }
