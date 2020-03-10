@@ -1,4 +1,4 @@
-package com.ldt.navigation;
+package com.ldt.navigation.effectview;
 
 import android.view.ViewTreeObserver;
 

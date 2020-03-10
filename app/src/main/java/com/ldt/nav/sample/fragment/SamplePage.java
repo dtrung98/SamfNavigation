@@ -180,5 +180,8 @@ public class SamplePage extends NavigationFragment {
         return defaultP;
     }
 
-
+    @Override
+    public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+        int x = 5;
+    }
 }

@@ -10,13 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.ldt.navigation.effectview.EffectFrameLayout;
+import com.ldt.navigation.effectview.EffectView;
 import com.ldt.navigation.router.Router;
 
 import java.lang.ref.WeakReference;
@@ -25,7 +26,7 @@ import java.lang.ref.WeakReference;
  * Created by burt on 2016. 5. 24..
  * Updated by dtrung98 on 2019. 12
  */
-public abstract class NavigationFragment extends Fragment {
+public abstract class NavigationFragment extends Fragment implements OnWindowInsetsChangedListener {
     private static final String TAG ="NavigationFragment";
     public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
@@ -41,10 +42,8 @@ public abstract class NavigationFragment extends Fragment {
         outState.putBoolean(ANIMATABLE, mAnimatable);
     }
 
-    private FrameLayout mWrapperRootLayout = null;
     private PresentStyle presentStyle = null;
     private PresentStyle exitPresentStyle = null;
-    protected View mContentView = null;
 
     public boolean navigateBack() {
         NavigationController controller = getNavigationController();
@@ -58,7 +57,6 @@ public abstract class NavigationFragment extends Fragment {
             controller.navigateTo(fragment);
     }
 
-    public void onSetStatusBarMargin(int value) {}
 
     public NavigationController getNavigationController() {
         if(weakNavigationController == null)
@@ -130,26 +128,40 @@ public abstract class NavigationFragment extends Fragment {
         mIsOnConfigurationAnimation = savedInstanceState != null;
     }
 
+    private boolean isRootLayoutWrapped = false;
+    public boolean shouldForceWrapLayout() {
+        return false;
+    }
+
     @Nullable
     @Override
     final public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root;
         View v = onCreateContentView(inflater, container, savedInstanceState);
         if(v == null) return null;
 
-        if(mWrapperRootLayout ==null)
-        mWrapperRootLayout = new EffectFrameLayout(inflater.getContext());
-        else
-        mWrapperRootLayout.removeAllViews();
+        // nếu root không phải effectview
+        // hoặc nếu yêu cầu ép buộc wrap layout
+        if( !(v instanceof EffectView) || shouldForceWrapLayout()) {
+            root = new EffectFrameLayout(inflater.getContext());
+            root.setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            ((ViewGroup)root).addView(v);
+        } else root = v;
+        return root;
+    }
 
-        mContentView = v;
-        mWrapperRootLayout.addView(v);
-        return mWrapperRootLayout;
+    public int[] getWindowInsets() {
+        if(getNavigationController() != null) return getNavigationController().getWindowInsets();
+        return null;
+    }
+
+    public void applyInsets(int left, int top, int right, int bottom) {
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onSetStatusBarMargin(getStatusHeight(getResources()));
     }
 
     @Override
@@ -189,22 +201,6 @@ public abstract class NavigationFragment extends Fragment {
 
     @Nullable
     abstract protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
-
-    /**
-     * This is the layout for wrapping contentView
-     * @return AndroidFragmentFrameLayout
-     */
-    public FrameLayout getRootLayout() {
-        return mWrapperRootLayout;
-    }
-
-    /**
-     * This is the layout-view which is defined by user.
-     * @return content view
-     */
-    public View getContentView() {
-        return mContentView;
-    }
 
     @Override
     public Animator onCreateAnimator(final int transit, final boolean enter, int nextAnim) {
@@ -310,4 +306,7 @@ public abstract class NavigationFragment extends Fragment {
     public void onShowFragment() {}
     public void onHideFragment() {}
 
+    @Override
+    public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+    }
 }

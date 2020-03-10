@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.ldt.navigation.effectview.EffectFrameLayout
     android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ldt.nav.sample.activity.MainActivity"
     android:background="@android:color/white">
-    <FrameLayout
+    <com.ldt.navigation.effectview.EffectConstraintLayout
         android:id="@+id/left_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <FrameLayout
+    <com.ldt.navigation.effectview.EffectFrameLayout
         android:id="@+id/right_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <FrameLayout
+    <com.ldt.navigation.effectview.EffectFrameLayout
         android:id="@+id/floating_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</FrameLayout>
+</com.ldt.navigation.effectview.EffectFrameLayout>

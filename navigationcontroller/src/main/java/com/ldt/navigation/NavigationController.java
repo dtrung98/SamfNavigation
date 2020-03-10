@@ -2,6 +2,7 @@ package com.ldt.navigation;
 
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,12 +12,19 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.WeakHashMap;
 
 import com.ldt.navigation.router.FlexRouter;
 import com.ldt.navigation.router.Router;
@@ -204,10 +212,67 @@ public class NavigationController extends NavigationFragment {
         super.onDestroyView();
     }
 
+    private static final int[] mWindowInsets = new int[4];
+
+    @Override
+    public int[] getWindowInsets() {
+        int[] insets = new int[4];
+        System.arraycopy(mWindowInsets,0, insets, 0, 4);
+        return insets;
+    }
+
+    private static WeakHashMap<String, OnWindowInsetsChangedListener> sControllerWICLs = new WeakHashMap<>();
+    //private static ArrayList<String> sControllerWICLKeys = new ArrayList<>();
+
+    private static WeakReference<OnApplyWindowInsetsListener> sListener;
+    private static void registerWindowInsetsListener(Activity activity, String key, OnWindowInsetsChangedListener listener) {
+        if(key != null && !key.isEmpty() && listener != null) sControllerWICLs.put(key, listener);
+
+        if(activity != null && (sListener==null|| sListener.get() == null)) {
+            OnApplyWindowInsetsListener applyListener = new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    int top = insets.getStableInsetTop();
+                    int bottom = insets.getStableInsetBottom();
+                    int left = insets.getStableInsetLeft();
+                    int right = insets.getStableInsetRight();
+
+                    if(left!=mWindowInsets[0] || top != mWindowInsets[1] || right != mWindowInsets[2] || bottom != mWindowInsets[3]) {
+                        mWindowInsets[0] = left;
+                        mWindowInsets[1] = top;
+                        mWindowInsets[2] = right;
+                        mWindowInsets[3] = bottom;
+
+                        OnWindowInsetsChangedListener l;
+                        Set<Map.Entry<String, OnWindowInsetsChangedListener>> entrySet = sControllerWICLs.entrySet();
+                        for (Map.Entry<String, OnWindowInsetsChangedListener> me : entrySet) {
+                            l = me.getValue();
+                            if (l != null) l.onWindowInsetsChanged(left, top, right, bottom);
+                        }
+                    }
+                    return insets;
+                }
+            };
+
+            ViewCompat.setOnApplyWindowInsetsListener(activity.getWindow().getDecorView(), applyListener);
+
+            sListener = new WeakReference<>(applyListener);
+        }
+    }
+
+    public void getWindowInsets(int[] int4) {
+        System.arraycopy(mWindowInsets, 0, int4, 0, 4);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mUiContainer.activityCreated(savedInstanceState);
+
+        // get window insets
+        View view = getView();
+
+        registerWindowInsetsListener(getActivity(), mTag, this);
     }
 
     @SuppressLint("RestrictedApi")
@@ -428,7 +493,7 @@ public class NavigationController extends NavigationFragment {
             mFragStack.clear();
 
         } else */{
-            int pos = (positionAt > count-1) ? count - 1 : positionAt;
+            int pos = Math.min(positionAt, count - 1);
             NavigationFragment removeFragment;
             for (int i = count - 1; i >= pos ; i--) {
                 removeFragment = getFragmentAt(i);
@@ -614,5 +679,13 @@ public class NavigationController extends NavigationFragment {
     @Override
     public boolean requestBack() {
         return onNavigateBack();
+    }
+
+    @Override
+    public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+        for (NavigationFragment f :
+                mFragStack) {
+            f.onWindowInsetsChanged(left, top, right, bottom);
+        }
     }
 }
