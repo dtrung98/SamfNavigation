@@ -214,8 +214,7 @@ public class NavigationController extends NavigationFragment {
 
     private static final int[] mWindowInsets = new int[4];
 
-    @Override
-    public int[] getWindowInsets() {
+    public static int[] getWindowInsets() {
         int[] insets = new int[4];
         System.arraycopy(mWindowInsets,0, insets, 0, 4);
         return insets;

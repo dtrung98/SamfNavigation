@@ -3,8 +3,6 @@ package com.ldt.navigation;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.TimeInterpolator;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,24 +148,11 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         return root;
     }
 
-    public int[] getWindowInsets() {
-        if(getNavigationController() != null) return getNavigationController().getWindowInsets();
-        return null;
-    }
-
-    public void applyInsets(int left, int top, int right, int bottom) {
-
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        sStatusHeight = -1;
+        int[] insets = NavigationController.getWindowInsets();
+        onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
     }
 
     public Router getRouter() {
@@ -180,23 +165,6 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         NavigationController controller = getNavigationController();
         if(controller != null) return controller.getInterpolator();
         return new AccelerateDecelerateInterpolator();
-    }
-
-    private static int sStatusHeight = -1;
-    protected static int getStatusHeight(Resources myR)
-    {
-        if(sStatusHeight !=-1) return sStatusHeight;
-        int height;
-        int idSbHeight = myR.getIdentifier("status_bar_height", "dimen", "android");
-        if (idSbHeight > 0) {
-            height = myR.getDimensionPixelOffset(idSbHeight);
-            //   Toast.makeText(this, "Status Bar Height = "+ height, Toast.LENGTH_SHORT).show();
-        } else {
-            height = 0;
-            //        Toast.makeText(this,"Resources NOT found",Toast.LENGTH_LONG).show();
-        }
-        sStatusHeight =height;
-        return sStatusHeight;
     }
 
     @Nullable
