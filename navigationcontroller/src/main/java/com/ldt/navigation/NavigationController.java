@@ -253,7 +253,7 @@ public class NavigationController extends NavigationFragment {
                             if (l != null) l.onWindowInsetsChanged(left, top, right, bottom);
                         }
                     }
-                    return insets;//insets.consumeSystemWindowInsets();
+                    return ViewCompat.onApplyWindowInsets(v, insets);//insets.consumeSystemWindowInsets();
                 }
             };
 
