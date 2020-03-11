@@ -271,10 +271,6 @@ public class NavigationController extends NavigationFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mUiContainer.activityCreated(savedInstanceState);
-
-        // get window insets
-        View view = getView();
-
         registerWindowInsetsListener(getActivity(), mTag, this);
     }
 
