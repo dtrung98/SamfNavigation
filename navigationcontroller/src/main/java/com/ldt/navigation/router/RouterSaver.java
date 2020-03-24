@@ -37,7 +37,7 @@ public class RouterSaver {
             ArrayList<String> list = new ArrayList<>();
             for (NavigationController c :
                     mControllers) {
-                if(c.isControllerAvailable()) list.add(c.mTag);
+                if(c.isControllerAvailable()) list.add(c.mControllerTag);
             }
             return list;
         }
@@ -47,7 +47,7 @@ public class RouterSaver {
             int index = -1;
             int size = mControllers.size();
             for (int i = size - 1; i >= 0 ; i--) {
-                if(tag.equals( mControllers.get(i).mTag)) {
+                if(tag.equals( mControllers.get(i).mControllerTag)) {
                    index = i;
                     break;
                 }

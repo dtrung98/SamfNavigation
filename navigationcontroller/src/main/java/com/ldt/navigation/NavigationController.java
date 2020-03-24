@@ -43,7 +43,7 @@ public class NavigationController extends NavigationFragment {
     int mNavContainerId;
     private int mSubContainerId;
     private final Object mSync = new Object();
-    public String mTag;
+    public String mControllerTag;
     private Stack<String> mTagStack = new Stack<>();
     private static int sIdCount = 1;
     private static int nextId() {
@@ -123,11 +123,11 @@ public class NavigationController extends NavigationFragment {
 
         outState.putInt("sub-container-id", mSubContainerId);
 
-        outState.putString("controller-tag", mTag);
+        outState.putString("controller-tag", mControllerTag);
         ArrayList<String> list = new ArrayList<>(mTagStack);
         outState.putStringArrayList("fragment-navigation-tags", list);
 
-        UIContainer.save(mTag, mUiContainer.getClass());
+        UIContainer.save(mControllerTag, mUiContainer.getClass());
         mUiContainer.saveState(outState);
     }
 
@@ -137,9 +137,9 @@ public class NavigationController extends NavigationFragment {
         if(savedInstanceState!=null) {
             mNavContainerId = savedInstanceState.getInt("nav-container-id", -1);
             mSubContainerId = savedInstanceState.getInt("sub-container-id", R.id.sub_container);
-            mTag = savedInstanceState.getString("controller-tag");
+            mControllerTag = savedInstanceState.getString("controller-tag");
 
-            mUiContainer = UIContainer.instantiate(getContext(), mTag);
+            mUiContainer = UIContainer.instantiate(getContext(), mControllerTag);
 
 
             ArrayList<String> list;
@@ -207,7 +207,7 @@ public class NavigationController extends NavigationFragment {
 
     @Override
     public void onDestroyView() {
-        unregisterWindowInsetsListener(mTag);
+        unregisterWindowInsetsListener(mControllerTag);
         mUiContainer.destroyView();
         super.onDestroyView();
     }
@@ -271,7 +271,7 @@ public class NavigationController extends NavigationFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mUiContainer.activityCreated(savedInstanceState);
-        registerWindowInsetsListener(getActivity(), mTag, this);
+        registerWindowInsetsListener(getActivity(), mControllerTag, this);
     }
 
 
@@ -332,7 +332,7 @@ public class NavigationController extends NavigationFragment {
         NavigationController f = (NavigationController)fragmentManager.findFragmentByTag(tag);
         if(f!=null) {
 
-            if(f.mTag==null || f.mTag.isEmpty()) f.mTag = tag;
+            if(f.mControllerTag ==null || f.mControllerTag.isEmpty()) f.mControllerTag = tag;
 
             // restore fragment stack from restored tag stack
             if(!f.isRestoredFragment()) {
@@ -348,7 +348,7 @@ public class NavigationController extends NavigationFragment {
         f.mNavContainerId = navContainerId;
         f.mSubContainerId = View.generateViewId();
         f.mRestoredFragment = true; // no need to restore fragment anymore
-        f.mTag = tag;
+        f.mControllerTag = tag;
 
         UIContainer uic = null;
         try {
@@ -380,7 +380,7 @@ public class NavigationController extends NavigationFragment {
         fragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(mNavContainerId,this , mTag)
+                .add(mNavContainerId,this , mControllerTag)
                 .commit();
     }
 
@@ -388,7 +388,7 @@ public class NavigationController extends NavigationFragment {
         fragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(this , mTag)
+                .add(this , mControllerTag)
                 .commit();
     }
 

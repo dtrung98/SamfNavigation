@@ -257,7 +257,7 @@ public interface SplitRouter extends FlexRouter {
                     break;
                 }
 
-                if(controller.mTag.equals(saver.mRightTag) || controller.mTag.equals(saver.mLeftTag)) {
+                if(controller.mControllerTag.equals(saver.mRightTag) || controller.mControllerTag.equals(saver.mLeftTag)) {
                     // Tới root và nó là fragment left hoặc right
                     if(i!=0) continue;
 

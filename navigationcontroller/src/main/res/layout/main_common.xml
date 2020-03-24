@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="?navBackColor"
+    android:theme="@style/NavigationTheme">
     <com.ldt.navigation.effectview.EffectConstraintLayout
         android:id="@+id/left_container"
         android:layout_width="match_parent"

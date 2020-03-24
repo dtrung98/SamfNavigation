@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#40000000"
+    android:background="?navDimColor"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:theme="@style/NavigationTheme">
     <androidx.cardview.widget.CardView
         android:id="@+id/sub_container"
         android:layout_width="0dp"
@@ -21,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:cardBackgroundColor="@android:color/white"
+        app:cardBackgroundColor="?navBackColor"
         app:cardElevation="0dp"
         />
 

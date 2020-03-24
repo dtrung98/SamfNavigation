@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="navBackColor" format="color"/>
+    <attr name="navDimColor" format="color"/>
+    <attr name="navCardCornerRadius" format="dimension"/>
+    <attr name="navSplitDividerColor" format="color"/>
+    <attr name="navSplitDividerSize" format="dimension"/>
+    <attr name="masterContainerWidth" format="dimension"/>
+    <style name="NavigationTheme.Base">
+        <item name="navBackColor">@android:color/white</item>
+        <item name="navDimColor">#44000000</item>
+        <item name="navCardCornerRadius">16dp</item>
+        <item name="navSplitDividerColor">#33000000</item>
+
+        <item name="navSplitDividerSize">1dp</item>
+        <item name="masterContainerWidth">350dp</item>
+
+    </style>
+    <style name="NavigationTheme" parent="NavigationTheme.Base">
+    </style>
+</resources>
