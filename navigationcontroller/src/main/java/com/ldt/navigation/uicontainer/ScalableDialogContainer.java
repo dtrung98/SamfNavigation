@@ -23,8 +23,6 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
   private int w;
   private int h;
   private float dpUnit;
-  private View mDimView;
-  private PresentStyle mFade = PresentStyle.inflate(PresentStyle.FADE);
   @Override
   public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
     mController = controller;
@@ -70,7 +68,6 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
   @Override
   public void bindLayout(View view) {
   view.findViewById(R.id.root).setOnClickListener(this);
-  mDimView = view.findViewById(R.id.dim_view);
   }
 
   @Override
@@ -96,12 +93,4 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
     if(mController!=null) mController.quit();
   }
 
-  @Override
-  public void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {
-    super.executeAnimator(animator, transit, enter, nextAnim);
-    long duration = (animator == null) ?  125 : animator.getDuration();
-    Animator dimAnimator = PresentStyle.inflateAnimator(mDimView.getContext(), mFade, transit, enter);
-    dimAnimator.setTarget(mDimView);
-    dimAnimator.start();
-  }
 }

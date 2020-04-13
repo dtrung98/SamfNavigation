@@ -5,10 +5,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+
+import com.ldt.navigation.PresentStyle;
+import com.ldt.navigation.R;
 
 public abstract class AnimatorUIContainer implements UIContainer {
     private View mRootView;
     private View mSubContainerView;
+    private View mDimView;
+    private PresentStyle mFade;
+    public View getDimView() {
+        return mDimView;
+    }
 
     public View getRootView() {
         return mRootView;
@@ -22,7 +31,18 @@ public abstract class AnimatorUIContainer implements UIContainer {
     public View onCreateLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
         mRootView = provideLayout(context, inflater, viewGroup, subContainerId);
         mSubContainerView = mRootView.findViewById(subContainerId);
+        mDimView = mRootView.findViewById(R.id.dim_view);
         return mRootView;
+    }
+
+    public void executeDimAnimator(Animator containerAnimator, int transit, boolean enter, int nextAnim) {
+        if(mDimView == null) return;
+        if(mFade == null) mFade = PresentStyle.inflate(PresentStyle.FADE);
+        long duration = (containerAnimator == null) ?  125 : containerAnimator.getDuration();
+        Animator dimAnimator = PresentStyle.inflateAnimator(mDimView.getContext(), mFade, transit, enter);
+        dimAnimator.setTarget(mDimView);
+        dimAnimator.setDuration(duration);
+        dimAnimator.start();
     }
 
     @Override
@@ -31,5 +51,7 @@ public abstract class AnimatorUIContainer implements UIContainer {
             animator.setTarget(mSubContainerView);
             animator.start();
         }
+        // dim background if any dim view
+        executeDimAnimator(animator, transit, enter, nextAnim);
     }
 }

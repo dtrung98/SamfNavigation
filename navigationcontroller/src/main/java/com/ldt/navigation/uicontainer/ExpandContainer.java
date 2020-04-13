@@ -17,9 +17,14 @@ public class ExpandContainer extends AnimatorUIContainer {
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int providedSubContainerId) {
     // provide container layout
     // provide sub container layout
-    View v = inflater.inflate(R.layout.expand_container, viewGroup, false);
-    v.setId(providedSubContainerId);
+    View v = inflater.inflate(R.layout.aninator_expand_container, viewGroup, false);
+    v.findViewById(R.id.sub_container).setId(providedSubContainerId);
     return v;
+  }
+
+  @Override
+  public int defaultDuration() {
+    return 325;
   }
 
   @Override

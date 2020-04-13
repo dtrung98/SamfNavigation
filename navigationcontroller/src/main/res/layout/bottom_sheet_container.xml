@@ -5,24 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?navDimColor"
     android:clickable="true"
     android:focusable="true"
     android:theme="@style/NavigationTheme">
-    <com.ldt.navigation.effectview.EffectCardView
-        android:id="@+id/sub_container"
+    <View
+        android:id="@+id/dim_view"
+        android:background="?navDimColor"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clickable="true"
-        app:cardCornerRadius="14dp"
-        android:focusable="true"
-        android:layout_marginTop="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <com.ldt.navigation.effectview.EffectFrameLayout
+        android:id="@+id/panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:cardBackgroundColor="?navBackColor"
-        app:cardElevation="0dp"
-        />
+        >
+        <com.ldt.navigation.effectview.EffectCardView
+            android:id="@+id/sub_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            app:cardCornerRadius="14dp"
+            android:focusable="true"
+            android:translationY="25dp"
+            android:paddingBottom="25dp"
+            app:cardBackgroundColor="?navBackColor"
+            app:cardElevation="0dp"
+            />
+    </com.ldt.navigation.effectview.EffectFrameLayout>
+
 
 </com.ldt.navigation.effectview.EffectConstraintLayout>
