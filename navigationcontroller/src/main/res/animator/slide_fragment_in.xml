@@ -17,4 +17,4 @@
     android:valueFrom="1"
     android:valueTo="0.30"
     android:propertyName="yFraction"
-    android:valueType="floatType"/>
+    android:valueType="floatType" />

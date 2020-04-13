@@ -1,5 +1,7 @@
 package com.ldt.navigation;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,10 +39,9 @@ import com.ldt.navigation.uicontainer.ExpandContainer;
 public class NavigationController extends NavigationFragment {
 
     private static final String TAG = "NavigationController";
-
     private Stack<NavigationFragment> mFragStack = new Stack<>();
-    public  @IdRes
-    int mNavContainerId;
+
+    public  @IdRes int mNavContainerId;
     private int mSubContainerId;
     private final Object mSync = new Object();
     public String mControllerTag;
@@ -128,7 +129,7 @@ public class NavigationController extends NavigationFragment {
         outState.putStringArrayList("fragment-navigation-tags", list);
 
         UIContainer.save(mControllerTag, mUiContainer.getClass());
-        mUiContainer.saveState(outState);
+        mUiContainer.saveState(this, outState);
     }
 
     @Override
@@ -141,7 +142,6 @@ public class NavigationController extends NavigationFragment {
 
             mUiContainer = UIContainer.instantiate(getContext(), mControllerTag);
 
-
             ArrayList<String> list;
             list = savedInstanceState.getStringArrayList("fragment-navigation-tags");
             if (list != null) {
@@ -150,16 +150,16 @@ public class NavigationController extends NavigationFragment {
             }
         }
 
-        int w = getContext().getResources().getConfiguration().screenWidthDp;
+        int w = (getContext() == null) ? 1 : getContext().getResources().getConfiguration().screenWidthDp;
 
-        int h = getContext().getResources().getConfiguration().screenHeightDp;
+        int h = (getContext() == null) ? 1 :  getContext().getResources().getConfiguration().screenHeightDp;
 
-        float dpUnit = getContext().getResources().getDimension(R.dimen.dpUnit);
+        float dpUnit = (getContext() == null) ? 1 :  getContext().getResources().getDimension(R.dimen.dpUnit);
         if (mUiContainer == null) mUiContainer = new ExpandContainer();
-        mUiContainer.provideController(this, w, h, dpUnit);
+        mUiContainer.provideQualifier(this, w, h, dpUnit);
 
-        mUiContainer.created(savedInstanceState);
-        mUiContainer.restoreState(savedInstanceState);
+        mUiContainer.created(this, savedInstanceState);
+        mUiContainer.restoreState(this, savedInstanceState);
     }
 
     private void showStartupFragmentIfNeed() {
@@ -178,37 +178,37 @@ public class NavigationController extends NavigationFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mUiContainer.resume();
+        mUiContainer.resume(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mUiContainer.start();
+        mUiContainer.start(this);
     }
 
     @Override
     public void onPause() {
-        mUiContainer.pause();
+        mUiContainer.pause(this);
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        mUiContainer.stop();
+        mUiContainer.stop(this);
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        mUiContainer.destroy();
+        mUiContainer.destroy(this);
         super.onDestroy();
     }
 
     @Override
     public void onDestroyView() {
         unregisterWindowInsetsListener(mControllerTag);
-        mUiContainer.destroyView();
+        mUiContainer.destroyView(this);
         super.onDestroyView();
     }
 
@@ -270,7 +270,7 @@ public class NavigationController extends NavigationFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mUiContainer.activityCreated(savedInstanceState);
+        mUiContainer.activityCreated(this, savedInstanceState);
         registerWindowInsetsListener(getActivity(), mControllerTag, this);
     }
 
@@ -302,6 +302,7 @@ public class NavigationController extends NavigationFragment {
                 mFragStack.push(f);
             }
         }
+        if(mUiContainer != null) mUiContainer.stackChanged(this);
     }
 
     // This flag will become true after a successful restoration
@@ -353,10 +354,12 @@ public class NavigationController extends NavigationFragment {
         UIContainer uic = null;
         try {
             uic = uiContainerCls.newInstance();
-        } catch (Exception ignored) {
-            Log.e(TAG, "Unable to create new UIContainer instance");
+        } catch (Exception ignored) {}
+
+        if(uic == null) {
+            uic = new ExpandContainer();
+            Log.e(TAG, "Couldn't to create new UIContainer instance, using default container instead");
         }
-        if(uic == null) uic = new ExpandContainer();
 
         f.mUiContainer = uic;
 
@@ -406,7 +409,7 @@ public class NavigationController extends NavigationFragment {
             FragmentManager fragmentManager = getFragmentManager();
             if(fragmentManager!=null)
                 fragmentManager.beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .remove(this)
                         .commit();
         }
@@ -426,7 +429,7 @@ public class NavigationController extends NavigationFragment {
     @Override
     protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         showStartupFragmentIfNeed();
-        return mUiContainer.provideLayout(getContext(), inflater, container, mSubContainerId);
+        return mUiContainer.onCreateLayout(getContext(), inflater, container, mSubContainerId);
     }
 
     @Override
@@ -507,7 +510,7 @@ public class NavigationController extends NavigationFragment {
 
         mTagStack.push(eTag);
         mFragStack.push(fragment);
-
+        if(mUiContainer!=null) mUiContainer.stackChanged(this);
     }
 
     public void switchNew(NavigationFragment fragment, boolean withAnimation) {
@@ -543,13 +546,12 @@ public class NavigationController extends NavigationFragment {
                 if(openExit==PresentStyle.SAME_AS_OPEN)
                     getTopFragment().setOpenExitPresentStyle(fragment.getPresentStyle());
                 else if(openExit!=PresentStyle.REMOVED_FRAGMENT_PRESENT_STYLE)
-                    getTopFragment().setOpenExitPresentStyle(PresentStyle.get(openExit));
+                    getTopFragment().setOpenExitPresentStyle(PresentStyle.inflate(openExit));
 
                 fragment.setAnimatable(withAnimation);
                 // hide last fragment and add new fragment
                 NavigationFragment hideFragment = mFragStack.peek();
                 hideFragment.setAnimatable(withAnimation);
-                hideFragment.onHideFragment();
                 FragmentTransaction ft = getFragmentManagerForNavigation()
                         .beginTransaction();
                 if(withAnimation)
@@ -560,11 +562,8 @@ public class NavigationController extends NavigationFragment {
             }
             mFragStack.add(fragment);
             mTagStack.add(tag);
+            if(mUiContainer != null) mUiContainer.stackChanged(this);
         }
-    }
-    private boolean mIsAbleToPopRoot = false;
-    public void setAbleToPopRoot(boolean able) {
-        mIsAbleToPopRoot = able;
     }
     public boolean dismissFragment(NavigationFragment fragment) {
         return dismissFragment(fragment, true);
@@ -592,8 +591,18 @@ public class NavigationController extends NavigationFragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .remove(fragment)
                     .commit();
+            if(mUiContainer != null) mUiContainer.stackChanged(this);
             return true;
         }
+    }
+
+    @Override
+    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
+        Animator containerAnimator = super.onCreateAnimator(transit, enter, nextAnim);
+        if(mUiContainer != null) mUiContainer.executeAnimator(containerAnimator, transit, enter, nextAnim);
+        Animator delayedAnimator = AnimatorInflater.loadAnimator(getContext(), R.animator.none);
+        delayedAnimator.setDuration(containerAnimator==null ? 0 : containerAnimator.getDuration());
+        return delayedAnimator;
     }
 
     @Override
@@ -642,8 +651,10 @@ public class NavigationController extends NavigationFragment {
                     .show(fragmentToShow)
                     .remove(fragmentToRemove)
                     .commit();
-
         }
+
+        if(mUiContainer != null) mUiContainer.stackChanged(this);
+
         return true;
     }
 
@@ -651,14 +662,6 @@ public class NavigationController extends NavigationFragment {
 
         while (mFragStack.size() >= 2) {
             navigateBack();
-        }
-    }
-    public void navigateBackAllFragments() {
-        if(!mIsAbleToPopRoot) {
-            navigateBackToRootFragment();
-        } else {
-            while (mFragStack.size()>=1)
-                navigateBack();
         }
     }
 
@@ -683,6 +686,7 @@ public class NavigationController extends NavigationFragment {
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+        if(mUiContainer!=null) mUiContainer.onWindowInsetsChanged(this, left, top, right, bottom);
         for (NavigationFragment f :
                 mFragStack) {
             if(f.attachedToActivity())

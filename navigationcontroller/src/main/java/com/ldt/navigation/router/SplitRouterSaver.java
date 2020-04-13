@@ -61,7 +61,7 @@ public class SplitRouterSaver extends RouterSaver {
             mControllers.add(1, mControllers.remove(index));
         }
     }
-    void setUp(SplitRouter.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
+    void setUp(BaseSplitRouter.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
         if(!mAlreadyConfig || !mConfigOnce) {
             mConfigOnce = condition.configOnce;
 

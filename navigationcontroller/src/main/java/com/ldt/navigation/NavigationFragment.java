@@ -93,7 +93,7 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
     }
 
     public PresentStyle getPresentStyle() {
-        if(presentStyle==null) presentStyle = PresentStyle.get(defaultTransition());
+        if(presentStyle==null) presentStyle = PresentStyle.inflate(defaultTransition());
         return presentStyle;
     }
 
@@ -190,23 +190,23 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
             return null; //no animatable
         }
 
-        PresentStyle ps = getPresentStyle();
-        if(ps.getType() == PresentStyle.NONE) return null;
+        PresentStyle presentStyle = getPresentStyle();
+        if(presentStyle.getType() == PresentStyle.NONE) return null;
 
         Animator animator = null;
         if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
 
             if (enter) {
-                int id = ps.getOpenEnterAnimatorId();
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
+                int id = presentStyle.getOpenEnterAnimatorId();
+                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             } else {
                 int id;
                 if(exitPresentStyle==null)
-                    id = ps.getOpenExitAnimatorId();
+                    id = presentStyle.getOpenExitAnimatorId();
                 else {
                     id = exitPresentStyle.getOpenExitAnimatorId();
                 }
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
+                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             }
 
         } else {
@@ -214,68 +214,25 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
             if (enter) {
                 int id;
                 if(exitPresentStyle == null)
-                id = ps.getCloseEnterAnimatorId();
+                id = presentStyle.getCloseEnterAnimatorId();
                 else {
                     id = exitPresentStyle.getCloseEnterAnimatorId();
                     exitPresentStyle = null;
                 }
 
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
+                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             } else {
                 int id;
-                id = ps.getCloseExitAnimatorId();
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getActivity(), id);
+                id = presentStyle.getCloseExitAnimatorId();
+                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             }
         }
         if(animator != null) {
             animator.setInterpolator(getInterpolator());
             animator.setDuration(defaultDuration());
         }
-
-        if(animator!=null)
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-                if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
-
-                    if(enter) {
-                        onShowFragment();
-                    } else {
-                        //onHideFragment();
-                    }
-                } else {
-
-                    if(enter) {
-                        onShowFragment();
-                    } else {
-                        onHideFragment();
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
         return animator;
     }
-
-
-    public void onShowFragment() {}
-    public void onHideFragment() {}
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {

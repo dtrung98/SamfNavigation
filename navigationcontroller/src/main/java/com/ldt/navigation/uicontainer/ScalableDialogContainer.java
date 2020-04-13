@@ -1,29 +1,32 @@
 package com.ldt.navigation.uicontainer;
 
+import android.animation.Animator;
 import android.view.View;
 import android.content.Context;
 
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.fragment.app.FragmentTransaction;
+
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
  *  dialog to ra theo kích cỡ màn hình
  */
-public class ScalableDialogContainer implements UIContainer, View.OnClickListener {
-  View mRootView;
-  int mSubContainerId;
-  View mSubContainerView;
+public class ScalableDialogContainer extends AnimatorUIContainer implements View.OnClickListener {
 
   private int w;
   private int h;
   private float dpUnit;
+  private View mDimView;
+  private PresentStyle mFade = PresentStyle.inflate(PresentStyle.FADE);
   @Override
-  public void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
     mController = controller;
     w = wQualifier;
     h = hQualifier;
@@ -61,22 +64,22 @@ public class ScalableDialogContainer implements UIContainer, View.OnClickListene
     ViewGroup.LayoutParams params = dialog.getLayoutParams();
     params.width = (int)(newW*dpUnit);
     params.height = (int)(newH*dpUnit);
-
-    mSubContainerId = subContainerId;
-
   return v;
 }
 
   @Override
   public void bindLayout(View view) {
-    mRootView = view;
-    mSubContainerView = view.findViewById(mSubContainerId);
   view.findViewById(R.id.root).setOnClickListener(this);
-
+  mDimView = view.findViewById(R.id.dim_view);
   }
 
   @Override
-  public void start() {
+  public int defaultTransition() {
+    return PresentStyle.ROTATE_DOWN_LEFT;
+  }
+
+  @Override
+  public void start(NavigationController controller) {
     //mSubContainerView.setTranslationY(h);
     //mSubContainerView.animate().translationY(h/2).setInterpolator(new AccelerateDecelerateInterpolator()).start();
   }
@@ -84,12 +87,21 @@ public class ScalableDialogContainer implements UIContainer, View.OnClickListene
   private NavigationController mController;
 
   @Override
-  public void destroy() {
+  public void destroy(NavigationController controller) {
     mController = null;
   }
 
   @Override
   public void onClick(View v) {
     if(mController!=null) mController.quit();
+  }
+
+  @Override
+  public void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {
+    super.executeAnimator(animator, transit, enter, nextAnim);
+    long duration = (animator == null) ?  125 : animator.getDuration();
+    Animator dimAnimator = PresentStyle.inflateAnimator(mDimView.getContext(), mFade, transit, enter);
+    dimAnimator.setTarget(mDimView);
+    dimAnimator.start();
   }
 }

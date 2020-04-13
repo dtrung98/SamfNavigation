@@ -16,7 +16,7 @@ import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.uicontainer.ExpandContainer;
-import com.ldt.navigation.uicontainer.NextFlowContainer;
+import com.ldt.navigation.uicontainer.NewFlowContainer;
 
 import java.util.Random;
 
@@ -82,7 +82,7 @@ public class SamplePage extends NavigationFragment {
     @OnClick(R.id.button_2)
     void openSetting() {
         getNavigationController().presentNavigator("setting-nav",R.id.floating_container,
-                SamplePage.class, NextFlowContainer.class);
+                SamplePage.class, NewFlowContainer.class);
     }
 
     @OnClick(R.id.button_view1)

@@ -14,7 +14,7 @@
     <style name="DarkTheme" parent="AppTheme">
 
     </style>
-    <style name="NavigationTheme">
+    <style name="NavigationTheme" parent="NavigationTheme.Base">
         <item name="navBackColor">?backColor</item>
         <item name="navDimColor">#44000000</item>
     </style>

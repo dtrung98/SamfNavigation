@@ -1,6 +1,12 @@
 package com.ldt.navigation;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.content.Context;
+
+import androidx.fragment.app.FragmentTransaction;
+
 /**
  * Created by burt on 2016. 5. 26..
  */
@@ -49,7 +55,6 @@ public class PresentStyle {
     public static final int ZOOM_FROM_RIGHT_BOTTOM_CORNER= 39;
     public static final int CUSTOM = 40;
 
-
     private int openEnterAnimatorId;
     private int openExitAnimatorId;
     private int closeEnterAnimatorId;
@@ -58,7 +63,6 @@ public class PresentStyle {
     public int getType() {
         return type;
     }
-
 
     public PresentStyle(int type, int openEnterAnimatorId, int openExitAnimatorId, int closeEnterAnimatorId, int closeExitAnimatorId) {
         this.type = type;
@@ -74,6 +78,16 @@ public class PresentStyle {
         this.openExitAnimatorId = openExitAnimatorId;
         this.closeEnterAnimatorId = closeEnterAnimatorId;
         this.closeExitAnimatorId = closeExitAnimatorId;
+    }
+
+    public static Animator inflateAnimator(Context context, PresentStyle style, int transit, boolean enter) {
+        int id = 0;
+        if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
+            id = enter ? style.openEnterAnimatorId : style.openExitAnimatorId;
+        } else {
+            id = enter ? style.closeEnterAnimatorId : style.closeExitAnimatorId;
+        }
+        return AnimatorInflater.loadAnimator(context, id);
     }
 
     public int getOpenEnterAnimatorId() {
@@ -92,7 +106,7 @@ public class PresentStyle {
         return closeExitAnimatorId;
     }
 
-    public static PresentStyle get(int style) {
+    public static PresentStyle inflate(int style) {
         switch (style) {
             case NONE:
                 return None();

@@ -1,5 +1,6 @@
 package com.ldt.navigation.uicontainer;
 
+import android.animation.Animator;
 import android.os.Bundle;
 import android.view.View;
 import android.content.Context;
@@ -12,7 +13,6 @@ import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.PresentStyle;
 
 import static com.ldt.navigation.NavigationFragment.DEFAULT_DURATION;
-import static com.ldt.navigation.NavigationFragment.PRESENT_STYLE_DEFAULT;
 
 public interface UIContainer {
  SimpleArrayMap<String, Class<?>> sClassMap =
@@ -44,7 +44,7 @@ public interface UIContainer {
   * @param hQualifier
   * @param dpUnit
   */
- default void provideController(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {}
+ default void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {}
 
  /**
   * Equal to onCreateView
@@ -57,6 +57,12 @@ public interface UIContainer {
  View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId);
 
  /**
+  *  Called by Navigation Controller
+  */
+ default View onCreateLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
+  return provideLayout(context, inflater, viewGroup, subContainerId);
+ }
+ /**
   * Equal to onViewCreated
   * @param view
   */
@@ -67,21 +73,23 @@ public interface UIContainer {
  /*
  Call in onCreate, after provideConfig
   */
- default void created(Bundle bundle) {}
+ default void created(NavigationController controller, Bundle bundle) {}
 
  /**
   * Call in onDestroyView
   */
- default void destroy() {}
- default void saveState(Bundle bundle) {}
- default void restoreState(Bundle bundle) {}
- default void start() {};
- default void stop() {};
- default void resume() {};
- default void pause() {};
- default void destroyView() {}
- default void activityCreated(Bundle savedInstanceState) {}
+ default void destroy(NavigationController controller) {}
+ default void saveState(NavigationController controller, Bundle bundle) {}
+ default void restoreState(NavigationController controller, Bundle bundle) {}
+ default void start(NavigationController controller) {};
+ default void stop(NavigationController controller) {};
+ default void resume(NavigationController controller) {};
+ default void pause(NavigationController controller) {};
+ default void destroyView(NavigationController controller) {}
+ default void stackChanged(NavigationController controller) {}
+ default void activityCreated(NavigationController controller, Bundle savedInstanceState) {}
  default LayoutInflater provideLayoutInflater(Bundle savedInstanceState) { return null;}
+ default void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {}
 
  default boolean shouldAttachToContainerView() {
   return true;
@@ -92,11 +100,12 @@ public interface UIContainer {
  }
 
  default int defaultTransition() {
-  return PresentStyle.NONE;
+  return PresentStyle.FADE;
  }
 
  default int defaultOpenExitTransition() {
   return PresentStyle.SAME_AS_OPEN;
  }
 
+ default void onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {}
 }

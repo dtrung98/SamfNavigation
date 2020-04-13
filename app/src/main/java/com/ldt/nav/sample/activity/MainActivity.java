@@ -9,10 +9,10 @@ import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.router.SplitRouterSaver;
-import com.ldt.navigation.router.SplitRouter;
-import com.ldt.navigation.uicontainer.ExpandContainer;
+import com.ldt.navigation.router.BaseSplitRouter;
+import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 
-public class MainActivity extends AppCompatActivity implements SplitRouter {
+public class MainActivity extends AppCompatActivity implements BaseSplitRouter {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
                 getSupportFragmentManager(),
                 leftContainerViewId,
                 SamplePage.class,
-                ExpandContainer.class);
+                ExpandStaticContainer.class);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
                 getSupportFragmentManager(),
                 rightContainerViewId,
                 EmptyPage.class,
-                ExpandContainer.class);
+                ExpandStaticContainer.class);
     }
 
     @Override
