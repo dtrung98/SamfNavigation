@@ -20,10 +20,10 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @NonNull
-  abstract UIContainer createSubContainer(NavigationController controller, int wQualifier, int hQualifier, float dpUnit);
+  protected abstract UIContainer createSubContainer(NavigationController controller, int wQualifier, int hQualifier, float dpUnit);
 
   @Override
-  public final void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
     mSubContainer = createSubContainer(controller, wQualifier, hQualifier, dpUnit);
     mSubContainer.provideQualifier(controller, wQualifier, hQualifier, dpUnit);
   }
