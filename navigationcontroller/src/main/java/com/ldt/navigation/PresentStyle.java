@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
  * Created by burt on 2016. 5. 26..
  */
 public class PresentStyle {
-    public static final int REMOVED_FRAGMENT_PRESENT_STYLE = -2;
+    public static final int SELF_DEFINED = -2;
     public static final int SAME_AS_OPEN = -1;
     public static final int NONE                    = 0;
     public static final int ACCORDION_LEFT          = 1;

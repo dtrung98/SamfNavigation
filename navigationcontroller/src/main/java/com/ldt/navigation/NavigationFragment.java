@@ -29,19 +29,35 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
     public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
     public static final int PRESENT_STYLE_DEFAULT = PresentStyle.SLIDE_LEFT;
+    public static final String SELF_OPEN_EXIT_PRESENT_STYLE_TYPE = "self_open_exit_present_style_type";
+    public static final int SELF_OPEN_EXIT_TYPE_NO_SET = -3;
 
     private WeakReference<NavigationController> weakNavigationController = null;
     protected boolean mAnimatable = true;
     protected boolean mIsOnConfigurationAnimation = false;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mAnimatable = savedInstanceState.getBoolean(ANIMATABLE, mAnimatable);
+            int savedOpenExitType = savedInstanceState.getInt(SELF_OPEN_EXIT_PRESENT_STYLE_TYPE, SELF_OPEN_EXIT_TYPE_NO_SET);
+            if(savedOpenExitType != SELF_OPEN_EXIT_TYPE_NO_SET) mOpenExitPresentStyle = PresentStyle.inflate(savedOpenExitType);
+        }
+
+        mIsOnConfigurationAnimation = savedInstanceState != null;
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ANIMATABLE, mAnimatable);
+        int openExitType = mOpenExitPresentStyle ==null ? SELF_OPEN_EXIT_TYPE_NO_SET : mOpenExitPresentStyle.getType();
+        outState.putInt(SELF_OPEN_EXIT_PRESENT_STYLE_TYPE, openExitType);
     }
 
-    private PresentStyle presentStyle = null;
-    private PresentStyle exitPresentStyle = null;
+    private PresentStyle mOpenEnterPresentStyle = null;
+    private PresentStyle mOpenExitPresentStyle = null;
 
     public boolean navigateBack() {
         NavigationController controller = getNavigationController();
@@ -68,6 +84,7 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
 
     protected void setAnimatable(boolean animatable) {
         this.mAnimatable = animatable;
+        mIsOnConfigurationAnimation = false;
     }
 
  /*  protected voild setPresentStyle(PresentStyle presentStyle) {
@@ -78,23 +95,24 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         return PRESENT_STYLE_DEFAULT;
     }
 
-    public void setOpenExitPresentStyle(PresentStyle exitPresentStyle) {
-        this.exitPresentStyle = exitPresentStyle;
+    void setSelfOpenExitPresentStyle(PresentStyle newStyle) {
+        if(mOpenExitPresentStyle == null || (newStyle != null && mOpenExitPresentStyle.getType() == newStyle.getType()))
+        this.mOpenExitPresentStyle = PresentStyle.inflate(newStyle.getType());
     }
 
     /**
-     *  Cài đặt hiệu ứng cho Fragment cũ
+     *  Cài đặt hiệu ứng chuyển cảnh cho Fragment nằm phía sau
      * @return  0 : không dùng hiệu ứng
-     * <br>  -1 : dùng cùng loại hiệu ứng với Fragment mới
-     * <br> -2 : dùng hiệu ứng biến mất của Fragment cũ
+     * <br>  -1 :  hiệu ứng đồng nhất
+     * <br> -2 : dùng hiệu ứng biến mất của Fragment nằm phía sau đó
      */
     public int defaultOpenExitTransition() {
         return PresentStyle.SAME_AS_OPEN;
     }
 
-    public PresentStyle getPresentStyle() {
-        if(presentStyle==null) presentStyle = PresentStyle.inflate(defaultTransition());
-        return presentStyle;
+    public PresentStyle getOpenEnterPresentStyle() {
+        if(mOpenEnterPresentStyle ==null) mOpenEnterPresentStyle = PresentStyle.inflate(defaultTransition());
+        return mOpenEnterPresentStyle;
     }
 
     public int defaultDuration() {
@@ -114,16 +132,6 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
     public boolean requestBack() {
         NavigationController controller = getNavigationController();
         return controller != null && controller.onNavigateBack();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
-            mAnimatable = savedInstanceState.getBoolean(ANIMATABLE, mAnimatable);
-        }
-
-        mIsOnConfigurationAnimation = savedInstanceState != null;
     }
 
     private boolean isRootLayoutWrapped = false;
@@ -175,58 +183,64 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
 
     @Override
     public Animator onCreateAnimator(final int transit, final boolean enter, int nextAnim) {
-        if(mIsOnConfigurationAnimation) {
+        /* Fragment trong quá trình restore lại, hãy vô hiệu hóa đi */
+       if(mIsOnConfigurationAnimation) {
             mIsOnConfigurationAnimation = false;
             return null;
         }
 
+        /* Fragment bị tắt hiệu ứng */
         if(!mAnimatable) {
             mAnimatable = true;
             return null;
         }
 
         NavigationController nav =  getNavigationController();
+        /* Không được gắn Controller và bản thân không phải Controller */
         if(nav == null && !(this instanceof NavigationController)) {
             return null; //no animatable
         }
 
-        PresentStyle presentStyle = getPresentStyle();
-        if(presentStyle.getType() == PresentStyle.NONE) return null;
+        /* Open Enter Transition Style */
+        PresentStyle openEnterPresentStyle = getOpenEnterPresentStyle();
+        if(openEnterPresentStyle.getType() == PresentStyle.NONE) return null;
 
         Animator animator = null;
         if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
 
+            /* Open Enter */
             if (enter) {
-                int id = presentStyle.getOpenEnterAnimatorId();
+                int id = openEnterPresentStyle.getOpenEnterAnimatorId();
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            } else {
+            } else { /* Open Exit */
                 int id;
-                if(exitPresentStyle==null)
-                    id = presentStyle.getOpenExitAnimatorId();
+                if(mOpenExitPresentStyle ==null)
+                    id = openEnterPresentStyle.getOpenExitAnimatorId();
                 else {
-                    id = exitPresentStyle.getOpenExitAnimatorId();
+                    id = mOpenExitPresentStyle.getOpenExitAnimatorId();
                 }
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             }
 
         } else {
 
-            if (enter) {
+            if (enter) { /* Close Enter */
                 int id;
-                if(exitPresentStyle == null)
-                id = presentStyle.getCloseEnterAnimatorId();
+                if(mOpenExitPresentStyle == null)
+                id = openEnterPresentStyle.getCloseEnterAnimatorId();
                 else {
-                    id = exitPresentStyle.getCloseEnterAnimatorId();
-                    exitPresentStyle = null;
+                    id = mOpenExitPresentStyle.getCloseEnterAnimatorId();
+                    mOpenExitPresentStyle = null;
                 }
 
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            } else {
+            } else { /* Close Exit */
                 int id;
-                id = presentStyle.getCloseExitAnimatorId();
+                id = openEnterPresentStyle.getCloseExitAnimatorId();
                 if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
             }
         }
+
         if(animator != null) {
             animator.setInterpolator(getInterpolator());
             animator.setDuration(defaultDuration());

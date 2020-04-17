@@ -523,32 +523,39 @@ public class NavigationController extends NavigationFragment {
         navigateTo(fragment, true);
     }
 
-    public void navigateTo(NavigationFragment fragment, boolean withAnimation) {
+    public void navigateTo(NavigationFragment fragmentToPush, boolean withAnimation) {
 
         synchronized (mSync) {
 
-            fragment.setNavigationController(this);
+            fragmentToPush.setNavigationController(this);
 
             // phát sinh tag
             String tag = nextNavigationFragmentTag();
 
             // nếu stack rỗng
             if (mFragStack.size() == 0) {
-                fragment.setAnimatable(false);
+                fragmentToPush.setAnimatable(false);
                 getFragmentManagerForNavigation()
                         .beginTransaction()
-                        .replace(mSubContainerId, fragment, tag)
+                        .replace(mSubContainerId, fragmentToPush, tag)
                         .commit();
 
             } else {
+                int openExit = fragmentToPush.defaultOpenExitTransition();
+                NavigationFragment fragmentToHide = getTopFragment();
+                /* fragment to push quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
 
-                int openExit = fragment.defaultOpenExitTransition();
                 if(openExit==PresentStyle.SAME_AS_OPEN)
-                    getTopFragment().setOpenExitPresentStyle(fragment.getPresentStyle());
-                else if(openExit!=PresentStyle.REMOVED_FRAGMENT_PRESENT_STYLE)
-                    getTopFragment().setOpenExitPresentStyle(PresentStyle.inflate(openExit));
+                    fragmentToHide.setSelfOpenExitPresentStyle(fragmentToPush.getOpenEnterPresentStyle());
 
-                fragment.setAnimatable(withAnimation);
+                /* fragment to push ép fragment nằm sau nó tuân theo hiệu ứng chỉ định */
+                else if(openExit != PresentStyle.SELF_DEFINED)
+                    fragmentToHide.setSelfOpenExitPresentStyle(PresentStyle.inflate(openExit));
+                else {
+                    /* fragment nằm sau thích gì thì chạy nấy */
+                }
+
+                fragmentToPush.setAnimatable(withAnimation);
                 // hide last fragment and add new fragment
                 NavigationFragment hideFragment = mFragStack.peek();
                 hideFragment.setAnimatable(withAnimation);
@@ -557,10 +564,10 @@ public class NavigationController extends NavigationFragment {
                 if(withAnimation)
                         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                         ft.hide(hideFragment)
-                        .add(mSubContainerId, fragment, tag)
+                        .add(mSubContainerId, fragmentToPush, tag)
                         .commit();
             }
-            mFragStack.add(fragment);
+            mFragStack.add(fragmentToPush);
             mTagStack.add(tag);
             if(mUiContainer != null) mUiContainer.stackChanged(this);
         }
@@ -569,6 +576,10 @@ public class NavigationController extends NavigationFragment {
         return dismissFragment(fragment, true);
     }
 
+    /**
+     *  Đóng fragment chỉ định, nếu là top fragment thì gọi hàm navigateBack()
+     *  <br>Ngược lại
+     */
     public boolean dismissFragment(NavigationFragment fragment, boolean withAnimation) {
         int count = getFragmentCount();
         int index = mFragStack.indexOf(fragment);
@@ -645,6 +656,14 @@ public class NavigationController extends NavigationFragment {
             NavigationFragment fragmentToShow = mFragStack.peek();
             fragmentToShow.setNavigationController(this);
             fragmentToShow.setAnimatable(withAnimation);
+
+            int openExit = fragmentToRemove.defaultOpenExitTransition();
+            /* fragment to remove quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
+            if(openExit == PresentStyle.SAME_AS_OPEN)
+                fragmentToShow.setSelfOpenExitPresentStyle(fragmentToRemove.getOpenEnterPresentStyle());
+            else if(openExit != PresentStyle.SELF_DEFINED)
+                fragmentToShow.setSelfOpenExitPresentStyle(PresentStyle.inflate(openExit));
+
             getFragmentManagerForNavigation()
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
