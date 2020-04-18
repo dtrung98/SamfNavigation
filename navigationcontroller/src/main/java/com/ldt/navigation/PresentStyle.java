@@ -7,6 +7,8 @@ import android.content.Context;
 
 import androidx.fragment.app.FragmentTransaction;
 
+import java.security.cert.TrustAnchor;
+
 /**
  * Created by burt on 2016. 5. 26..
  */
@@ -54,6 +56,18 @@ public class PresentStyle {
     public static final int ZOOM_FROM_LEFT_BOTTOM_CORNER = 38;
     public static final int ZOOM_FROM_RIGHT_BOTTOM_CORNER= 39;
     public static final int CUSTOM = 40;
+
+    public static final int TRANSITION_NOT_DETECTED = -1;
+    public static final int TRANSITION_TYPE_OPEN_ENTER = 1;
+    public static final int TRANSITION_TYPE_OPEN_EXIT = 2;
+    public static final int TRANSITION_TYPE_CLOSE_ENTER = 3;
+    public static final int TRANSITION_TYPE_CLOSE_EXIT= 4;
+
+    public static final int getTransitionType(int transit, boolean enter) {
+        if(transit==FragmentTransaction.TRANSIT_FRAGMENT_OPEN) return (enter) ? TRANSITION_TYPE_OPEN_ENTER: TRANSITION_TYPE_OPEN_EXIT;
+        else if(transit == FragmentTransaction.TRANSIT_FRAGMENT_CLOSE) return  (enter) ? TRANSITION_TYPE_CLOSE_ENTER : TRANSITION_TYPE_CLOSE_EXIT;
+        else return TRANSITION_NOT_DETECTED;
+    }
 
     private int openEnterAnimatorId;
     private int openExitAnimatorId;

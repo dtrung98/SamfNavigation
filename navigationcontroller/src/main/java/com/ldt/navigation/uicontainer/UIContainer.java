@@ -107,5 +107,7 @@ public interface UIContainer {
   return PresentStyle.SAME_AS_OPEN;
  }
 
- default void onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {}
+ default int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+  return null;
+ }
 }

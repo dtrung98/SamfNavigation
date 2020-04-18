@@ -27,11 +27,12 @@ public class BottomSheetContainer extends AnimatorUIContainer implements View.On
   }
 
   @Override
-  public void onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
     mTopMargin = (int)mPanel.getContext().getResources().getDimension(R.dimen.dpUnit)*4 + top;
     View subView = getSubContainerView();
     subView.setTranslationY(mTopMargin);
     subView.setPadding(subView.getPaddingLeft(), subView.getPaddingTop(), subView.getPaddingRight(), subView.getPaddingBottom());
+    return null;
   }
 
   @Override

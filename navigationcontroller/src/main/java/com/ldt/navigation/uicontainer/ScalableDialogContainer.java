@@ -93,4 +93,8 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
     if(mController!=null) mController.quit();
   }
 
+  @Override
+  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+    return new int[] {0,0,0,0};
+  }
 }

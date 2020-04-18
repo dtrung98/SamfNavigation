@@ -105,8 +105,6 @@ public class NavigationController extends NavigationFragment {
     private static String nextNavigationFragmentTag() {
         return "com.ldt.navigation.fragment:"+nextId();
     }
-
-    private TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
     public final NavigationFragment getFragmentAt(int i) {
         return mFragStack.get(i);
     }
@@ -220,7 +218,7 @@ public class NavigationController extends NavigationFragment {
         return insets;
     }
 
-    private static WeakHashMap<String, OnWindowInsetsChangedListener> sControllerWICLs = new WeakHashMap<>();
+    private static WeakHashMap<String, WindowInsetsListener> sControllerWICLs = new WeakHashMap<>();
     //private static ArrayList<String> sControllerWICLKeys = new ArrayList<>();
 
     private static WeakReference<OnApplyWindowInsetsListener> sListener;
@@ -228,7 +226,7 @@ public class NavigationController extends NavigationFragment {
         sControllerWICLs.remove(key);
     }
 
-    private static void registerWindowInsetsListener(Activity activity, String key, OnWindowInsetsChangedListener listener) {
+    private static void registerWindowInsetsListener(Activity activity, String key, WindowInsetsListener listener) {
         if(key != null && !key.isEmpty() && listener != null) sControllerWICLs.put(key, listener);
 
         if(activity != null) {
@@ -246,9 +244,9 @@ public class NavigationController extends NavigationFragment {
                         mWindowInsets[2] = right;
                         mWindowInsets[3] = bottom;
 
-                        OnWindowInsetsChangedListener l;
-                        Set<Map.Entry<String, OnWindowInsetsChangedListener>> entrySet = sControllerWICLs.entrySet();
-                        for (Map.Entry<String, OnWindowInsetsChangedListener> me : entrySet) {
+                        WindowInsetsListener l;
+                        Set<Map.Entry<String, WindowInsetsListener>> entrySet = sControllerWICLs.entrySet();
+                        for (Map.Entry<String, WindowInsetsListener> me : entrySet) {
                             l = me.getValue();
                             if (l != null) l.onWindowInsetsChanged(left, top, right, bottom);
                         }
@@ -441,11 +439,9 @@ public class NavigationController extends NavigationFragment {
     public int getFragmentCount() {
         return mFragStack.size();
     }
-    public void setInterpolator(TimeInterpolator interpolator) {
-        this.interpolator = interpolator;
-    }
-    public TimeInterpolator getInterpolator() {
-        return interpolator;
+
+    public TimeInterpolator defaultInterpolator() {
+        return new AccelerateDecelerateInterpolator();
     }
 
     public void switchAt(NavigationFragment fragment, int positionAt) {
@@ -546,11 +542,11 @@ public class NavigationController extends NavigationFragment {
                 /* fragment to push quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
 
                 if(openExit==PresentStyle.SAME_AS_OPEN)
-                    fragmentToHide.setSelfOpenExitPresentStyle(fragmentToPush.getOpenEnterPresentStyle());
+                    fragmentToHide.overrideOpenExitCloseEnterTransition(fragmentToPush.getOpenEnterPresentStyle(), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
 
                 /* fragment to push ép fragment nằm sau nó tuân theo hiệu ứng chỉ định */
                 else if(openExit != PresentStyle.SELF_DEFINED)
-                    fragmentToHide.setSelfOpenExitPresentStyle(PresentStyle.inflate(openExit));
+                    fragmentToHide.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
                 else {
                     /* fragment nằm sau thích gì thì chạy nấy */
                 }
@@ -660,9 +656,9 @@ public class NavigationController extends NavigationFragment {
             int openExit = fragmentToRemove.defaultOpenExitTransition();
             /* fragment to remove quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
             if(openExit == PresentStyle.SAME_AS_OPEN)
-                fragmentToShow.setSelfOpenExitPresentStyle(fragmentToRemove.getOpenEnterPresentStyle());
+                fragmentToShow.overrideOpenExitCloseEnterTransition(fragmentToRemove.getOpenEnterPresentStyle(), fragmentToRemove.defaultDuration(), fragmentToRemove.defaultInterpolator());
             else if(openExit != PresentStyle.SELF_DEFINED)
-                fragmentToShow.setSelfOpenExitPresentStyle(PresentStyle.inflate(openExit));
+                fragmentToShow.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToRemove.defaultDuration(), fragmentToRemove.defaultInterpolator());
 
             getFragmentManagerForNavigation()
                     .beginTransaction()
@@ -705,7 +701,16 @@ public class NavigationController extends NavigationFragment {
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
-        if(mUiContainer!=null) mUiContainer.onWindowInsetsChanged(this, left, top, right, bottom);
+        if(mUiContainer!=null) {
+            int[] customInset = mUiContainer.onWindowInsetsChanged(this, left, top, right, bottom);
+            if(customInset != null && customInset.length==4) {
+                left = customInset[0];
+                top = customInset[1];
+                right = customInset[2];
+                bottom = customInset[3];
+            }
+        }
+
         for (NavigationFragment f :
                 mFragStack) {
             if(f.attachedToActivity())

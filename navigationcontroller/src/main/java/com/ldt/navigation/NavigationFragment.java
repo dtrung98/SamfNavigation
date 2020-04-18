@@ -12,7 +12,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
@@ -24,7 +23,7 @@ import java.lang.ref.WeakReference;
  * Created by burt on 2016. 5. 24..
  * Updated by dtrung98 on 2019. 12
  */
-public abstract class NavigationFragment extends Fragment implements OnWindowInsetsChangedListener {
+public abstract class NavigationFragment extends Fragment implements WindowInsetsListener {
     private static final String TAG ="NavigationFragment";
     public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
@@ -95,9 +94,17 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         return PRESENT_STYLE_DEFAULT;
     }
 
-    void setSelfOpenExitPresentStyle(PresentStyle newStyle) {
+    void overrideOpenExitCloseEnterTransition(PresentStyle newStyle, int duration, TimeInterpolator interpolator) {
         if(mOpenExitPresentStyle == null || (newStyle != null && mOpenExitPresentStyle.getType() == newStyle.getType()))
         this.mOpenExitPresentStyle = PresentStyle.inflate(newStyle.getType());
+        mOpenExitCloseEnterDuration = duration;
+        mOpenExitCloseEnterInterpolator = interpolator;
+    }
+
+    private int mOpenExitCloseEnterDuration = -1;
+    private TimeInterpolator mOpenExitCloseEnterInterpolator = null;
+    private boolean useCustomOpenExitCloseEnterTransition() {
+        return mOpenExitPresentStyle != null && mOpenExitCloseEnterDuration > -1 && mOpenExitCloseEnterInterpolator != null;
     }
 
     /**
@@ -172,9 +179,9 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
             return controller.getRouter();
     }
 
-    public TimeInterpolator getInterpolator() {
+    public TimeInterpolator defaultInterpolator() {
         NavigationController controller = getNavigationController();
-        if(controller != null) return controller.getInterpolator();
+        if(controller != null) return controller.defaultInterpolator();
         return new AccelerateDecelerateInterpolator();
     }
 
@@ -205,46 +212,53 @@ public abstract class NavigationFragment extends Fragment implements OnWindowIns
         PresentStyle openEnterPresentStyle = getOpenEnterPresentStyle();
         if(openEnterPresentStyle.getType() == PresentStyle.NONE) return null;
 
-        Animator animator = null;
-        if(transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
-
-            /* Open Enter */
-            if (enter) {
-                int id = openEnterPresentStyle.getOpenEnterAnimatorId();
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            } else { /* Open Exit */
-                int id;
-                if(mOpenExitPresentStyle ==null)
-                    id = openEnterPresentStyle.getOpenExitAnimatorId();
-                else {
+        int id = -1;
+        int duration = -1;
+        TimeInterpolator interpolator = null;
+        int transitType = PresentStyle.getTransitionType(transit, enter);
+        switch (transitType) {
+            case PresentStyle.TRANSITION_TYPE_OPEN_ENTER:
+                id = getOpenEnterPresentStyle().getOpenEnterAnimatorId();
+                duration = defaultDuration();
+                interpolator = defaultInterpolator();
+                break;
+            case PresentStyle.TRANSITION_TYPE_CLOSE_EXIT:
+                id = getOpenEnterPresentStyle().getCloseExitAnimatorId();
+                duration = defaultDuration();
+                interpolator = defaultInterpolator();
+                break;
+            case PresentStyle.TRANSITION_TYPE_OPEN_EXIT:
+                if(useCustomOpenExitCloseEnterTransition()) {
                     id = mOpenExitPresentStyle.getOpenExitAnimatorId();
+                    duration = mOpenExitCloseEnterDuration;
+                    interpolator = mOpenExitCloseEnterInterpolator;
+                } else {
+                    id = getOpenEnterPresentStyle().getOpenExitAnimatorId();
+                    duration = defaultDuration();
+                    interpolator = defaultInterpolator();
                 }
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            }
-
-        } else {
-
-            if (enter) { /* Close Enter */
-                int id;
-                if(mOpenExitPresentStyle == null)
-                id = openEnterPresentStyle.getCloseEnterAnimatorId();
-                else {
+                break;
+            case PresentStyle.TRANSITION_TYPE_CLOSE_ENTER:
+                if(useCustomOpenExitCloseEnterTransition()) {
                     id = mOpenExitPresentStyle.getCloseEnterAnimatorId();
-                    mOpenExitPresentStyle = null;
+                    duration = mOpenExitCloseEnterDuration;
+                    interpolator = mOpenExitCloseEnterInterpolator;
+                } else {
+                    id = getOpenEnterPresentStyle().getCloseEnterAnimatorId();
+                    duration = defaultDuration();
+                    interpolator = defaultInterpolator();
                 }
-
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            } else { /* Close Exit */
-                int id;
-                id = openEnterPresentStyle.getCloseExitAnimatorId();
-                if(id != -1) animator = AnimatorInflater.loadAnimator(getContext(), id);
-            }
         }
 
-        if(animator != null) {
-            animator.setInterpolator(getInterpolator());
-            animator.setDuration(defaultDuration());
-        }
+        //Animator animator = null;
+        Animator animator = null;
+        if(id != -1)
+        try {
+            animator = AnimatorInflater.loadAnimator(getContext(), id);
+        } catch (Exception ignored) {}
+
+        if(animator != null && duration != -1)  animator.setDuration(duration);
+        if(animator != null && interpolator != null) animator.setInterpolator(interpolator);
         return animator;
     }
 

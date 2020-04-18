@@ -158,7 +158,8 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @Override
-  public void onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
-    if(mSubContainer != null) mSubContainer.onWindowInsetsChanged(controller, left, top, right, bottom);
+  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+    if(mSubContainer != null) return mSubContainer.onWindowInsetsChanged(controller, left, top, right, bottom);
+    return UIContainer.super.onWindowInsetsChanged(controller, left, top, right, bottom);
   }
 }
