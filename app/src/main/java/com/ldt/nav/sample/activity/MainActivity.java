@@ -4,15 +4,18 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationFragment;
+import com.ldt.navigation.router.SplitRouter;
 import com.ldt.navigation.router.SplitRouterSaver;
 import com.ldt.navigation.router.BaseSplitRouter;
 import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 
-public class MainActivity extends AppCompatActivity implements BaseSplitRouter {
+public class MainActivity extends AppCompatActivity implements SplitRouter {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +41,20 @@ public class MainActivity extends AppCompatActivity implements BaseSplitRouter {
     private final SplitRouterSaver mRouterSaver = new SplitRouterSaver("left-router","right-router");
 
     @Override
-    public NavigationController presentLeftRouter(String leftControllerTag, int leftContainerViewId) {
-        return presentNavigator(leftControllerTag,
-                getSupportFragmentManager(),
-                leftContainerViewId,
-                SamplePage.class,
-                ExpandStaticContainer.class);
+    public FragmentManager provideFragmentManager() {
+        return getSupportFragmentManager();
     }
 
+    @NonNull
     @Override
-    public NavigationController presentRightRouter(String rightControllerTag, int rightContainerViewId) {
-        return /*null*/ presentNavigator(rightControllerTag,
-                getSupportFragmentManager(),
-                rightContainerViewId,
-                EmptyPage.class,
-                ExpandStaticContainer.class);
+    public Class<? extends NavigationFragment> provideDefaultDetailFragment() {
+        return EmptyPage.class;
+    }
+
+    @NonNull
+    @Override
+    public Class<? extends NavigationFragment> provideDefaultMasterFragment() {
+        return SamplePage.class;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.ldt.nav.sample.fragment;
 
+import android.animation.TimeInterpolator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,10 +13,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
+import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.NewFlowContainer;
 
@@ -70,13 +74,13 @@ public class SamplePage extends NavigationFragment {
             navigateTo(SamplePage.newInstance(mIndex + 1, -1));
         }
         
-        /*
+       /* if(getFragmentManager()!=null)
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container,new SamplePageTwo(),"sample-page-2")
+                .replace(R.id.container,new SamplePage(),"sample-page-2")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-       .commit();
-       */
+       .commit();*/
+
     }
 
     @OnClick(R.id.button_2)
@@ -149,12 +153,9 @@ public class SamplePage extends NavigationFragment {
         } else if(type == 1) {
             mRoot.setBackgroundResource(R.color.focusGreen);
             mButton.setBackgroundResource(R.drawable.background_round_dark_blue);
-
-
         } else if(type == 2) {
             mRoot.setBackgroundResource(R.color.FlatOrange);
             mButton.setBackgroundResource(R.drawable.background_round_pink);
-
         }
 
     }
@@ -175,24 +176,24 @@ public class SamplePage extends NavigationFragment {
     View mQuitButton;
 
     private int defaultP = -1;
+
     @Override
     public int defaultTransition() {
       
         if(defaultP ==-1) {
             Random r = new Random();
-            defaultP = r.nextInt(39) + 1; //exclude NONE present style
+            defaultP = r.nextInt(40) + 1; //exclude NONE present style
         }
         
-        return defaultP;
+        return PresentStyle.SCALEXY;
     }
+
 
     @BindView(R.id.status_bar)
     View mStatusBar;
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
-        int x = 5;
-
         mStatusBar.getLayoutParams().height = top;
         mStatusBar.requestLayout();
 

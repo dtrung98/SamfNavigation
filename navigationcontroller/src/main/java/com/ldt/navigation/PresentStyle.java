@@ -55,13 +55,14 @@ public class PresentStyle {
     public static final int ZOOM_FROM_RIGHT_TOP_CORNER   = 37;
     public static final int ZOOM_FROM_LEFT_BOTTOM_CORNER = 38;
     public static final int ZOOM_FROM_RIGHT_BOTTOM_CORNER= 39;
-    public static final int CUSTOM = 40;
+    public static final int DEFAULT_FRAGMENT_OPEN_CLOSE = 40;
+    public static final int CUSTOM = 41;
 
-    public static final int TRANSITION_NOT_DETECTED = -1;
-    public static final int TRANSITION_TYPE_OPEN_ENTER = 1;
-    public static final int TRANSITION_TYPE_OPEN_EXIT = 2;
-    public static final int TRANSITION_TYPE_CLOSE_ENTER = 3;
-    public static final int TRANSITION_TYPE_CLOSE_EXIT= 4;
+    public static final int TRANSITION_NOT_DETECTED = 42;
+    public static final int TRANSITION_TYPE_OPEN_ENTER =43;
+    public static final int TRANSITION_TYPE_OPEN_EXIT = 44;
+    public static final int TRANSITION_TYPE_CLOSE_ENTER = 45;
+    public static final int TRANSITION_TYPE_CLOSE_EXIT= 46;
 
     public static final int getTransitionType(int transit, boolean enter) {
         if(transit==FragmentTransaction.TRANSIT_FRAGMENT_OPEN) return (enter) ? TRANSITION_TYPE_OPEN_ENTER: TRANSITION_TYPE_OPEN_EXIT;
@@ -202,6 +203,8 @@ public class PresentStyle {
                 return ZoomFromRightTopCorner();
             case ZOOM_FROM_RIGHT_BOTTOM_CORNER:
                 return ZoomFromRightBottomCorner();
+            case DEFAULT_FRAGMENT_OPEN_CLOSE:
+                return DefaultFragmentOpenClose();
             default:
                 return None();
         }
@@ -308,7 +311,7 @@ public class PresentStyle {
     }
 
     private static PresentStyle ScaleXY() {
-        return new PresentStyle(SCALEXY, R.animator.scalexy_enter, R.animator.scalexy_exit, R.animator.scalexy_enter, R.animator.scalexy_exit);
+        return new PresentStyle(SCALEXY, R.animator.scalexy_enter_half, R.animator.scalexy_exit_half, R.animator.scalexy_enter_half, R.animator.scalexy_exit_half);
     }
 
     private static PresentStyle SlideLeft() {
@@ -365,6 +368,10 @@ public class PresentStyle {
 
     private static PresentStyle ZoomFromRightBottomCorner() {
         return new PresentStyle(ZOOM_FROM_RIGHT_BOTTOM_CORNER, R.animator.zoom_from_left_corner_left_in, R.animator.zoom_from_left_corner_right_out, R.animator.zoom_from_left_corner_right_in, R.animator.zoom_from_left_corner_left_out);
+    }
+
+    private static PresentStyle DefaultFragmentOpenClose() {
+        return new PresentStyle(DEFAULT_FRAGMENT_OPEN_CLOSE, R.animator.fragment_open_enter, R.animator.fragment_open_exit, R.animator.fragment_close_enter, R.animator.fragment_close_exit);
     }
 
 }

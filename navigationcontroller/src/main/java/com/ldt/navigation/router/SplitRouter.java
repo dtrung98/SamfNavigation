@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.uicontainer.ExpandContainer;
+import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 import com.ldt.navigation.uicontainer.UIContainer;
 
 public interface SplitRouter extends BaseSplitRouter {
@@ -78,12 +79,12 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default NavigationController presentLeftRouter(String leftControllerTag, int leftContainerViewId) {
-        return presentNavigator(leftControllerTag, provideFragmentManager(), leftContainerViewId, provideDefaultMasterFragment(), ExpandContainer.class);
+        return presentNavigator(leftControllerTag, provideFragmentManager(), leftContainerViewId, provideDefaultMasterFragment(), ExpandStaticContainer.class);
     }
 
     @Override
     @NonNull
     default NavigationController presentRightRouter(String rightControllerTag, int rightContainerViewId) {
-        return presentNavigator(rightControllerTag, provideFragmentManager(), rightContainerViewId, provideDefaultDetailFragment(), ExpandContainer.class);
+        return presentNavigator(rightControllerTag, provideFragmentManager(), rightContainerViewId, provideDefaultDetailFragment(), ExpandStaticContainer.class);
     }
 }
