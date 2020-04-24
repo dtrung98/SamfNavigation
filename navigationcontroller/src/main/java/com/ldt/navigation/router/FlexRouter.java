@@ -12,6 +12,9 @@ import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.util.ArrayList;
 
+/**
+ * Cung cấp phương thức giúp điều khiển một stack các NavigationController nằm chồng lên nhau
+ */
 public interface FlexRouter extends Router {
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 

@@ -93,8 +93,11 @@ public class SamplePage extends NavigationFragment {
     void viewContent1() {
 
          NavigationController controller =  NavigationController.findInstance("right-router", getNavigationController().getFragmentManager());
-                  if(controller == null) getNavigationController()
-                          .presentNavigator("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class);
+                  if(controller == null) {
+                      getNavigationController()
+                              .presentNavigator("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class)
+                              .switchNew(new SamplePage());
+                  }
                   else controller.switchNew(new SamplePage());
     }
     @BindView(R.id.edit_text)
@@ -185,7 +188,7 @@ public class SamplePage extends NavigationFragment {
             defaultP = r.nextInt(40) + 1; //exclude NONE present style
         }
         
-        return PresentStyle.SCALEXY;
+        return defaultP;
     }
 
 

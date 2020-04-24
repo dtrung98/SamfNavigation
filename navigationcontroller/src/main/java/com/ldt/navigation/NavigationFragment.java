@@ -163,14 +163,22 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         return root;
     }
 
-    private boolean isAttachActivity = false;
+    private boolean isActivityCreated = false;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        isActivityCreated = true;
         super.onActivityCreated(savedInstanceState);
-        isAttachActivity = true;
-        int[] insets = NavigationController.getWindowInsets();
-        onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
+
+        /* self re-set window inset after created */
+        NavigationController controller = getNavigationController();
+        if(controller == null) {
+            int[] insets = NavigationController.getWindowInsets();
+            onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
+        } else {
+            int[] navInset = controller.mNavWindowInsets;
+            onWindowInsetsChanged(navInset[0], navInset[1], navInset[2], navInset[3]);
+        }
     }
 
     public Router getRouter() {
@@ -263,10 +271,16 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     }
 
     @Override
+    public void onDestroyView() {
+        isActivityCreated = false;
+        super.onDestroyView();
+    }
+
+    @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
     }
 
-    public boolean attachedToActivity() {
-        return isAttachActivity;
+    public boolean isActivityCreatedState() {
+        return isActivityCreated;
     }
 }
