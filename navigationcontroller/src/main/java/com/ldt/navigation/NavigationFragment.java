@@ -101,6 +101,12 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         mOpenExitCloseEnterInterpolator = interpolator;
     }
 
+    void clearOpenExitCloseEnterTransition() {
+        mOpenEnterPresentStyle = null;
+        mOpenExitCloseEnterDuration = -1;
+        mOpenExitCloseEnterInterpolator = null;
+    }
+
     private int mOpenExitCloseEnterDuration = -1;
     private TimeInterpolator mOpenExitCloseEnterInterpolator = null;
     private boolean useCustomOpenExitCloseEnterTransition() {
@@ -280,7 +286,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
     }
 
-    public boolean isActivityCreatedState() {
+    public final boolean isActivityCreatedState() {
         return isActivityCreated;
     }
 }

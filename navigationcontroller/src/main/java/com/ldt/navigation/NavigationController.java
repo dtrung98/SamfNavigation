@@ -170,6 +170,7 @@ public class NavigationController extends NavigationFragment {
                     mPendingFragments) {
                 navigateTo(fragment);
             }
+            mPendingFragments.clear();
         } else if(mStartUpFragmentCls !=null && initNotRestore) {
             NavigationFragment mainFragment = null;
             try {
@@ -181,8 +182,6 @@ public class NavigationController extends NavigationFragment {
             if(mainFragment!=null)
                 navigateTo(mainFragment);
         }
-
-
     }
 
     @Override
@@ -370,7 +369,7 @@ public class NavigationController extends NavigationFragment {
 
         if(uic == null) {
             uic = new ExpandContainer();
-            Log.e(TAG, "Couldn't to create new UIContainer instance, using default container instead");
+            Log.e(TAG, "Couldn't create new ui container object, will use default container instead");
         }
 
         f.mUiContainer = uic;
@@ -571,6 +570,7 @@ public class NavigationController extends NavigationFragment {
                     fragmentToHide.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
                 else {
                     /* fragment nằm sau thích gì thì chạy nấy */
+                    fragmentToHide.clearOpenExitCloseEnterTransition();
                 }
 
                 fragmentToPush.setAnimatable(withAnimation);
