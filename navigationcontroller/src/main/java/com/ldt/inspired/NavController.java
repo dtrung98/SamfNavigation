@@ -1,17 +1,19 @@
-package com.ldt.navigationx;
+package com.ldt.inspired;
+
+import androidx.fragment.app.Fragment;
 
 import java.lang.ref.WeakReference;
 
-public abstract class NavigationController<T extends NavigationFragment> extends NavigationFragment {
+public abstract class NavController<T extends Fragment> extends Fragment {
 
-    private WeakReference<NavigationController<?>> mParenController;
-    public NavigationController<?> getParentController() {
+    private WeakReference<NavController<?>> mParenController;
+    public NavController<?> getParentController() {
         return mParenController==null ? null : mParenController.get();
     }
 
-    public NavigationController<?> getRootController() {
-        NavigationController<?> current = this;
-        NavigationController<?> parent = null;
+    public NavController<?> getRootController() {
+        NavController<?> current = this;
+        NavController<?> parent = null;
 
         do {
             parent = current.getParentController();
@@ -25,7 +27,7 @@ public abstract class NavigationController<T extends NavigationFragment> extends
     public abstract void navigateTo(T nextOne);
     public abstract void switchNew(T newOne);
 
-    public static NavigationController findController(String tag) {
+    public static NavController findController(String tag) {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package com.ldt.navigation.uicontainer;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.ldt.navigation.NavigationController;
 
@@ -12,9 +13,9 @@ import com.ldt.navigation.NavigationController;
 public class NewFlowContainer extends FlexibleContainer {
   @NonNull
   @Override
-  protected UIContainer createSubContainer(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  protected UIContainer createSubContainer(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     if(hQualifier >= 432 && wQualifier >= 432) return new ScalableDialogContainer();
-    //else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new BottomSheetContainer();
+    else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new BottomSheetContainer();
     else return new ExpandContainer();
   }
 }

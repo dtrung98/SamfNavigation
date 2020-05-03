@@ -12,7 +12,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.fragment.NavHostFragment;
 
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
@@ -24,7 +28,7 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
   private int h;
   private float dpUnit;
   @Override
-  public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  public void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     mController = controller;
     w = wQualifier;
     h = hQualifier;
@@ -76,25 +80,25 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
   }
 
   @Override
-  public void start(NavigationController controller) {
+  public void start(Fragment controller) {
     //mSubContainerView.setTranslationY(h);
     //mSubContainerView.animate().translationY(h/2).setInterpolator(new AccelerateDecelerateInterpolator()).start();
   }
 
-  private NavigationController mController;
+  private Fragment mController;
 
   @Override
-  public void destroy(NavigationController controller) {
+  public void destroy(Fragment controller) {
     mController = null;
   }
 
   @Override
   public void onClick(View v) {
-    if(mController!=null) mController.quit();
+    if(mController instanceof NavigationController) ((NavigationController)mController).quit();
   }
 
   @Override
-  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+  public int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
     return new int[] {0,0,0,0};
   }
 }

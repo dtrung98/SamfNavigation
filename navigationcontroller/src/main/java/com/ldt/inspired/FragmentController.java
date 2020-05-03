@@ -1,4 +1,6 @@
-package com.ldt.navigationx;
+package com.ldt.inspired;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * FragmentController quản lý một stack các Fragment theo nguyên tắc Last In Fast Out
@@ -7,14 +9,14 @@ package com.ldt.navigationx;
  * thông qua lớp cung cấp giao diện UI Container
  *
   */
-public class FragmentController extends NavigationController<NavigationFragment> {
+public class FragmentController extends NavController<Fragment> {
     @Override
-    public void navigateTo(NavigationFragment nextOne) {
+    public void navigateTo(Fragment nextOne) {
 
     }
 
     @Override
-    public void switchNew(NavigationFragment newOne) {
+    public void switchNew(Fragment newOne) {
 
     }
 }

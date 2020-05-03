@@ -13,9 +13,10 @@ import java.security.cert.TrustAnchor;
  * Created by burt on 2016. 5. 26..
  */
 public class PresentStyle {
+    public static final int UNDEFINED = 0;
+    public static final int NONE  = -3;
     public static final int SELF_DEFINED = -2;
     public static final int SAME_AS_OPEN = -1;
-    public static final int NONE                    = 0;
     public static final int ACCORDION_LEFT          = 1;
     public static final int ACCORDION_RIGHT         = 2;
     public static final int ACCORDION_UP            = 3;

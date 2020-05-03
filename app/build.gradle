@@ -38,4 +38,8 @@ dependencies {
     // Butter Knife
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment:2.3.0-alpha06'
+    //implementation 'androidx.navigation:navigation-ui:2.2.2'
 }

@@ -8,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-
-import com.ldt.navigation.NavigationController;
+import androidx.fragment.app.Fragment;
 
 public abstract class FlexibleContainer implements UIContainer {
 
@@ -20,10 +19,10 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @NonNull
-  protected abstract UIContainer createSubContainer(NavigationController controller, int wQualifier, int hQualifier, float dpUnit);
+  protected abstract UIContainer createSubContainer(Fragment controller, int wQualifier, int hQualifier, float dpUnit);
 
   @Override
-  public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  public void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     mSubContainer = createSubContainer(controller, wQualifier, hQualifier, dpUnit);
     mSubContainer.provideQualifier(controller, wQualifier, hQualifier, dpUnit);
   }
@@ -45,67 +44,67 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @Override
-  public void created(NavigationController controller, Bundle bundle) {
+  public void created(Fragment controller, Bundle bundle) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.created(controller, bundle);
   }
 
   @Override
-  public void destroy(NavigationController controller) {
+  public void destroy(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.destroy(controller);
   }
 
   @Override
-  public void saveState(NavigationController controller, Bundle bundle) {
+  public void saveState(Fragment controller, Bundle bundle) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.saveState(controller, bundle);
   }
 
   @Override
-  public void restoreState(NavigationController controller, Bundle bundle) {
+  public void restoreState(Fragment controller, Bundle bundle) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.restoreState(controller, bundle);
   }
 
   @Override
-  public void start(NavigationController controller) {
+  public void start(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.start(controller);
   }
 
   @Override
-  public void stop(NavigationController controller) {
+  public void stop(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.stop(controller);
   }
 
   @Override
-  public void resume(NavigationController controller) {
+  public void resume(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.resume(controller);
   }
 
   @Override
-  public void pause(NavigationController controller) {
+  public void pause(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.pause(controller);
   }
 
   @Override
-  public void destroyView(NavigationController controller) {
+  public void destroyView(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.destroyView(controller);
   }
 
   @Override
-  public void stackChanged(NavigationController controller) {
+  public void stackChanged(Fragment controller) {
     UIContainer subContainer = getSubContainer();
     if(subContainer !=null) subContainer.stackChanged(controller);
   }
 
   @Override
-  public void activityCreated(NavigationController controller, Bundle savedInstanceState) {
+  public void activityCreated(Fragment controller, Bundle savedInstanceState) {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) subContainer.activityCreated(controller, savedInstanceState);
   }
@@ -130,7 +129,7 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @Override
-  public NavigationController getController() {
+  public Fragment getController() {
     UIContainer subContainer = getSubContainer();
     if(subContainer!=null) return subContainer.getController();
     return null;
@@ -158,7 +157,7 @@ public abstract class FlexibleContainer implements UIContainer {
   }
 
   @Override
-  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+  public int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
     if(mSubContainer != null) return mSubContainer.onWindowInsetsChanged(controller, left, top, right, bottom);
     return UIContainer.super.onWindowInsetsChanged(controller, left, top, right, bottom);
   }
