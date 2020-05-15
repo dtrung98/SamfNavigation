@@ -17,20 +17,6 @@ public interface SplitRouter extends BaseSplitRouter {
     @NonNull
     Class<? extends NavigationFragment> provideDefaultMasterFragment();
 
-    default void rightRouterSwitchNew(Class<? extends NavigationFragment> fragmentClazz) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = saver.findController(saver.getRightTag());
-
-        // chưa tồn tại right router, tạo một cái với startup là fragment chỉ định
-        if(controller == null) {
-            presentController(saver.getRightTag(), saver.getRightSubContainerId(), provideDefaultDetailFragment(), ExpandContainer.class);
-        } else try {
-            controller.switchNew(fragmentClazz.newInstance());
-        } catch (Exception ignored) {
-
-        }
-    }
-
     default void rightRouterSwitchNew(NavigationFragment fragment) {
         SplitRouterSaver saver = getRouterSaver();
         NavigationController controller = saver.findController(saver.getRightTag());
@@ -63,12 +49,12 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default NavigationController presentLeftRouter(String leftControllerTag, int leftContainerViewId) {
-        return presentController(leftControllerTag, leftContainerViewId, provideDefaultMasterFragment(), ExpandStaticContainer.class);
+        return presentController(leftControllerTag, leftContainerViewId, ExpandStaticContainer.class, provideDefaultMasterFragment(), null);
     }
 
     @Override
     @NonNull
     default NavigationController presentRightRouter(String rightControllerTag, int rightContainerViewId) {
-        return presentController(rightControllerTag, rightContainerViewId, provideDefaultDetailFragment(), ExpandStaticContainer.class);
+        return presentController(rightControllerTag, rightContainerViewId, ExpandStaticContainer.class, provideDefaultDetailFragment(), null);
     }
 }

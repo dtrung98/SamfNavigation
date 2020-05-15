@@ -89,16 +89,8 @@ public interface SplitRouter2 extends BaseSplitRouter2{
         /* Thêm và hiển thị Detail Controller ở giao diện split nếu chưa có */
         if(saver.isInSplitMode()) {
             NavigationController controller = saver.findController(saver.getDetailControllerTag());
-            if(controller==null) {
-                NavigationController rightRouter = presentDetailController(saver.getDetailControllerTag(), R.id.right_container);
-                if (rightRouter != null && saver.mRightRouterHasIntro) {
-                    // start up fragment là intro fragment
-                    // nó cần bị xóa bỏ khi controller ở giao diện một cột
-                    // lưu lại tham số class type của intro fragment
-                    // dùng class type này và root fragment của right controller để lấy tag của intro fragment
-                    saver.setDefaultIntroFragmentClass(rightRouter.getInitialFragmentClass());
-                }
-            }
+            if(controller == null)
+                presentDetailController(saver.getDetailControllerTag(), R.id.right_container);
         } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {
             // Xóa bỏ intro fragment tự sinh ra ở giao diện split
             NavigationController controller = saver.findController(saver.getDetailControllerTag());
@@ -183,11 +175,9 @@ public interface SplitRouter2 extends BaseSplitRouter2{
         outState.putString(DETAIL_CONTROLLER_TAG, saver.getDetailControllerTag());
 
         if(saver.isInSplitMode()) {
-            Class<? extends NavigationFragment> introFragmentCls = saver.getIntroFragmentClass();
             NavigationController rightController = saver.findController(saver.getDetailControllerTag());
             if (rightController != null) {
-                NavigationFragment rootFragment = rightController.getFragmentAt(0);
-                if (rightController.getFragmentCount() == 1 && rootFragment != null && rootFragment.getClass().equals(introFragmentCls)) {
+                if (rightController.isInitialFragmentRootFragment()) {
                     outState.putString(DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG, rightController.getFragmentTagAt(0));
                 }
             }
@@ -289,11 +279,11 @@ public interface SplitRouter2 extends BaseSplitRouter2{
     }
 
     default NavigationController presentMasterController(String leftControllerTag, int leftContainerViewId) {
-        return presentController(leftControllerTag, leftContainerViewId, provideDefaultMasterFragment(), ExpandStaticContainer.class);
+        return presentController(leftControllerTag, leftContainerViewId, ExpandStaticContainer.class, provideDefaultMasterFragment(), null);
     }
 
     @NonNull
     default NavigationController presentDetailController(String rightControllerTag, int rightContainerViewId) {
-        return presentController(rightControllerTag, rightContainerViewId, provideDefaultDetailFragment(), ExpandStaticContainer.class);
+        return presentController(rightControllerTag, rightContainerViewId, ExpandStaticContainer.class, provideDefaultDetailFragment(), null);
     }
 }

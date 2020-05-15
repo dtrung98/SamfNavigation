@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(provideLayout(this));
-        onCreateRouter(savedInstanceState, getSupportFragmentManager());
+        onCreateRouter(savedInstanceState);
     }
 
     @Override

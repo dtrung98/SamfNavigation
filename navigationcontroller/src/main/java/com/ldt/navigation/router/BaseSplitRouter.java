@@ -104,26 +104,25 @@ public interface BaseSplitRouter extends Router {
 
         // Thêm và hiển thị router phải ở giao diện split nếu chưa có
         if(saver.isInSplitMode()) {
-            NavigationController controller = saver.findController(saver.mRightTag);
+            NavigationController controller = findController(saver.mRightTag);
             if(controller==null) {
-                NavigationController rightRouter = presentRightRouter(saver.mRightTag, R.id.right_container);
-                if (rightRouter != null && saver.mRightRouterHasIntro) {
-                    // start up fragment là intro fragment
-                    // nó cần bị xóa bỏ khi controller ở giao diện một cột
-                    // lưu lại tham số class type của intro fragment
-                    // dùng class type này và root fragment của right controller để lấy tag của intro fragment
-                    saver.setDefaultIntroFragmentClass(rightRouter.getInitialFragmentClass());
+                NavigationController detailController = presentRightRouter(saver.mRightTag, R.id.right_container);
+                if (detailController != null && saver.mRightRouterHasIntro) {
+                    /* Router sẽ tự động xóa đi initial fragment nằm trong detail controller */
+                    /* Ta hãy lưu lại fragment này. Khi router chuyển sang compact mode thì sẽ xóa nó ra khỏi detail controller */
+                    /* Nếu thay thế fragment này (sử dụng hàm {@link NavigationController#switchNew(NavigationFragment)}) để thay thế bằng 1 fragment khác, fragment đó sẽ không bị xóa khỏi detail controller */
+
                 }
             }
         } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {
             // Xóa bỏ intro fragment tự sinh ra ở giao diện split
-            NavigationController controller = saver.findController(saver.mRightTag);
+            NavigationController controller = findController(saver.mRightTag);
             if(controller != null) {
                 NavigationFragment introFragment = controller.findFragment(saver.mRightRouterIntroFragmentTag);
                 if(introFragment != null) {
                     Log.d(TAG, "i mờ gô in to quýt");
                     int count = controller.getFragmentCount();
-                    if(count==1) controller.quit();
+                    if(count == 1) controller.quit();
                     else controller.dismissFragment(introFragment, false);
                 } else {
                     Log.d(TAG, "not quýt");
@@ -203,11 +202,9 @@ public interface BaseSplitRouter extends Router {
         outState.putString(RIGHT_ROUTER_TAG, saver.mRightTag);
 
         if(saver.isInSplitMode()) {
-            Class<? extends NavigationFragment> introFragmentCls = saver.getIntroFragmentClass();
-            NavigationController rightController = saver.findController(saver.getRightTag());
+            NavigationController rightController = findController(saver.getRightTag());
             if (rightController != null) {
-                NavigationFragment rootFragment = rightController.getFragmentAt(0);
-                if (rightController.getFragmentCount() == 1 && rootFragment != null && rootFragment.getClass().equals(introFragmentCls)) {
+                if(rightController.isInitialFragmentRootFragment()) {
                     outState.putString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG, rightController.getFragmentTagAt(0));
                 }
             }
@@ -268,11 +265,4 @@ public interface BaseSplitRouter extends Router {
         }
         else return Router.super.navigateBack(animated);
     }
-
-    /*    @Override
-    default void finishController(@NonNull NavigationController controller) {
-        SplitRouterSaver saver = getRouterSaver();
-        if(!controller.mTag.equals(saver.mLeftTag) && !controller.mTag.equals(saver.mRightTag))
-        FlexRouter.super.finishController(controller);
-    }*/
 }
