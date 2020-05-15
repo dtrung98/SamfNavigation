@@ -1,13 +1,10 @@
 package com.ldt.navigation.router;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.ExpandStaticContainer;
-import com.ldt.navigation.uicontainer.UIContainer;
 
 public interface SplitRouter extends BaseSplitRouter {
 
@@ -19,20 +16,20 @@ public interface SplitRouter extends BaseSplitRouter {
 
     default void rightRouterSwitchNew(NavigationFragment fragment) {
         SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = saver.findController(saver.getRightTag());
+        NavigationController controller = saver.findController(saver.getDetailControllerTag());
 
         // chưa tồn tại right router, tạo một cái với startup là fragment chỉ định
         if(controller == null)
-            controller = presentRightRouter(saver.getRightTag(), saver.getRightSubContainerId());
+            controller = presentRightRouter(saver.getDetailControllerTag(), saver.getRightSubContainerId());
         controller.switchNew(fragment);
     }
 
     default void rightRouterNavigateTo(NavigationFragment fragment, boolean animated) {
         SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = saver.findController(saver.getLeftTag());
+        NavigationController controller = saver.findController(saver.getMasterControllerTag());
 
         if(controller == null) {
-            controller = presentLeftRouter(saver.getLeftTag(), saver.getLeftSubContainerId());
+            controller = presentLeftRouter(saver.getMasterControllerTag(), saver.getLeftSubContainerId());
             controller.switchNew(fragment);
         }
         else controller.navigateTo(fragment);
@@ -40,10 +37,10 @@ public interface SplitRouter extends BaseSplitRouter {
 
     default void leftRouterNavigateTo(NavigationFragment fragment, boolean animated) {
         SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = saver.findController(saver.getLeftTag());
+        NavigationController controller = saver.findController(saver.getMasterControllerTag());
 
         if(controller == null)
-            controller = presentLeftRouter(saver.getLeftTag(), saver.getLeftSubContainerId());
+            controller = presentLeftRouter(saver.getMasterControllerTag(), saver.getLeftSubContainerId());
         controller.navigateTo(fragment, animated);
     }
 

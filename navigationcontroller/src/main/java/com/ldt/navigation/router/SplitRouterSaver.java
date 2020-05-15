@@ -1,12 +1,11 @@
 package com.ldt.navigation.router;
 
 import com.ldt.navigation.NavigationController;
-import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 
 public class SplitRouterSaver extends RouterSaver {
-    final String mLeftTag;
-    final String mRightTag;
+    final String mMasterControllerTag;
+    final String mDetailControllerTag;
 
     public int getLeftSubContainerId() {
         return mLeftSubContainerId;
@@ -16,12 +15,12 @@ public class SplitRouterSaver extends RouterSaver {
         return mRightSubContainerId;
     }
 
-    public String getLeftTag() {
-        return mLeftTag;
+    public String getMasterControllerTag() {
+        return mMasterControllerTag;
     }
 
-    public String getRightTag() {
-        return mRightTag;
+    public String getDetailControllerTag() {
+        return mDetailControllerTag;
     }
 
     public int getFloatingSubContainerId() {
@@ -33,8 +32,8 @@ public class SplitRouterSaver extends RouterSaver {
     int mFloatingSubContainerId = R.id.floating_container;
 
     public SplitRouterSaver(String leftRouterTag, String rightRouterTag) {
-        mLeftTag = leftRouterTag;
-        mRightTag = rightRouterTag;
+        mMasterControllerTag = leftRouterTag;
+        mDetailControllerTag = rightRouterTag;
     }
 
 /*    void setContainerTags(String leftTag, String rightTag) {
@@ -52,10 +51,10 @@ public class SplitRouterSaver extends RouterSaver {
     int leftWide = 350;
     int rightWide = -1;
     boolean mInSplitScreen = false;
-    String mRightRouterIntroFragmentTag = null;
+    String mDetailControllerInitialFragment = null;
     boolean mRightRouterHasIntro = false;
     void sort() {
-        NavigationController controller = findController(mRightTag);
+        NavigationController controller = findController(mDetailControllerTag);
         int index = mControllers.indexOf(controller);
         if(index != 1&&index !=-1) {
             mControllers.add(1, mControllers.remove(index));

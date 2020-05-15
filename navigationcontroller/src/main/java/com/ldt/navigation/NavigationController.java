@@ -193,15 +193,17 @@ public class NavigationController extends NavigationFragment {
 
     private void initialize() {
         boolean initNoRestore = mFragmentTags.isEmpty();
-        if(initNoRestore && !mPendingFragments.isEmpty()) {
-            /* this controller is init without restoring state and there're some pending fragment in stack */
+        if(!mPendingFragments.isEmpty()) {
+            /*There're some pending fragment in stack */
             for (NavigationFragment fragment :
                     mPendingFragments) {
                 navigateTo(fragment);
             }
             mPendingFragments.clear();
+        }
+
+        if(initNoRestore)
             mInitialFragmentTag = mFragments.get(0).getTag();
-        } /* else does nothing */
     }
 
     @Override

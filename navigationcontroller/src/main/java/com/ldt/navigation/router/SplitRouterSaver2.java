@@ -5,10 +5,14 @@ import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 
 import java.util.ArrayDeque;
+import java.util.HashMap;
 
 public class SplitRouterSaver2 extends RouterSaver {
-    public final ArrayDeque<String> mMasterStack = new ArrayDeque<>();
-    public final ArrayDeque<String> mDetailStack = new ArrayDeque<>();
+    /**
+     * The stack stores fragment tag stack in master controller
+     */
+    public final HashMap<String, Boolean> mFragmentType = new HashMap<>();
+
     final String mMasterControllerTag;
     final String mDetailControllerTag;
 

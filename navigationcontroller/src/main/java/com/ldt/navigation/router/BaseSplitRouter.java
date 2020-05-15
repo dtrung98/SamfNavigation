@@ -19,7 +19,7 @@ import com.ldt.navigation.R;
 FlexRouter quản lý giao diện phức tạp dạng 2-rows-panel ở màn hình rộng, thu gọn thành 1-rows  ở màn hình hẹp
  */
 public interface BaseSplitRouter extends Router {
-    String TAG = "SplitRouter";
+    String TAG = "BaseSplitRouter";
 
     String LEFT_ROUTER_TAG = "left-router-tag";
     String RIGHT_ROUTER_TAG = "right-router-tag";
@@ -98,36 +98,29 @@ public interface BaseSplitRouter extends Router {
     default void onCreateRouter(Bundle bundle) {
         SplitRouterSaver saver = getRouterSaver();
         Router.super.onCreateRouter(bundle);
-        Log.d(TAG, "onCreateRouter: with intro fragment tag:"+saver.mRightRouterIntroFragmentTag);
         // Thêm và hiển thị router trái nếu chưa có
-        presentLeftRouter(saver.mLeftTag, R.id.left_container);
+        presentLeftRouter(saver.mMasterControllerTag, R.id.left_container);
 
         // Thêm và hiển thị router phải ở giao diện split nếu chưa có
         if(saver.isInSplitMode()) {
-            NavigationController controller = findController(saver.mRightTag);
-            if(controller==null) {
-                NavigationController detailController = presentRightRouter(saver.mRightTag, R.id.right_container);
-                if (detailController != null && saver.mRightRouterHasIntro) {
-                    /* Router sẽ tự động xóa đi initial fragment nằm trong detail controller */
-                    /* Ta hãy lưu lại fragment này. Khi router chuyển sang compact mode thì sẽ xóa nó ra khỏi detail controller */
-                    /* Nếu thay thế fragment này (sử dụng hàm {@link NavigationController#switchNew(NavigationFragment)}) để thay thế bằng 1 fragment khác, fragment đó sẽ không bị xóa khỏi detail controller */
+            NavigationController controller = findController(saver.mDetailControllerTag);
+            if(controller==null)
+                presentRightRouter(saver.mDetailControllerTag, R.id.right_container);
 
-                }
-            }
-        } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {
+        } else if(bundle != null && saver.mDetailControllerInitialFragment != null) {
             // Xóa bỏ intro fragment tự sinh ra ở giao diện split
-            NavigationController controller = findController(saver.mRightTag);
+            NavigationController controller = findController(saver.mDetailControllerTag);
             if(controller != null) {
-                NavigationFragment introFragment = controller.findFragment(saver.mRightRouterIntroFragmentTag);
+                NavigationFragment introFragment = controller.findFragment(saver.mDetailControllerInitialFragment);
                 if(introFragment != null) {
-                    Log.d(TAG, "i mờ gô in to quýt");
+                    Log.d(TAG, "detail controller will dismiss initial fragment soon");
                     int count = controller.getFragmentCount();
                     if(count == 1) controller.quit();
                     else controller.dismissFragment(introFragment, false);
                 } else {
-                    Log.d(TAG, "not quýt");
+                    Log.d(TAG, "no initial fragment in detail controller found");
                 }
-            } else Log.d(TAG, "right controller is null");
+            } else Log.d(TAG, "detail controller doesn't exist");
         }
 
         // đảm bảo thứ tự left-router là 1, right-router là 2 trong stack
@@ -198,11 +191,11 @@ public interface BaseSplitRouter extends Router {
     default void onSaveRouterState(Bundle outState) {
         Router.super.onSaveRouterState(outState);
         SplitRouterSaver saver = getRouterSaver();
-        outState.putString(LEFT_ROUTER_TAG, saver.mLeftTag);
-        outState.putString(RIGHT_ROUTER_TAG, saver.mRightTag);
+        outState.putString(LEFT_ROUTER_TAG, saver.mMasterControllerTag);
+        outState.putString(RIGHT_ROUTER_TAG, saver.mDetailControllerTag);
 
         if(saver.isInSplitMode()) {
-            NavigationController rightController = findController(saver.getRightTag());
+            NavigationController rightController = findController(saver.getDetailControllerTag());
             if (rightController != null) {
                 if(rightController.isInitialFragmentRootFragment()) {
                     outState.putString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG, rightController.getFragmentTagAt(0));
@@ -217,7 +210,7 @@ public interface BaseSplitRouter extends Router {
         Router.super.onRestoreRouterState(bundle);
         String leftTag = bundle.getString(LEFT_ROUTER_TAG, "left-router");
         String rightTag = bundle.getString(RIGHT_ROUTER_TAG, "right-router");
-        saver.mRightRouterIntroFragmentTag = bundle.getString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG);
+        saver.mDetailControllerInitialFragment = bundle.getString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG);
     }
 
     @Override
@@ -243,7 +236,7 @@ public interface BaseSplitRouter extends Router {
                     break;
                 }
 
-                if(controller.mControllerTag.equals(saver.mRightTag) || controller.mControllerTag.equals(saver.mLeftTag)) {
+                if(controller.mControllerTag.equals(saver.mDetailControllerTag) || controller.mControllerTag.equals(saver.mMasterControllerTag)) {
                     // Tới root và nó là fragment left hoặc right
                     if(i!=0) continue;
 
