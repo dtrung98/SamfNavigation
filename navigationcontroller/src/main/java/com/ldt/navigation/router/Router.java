@@ -38,6 +38,21 @@ public interface Router extends BaseRouter {
     default NavigationController presentController(@NonNull String uniqueTag,
                                                    @IdRes int viewContainerId,
                                                    Class<? extends UIContainer> uiContainerClass,
+                                                   Class<? extends NavigationFragment> initialFragmentClass) {
+        return presentController(uniqueTag, viewContainerId, uiContainerClass, initialFragmentClass, null);
+    }
+
+    /**
+     * Present this fragment in a new NavigationController
+     * @param uniqueTag unique tag identify the navigation controller. If any controller has this tag, this command will be ignored
+     * @param viewContainerId container view that the controller will be put into
+     * @param initialFragmentClass Fragment that will be presented
+     * @param uiContainerClass  the ui container that will manage layout ui for controller
+     * @return the Controller
+     */
+    default NavigationController presentController(@NonNull String uniqueTag,
+                                                   @IdRes int viewContainerId,
+                                                   Class<? extends UIContainer> uiContainerClass,
                                                    Class<? extends NavigationFragment> initialFragmentClass,
                                                    @Nullable Bundle initialFragmentArgument) {
         RouterSaver saver = getRouterSaver();

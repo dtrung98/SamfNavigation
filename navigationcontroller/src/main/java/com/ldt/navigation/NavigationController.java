@@ -92,7 +92,7 @@ public class NavigationController extends NavigationFragment {
         return mWeakRouter.get();
     }
 
-    public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass,@Nullable Bundle initialFragmentArgument) {
+    public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
         BaseRouter router = getRouter();
         if(router instanceof Router) {
             return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, initialFragmentClass, initialFragmentArgument);
