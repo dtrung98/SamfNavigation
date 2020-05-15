@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
-import com.ldt.navigation.router.Router;
+import com.ldt.navigation.router.BaseRouter;
 
 import java.lang.ref.WeakReference;
 
@@ -187,7 +187,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         }
     }
 
-    public Router getRouter() {
+    public BaseRouter getRouter() {
         NavigationController controller = getNavigationController();
         if(controller == null) return null;
             return controller.getRouter();

@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentManager;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
-import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 
 /*
@@ -97,7 +96,7 @@ public interface SplitRouter2 extends BaseSplitRouter2{
                     // nó cần bị xóa bỏ khi controller ở giao diện một cột
                     // lưu lại tham số class type của intro fragment
                     // dùng class type này và root fragment của right controller để lấy tag của intro fragment
-                    saver.setDefaultIntroFragmentClass(rightRouter.getStartUpFragmentClass());
+                    saver.setDefaultIntroFragmentClass(rightRouter.getInitialFragmentClass());
                 }
             }
         } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {

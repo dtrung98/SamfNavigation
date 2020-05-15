@@ -10,17 +10,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
 
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
-import com.ldt.navigation.uicontainer.UIContainer;
 
 /*
 FlexRouter quản lý giao diện phức tạp dạng 2-rows-panel ở màn hình rộng, thu gọn thành 1-rows  ở màn hình hẹp
  */
-public interface BaseSplitRouter extends FlexRouter {
+public interface BaseSplitRouter extends Router {
     String TAG = "SplitRouter";
 
     String LEFT_ROUTER_TAG = "left-router-tag";
@@ -99,7 +97,7 @@ public interface BaseSplitRouter extends FlexRouter {
     @Override
     default void onCreateRouter(Bundle bundle) {
         SplitRouterSaver saver = getRouterSaver();
-        FlexRouter.super.onCreateRouter(bundle);
+        Router.super.onCreateRouter(bundle);
         Log.d(TAG, "onCreateRouter: with intro fragment tag:"+saver.mRightRouterIntroFragmentTag);
         // Thêm và hiển thị router trái nếu chưa có
         presentLeftRouter(saver.mLeftTag, R.id.left_container);
@@ -114,7 +112,7 @@ public interface BaseSplitRouter extends FlexRouter {
                     // nó cần bị xóa bỏ khi controller ở giao diện một cột
                     // lưu lại tham số class type của intro fragment
                     // dùng class type này và root fragment của right controller để lấy tag của intro fragment
-                    saver.setDefaultIntroFragmentClass(rightRouter.getStartUpFragmentClass());
+                    saver.setDefaultIntroFragmentClass(rightRouter.getInitialFragmentClass());
                 }
             }
         } else if(bundle != null && saver.mRightRouterIntroFragmentTag != null) {
@@ -199,7 +197,7 @@ public interface BaseSplitRouter extends FlexRouter {
 
     @Override
     default void onSaveRouterState(Bundle outState) {
-        FlexRouter.super.onSaveRouterState(outState);
+        Router.super.onSaveRouterState(outState);
         SplitRouterSaver saver = getRouterSaver();
         outState.putString(LEFT_ROUTER_TAG, saver.mLeftTag);
         outState.putString(RIGHT_ROUTER_TAG, saver.mRightTag);
@@ -219,7 +217,7 @@ public interface BaseSplitRouter extends FlexRouter {
     @Override
     default void onRestoreRouterState(Bundle bundle) {
         SplitRouterSaver saver = getRouterSaver();
-        FlexRouter.super.onRestoreRouterState(bundle);
+        Router.super.onRestoreRouterState(bundle);
         String leftTag = bundle.getString(LEFT_ROUTER_TAG, "left-router");
         String rightTag = bundle.getString(RIGHT_ROUTER_TAG, "right-router");
         saver.mRightRouterIntroFragmentTag = bundle.getString(RIGHT_ROUTER_INTRO_FRAGMENT_TAG);
@@ -268,7 +266,7 @@ public interface BaseSplitRouter extends FlexRouter {
             return result;
 
         }
-        else return FlexRouter.super.navigateBack(animated);
+        else return Router.super.navigateBack(animated);
     }
 
     /*    @Override

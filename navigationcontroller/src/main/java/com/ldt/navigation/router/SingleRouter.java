@@ -4,8 +4,10 @@ import com.ldt.navigation.NavigationFragment;
 
 /**
  * Created by dtrung98 on 2020. 1. 30
+ * <br> SingleRouter là interface cung cấp các phương thức điều khiển 1 NAVIGATION CONTROLLER duy nhất cho {@link androidx.fragment.app.FragmentActivity} or {@link androidx.fragment.app.Fragment}.
+ * <br>
  */
-public interface SingleRouter extends Router {
+public interface SingleRouter extends BaseRouter {
     NavigationController getNavigationController();
 
     @Override

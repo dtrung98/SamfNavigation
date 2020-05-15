@@ -1,11 +1,9 @@
 package com.ldt.nav.sample.fragment;
 
-import android.animation.TimeInterpolator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,12 +11,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.NewFlowContainer;
 
@@ -85,7 +81,7 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        getNavigationController().presentNavigator("setting-nav",R.id.floating_container,
+        getNavigationController().presentFragmentInNewController("setting-nav",R.id.floating_container,
                 SamplePage.class, NewFlowContainer.class);
     }
 
@@ -95,7 +91,7 @@ public class SamplePage extends NavigationFragment {
          NavigationController controller =  NavigationController.findInstance("right-router", getNavigationController().getFragmentManager());
                   if(controller == null) {
                       getNavigationController()
-                              .presentNavigator("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class)
+                              .presentFragmentInNewController("right-router",R.id.right_container, SamplePage.class, ExpandContainer.class)
                               .switchNew(new SamplePage());
                   }
                   else controller.switchNew(new SamplePage());
