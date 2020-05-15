@@ -5,9 +5,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 
+
+import androidx.fragment.app.Fragment;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
@@ -27,7 +27,7 @@ public class BottomSheetContainer extends AnimatorUIContainer implements View.On
   }
 
   @Override
-  public int[] onWindowInsetsChanged(NavigationController controller, int left, int top, int right, int bottom) {
+  public int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
     mTopMargin = (int)mPanel.getContext().getResources().getDimension(R.dimen.dpUnit)*4 + top;
     View subView = getSubContainerView();
     subView.setTranslationY(mTopMargin);
@@ -50,20 +50,20 @@ public class BottomSheetContainer extends AnimatorUIContainer implements View.On
    executeDimAnimator(animator, transit, enter, nextAnim);
   }
 
-  private NavigationController mController;
+  private Fragment mController;
 
   @Override
-  public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+  public void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     mController = controller;
   }
 
   @Override
-  public void destroy(NavigationController controller) {
+  public void destroy(Fragment controller) {
     mController = null;
   }
 
   @Override
   public void onClick(View v) {
-    if(mController!=null) mController.quit();
+    if(mController instanceof NavigationController) ((NavigationController)mController).quit();
   }
 }

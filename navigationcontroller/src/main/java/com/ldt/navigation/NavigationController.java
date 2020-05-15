@@ -73,16 +73,16 @@ public class NavigationController extends NavigationFragment {
 
     public NavigationController presentNavigator(String tag, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
-        if(router instanceof FlexRouter && getFragmentManager() != null) {
-            return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), mNavContainerId, startUpFragmentCls, uiContainerCls);
+        if(router instanceof FlexRouter) {
+            return ((FlexRouter) router).presentController(tag, mNavContainerId, startUpFragmentCls, uiContainerCls);
         }
         return null;
     }
 
     public NavigationController presentNavigator(String tag, int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
-        if(router instanceof FlexRouter && getFragmentManager() != null) {
-            return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
+        if(router instanceof FlexRouter) {
+            return ((FlexRouter) router).presentController(tag, navContainerId, startUpFragmentCls, uiContainerCls);
         }
         return null;
     }
@@ -170,6 +170,7 @@ public class NavigationController extends NavigationFragment {
                     mPendingFragments) {
                 navigateTo(fragment);
             }
+            mPendingFragments.clear();
         } else if(mStartUpFragmentCls !=null && initNotRestore) {
             NavigationFragment mainFragment = null;
             try {
@@ -181,8 +182,6 @@ public class NavigationController extends NavigationFragment {
             if(mainFragment!=null)
                 navigateTo(mainFragment);
         }
-
-
     }
 
     @Override
@@ -370,7 +369,7 @@ public class NavigationController extends NavigationFragment {
 
         if(uic == null) {
             uic = new ExpandContainer();
-            Log.e(TAG, "Couldn't to create new UIContainer instance, using default container instead");
+            Log.e(TAG, "Couldn't create new ui container object, will use default container instead");
         }
 
         f.mUiContainer = uic;
@@ -571,6 +570,7 @@ public class NavigationController extends NavigationFragment {
                     fragmentToHide.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
                 else {
                     /* fragment nằm sau thích gì thì chạy nấy */
+                    fragmentToHide.clearOpenExitCloseEnterTransition();
                 }
 
                 fragmentToPush.setAnimatable(withAnimation);

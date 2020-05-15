@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.ldt.navigation.NavigationController;
+import androidx.fragment.app.Fragment;
+
 import com.ldt.navigation.R;
 
 public class ScalableDialogContainer2 implements UIContainer, DialogInterface.OnCancelListener, DialogInterface.OnDismissListener {
@@ -18,7 +19,7 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
     private int h;
     private float dpUnit;
     @Override
-    public void provideQualifier(NavigationController controller, int wQualifier, int hQualifier, float dpUnit) {
+    public void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
         mController = controller;
         w = wQualifier;
         h = hQualifier;
@@ -60,10 +61,10 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
         return v;
     }
 
-    private NavigationController mController;
+    private Fragment mController;
 
     @Override
-    public void created(NavigationController controller, Bundle savedInstanceState) {
+    public void created(Fragment controller, Bundle savedInstanceState) {
         mShowsDialog = true;//mContainerId == 0;
         if (savedInstanceState != null) {
             mStyle = savedInstanceState.getInt(SAVED_STYLE, STYLE_NORMAL);
@@ -75,7 +76,7 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
     }
 
     @Override
-    public void destroy(NavigationController controller) {
+    public void destroy(Fragment controller) {
         mController = null;
     }
 
@@ -217,7 +218,7 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
     }
 
     @Override
-    public void activityCreated(NavigationController controller, Bundle savedInstanceState) {
+    public void activityCreated(Fragment controller, Bundle savedInstanceState) {
         if (!mShowsDialog) {
             return;
         }
@@ -241,14 +242,14 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
         }
     }
     @Override
-    public void start(NavigationController controller) {
+    public void start(Fragment controller) {
         if (mDialog != null) {
             mRemoved = false;
             mDialog.show();
         }
     }
     @Override
-    public void saveState(NavigationController controller, Bundle outState) {
+    public void saveState(Fragment controller, Bundle outState) {
         if (mDialog != null) {
             Bundle dialogState = mDialog.onSaveInstanceState();
             if (dialogState != null) {
@@ -272,7 +273,7 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
         }
     }
     @Override
-    public void stop(NavigationController controller) {
+    public void stop(Fragment controller) {
         if (mDialog != null) {
             mDialog.hide();
         }
@@ -281,7 +282,7 @@ public class ScalableDialogContainer2 implements UIContainer, DialogInterface.On
      * Remove dialog.
      */
     @Override
-    public void destroyView(NavigationController controller) {
+    public void destroyView(Fragment controller) {
         mDestroyed = true;
         if (mDialog != null) {
             // Set removed here because this dismissal is just to hide

@@ -10,22 +10,6 @@ import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 import com.ldt.navigation.uicontainer.UIContainer;
 
 public interface SplitRouter extends BaseSplitRouter {
-    FragmentManager provideFragmentManager();
-
-    default void switchNew(String controllerTag, Class<? extends NavigationFragment> fragmentCls, Class<? extends UIContainer> uiContainerCls) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = saver.findController(controllerTag);
-
-        if(controller == null)
-            presentFloatingNavigator(controllerTag, provideFragmentManager(), fragmentCls, uiContainerCls);
-        else try {
-            controller.switchNew(fragmentCls.newInstance());
-        } catch (Exception ignored) {}
-    }
-
-    default NavigationController presentFloatingNavigator(String controllerTag, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
-        return presentFloatingNavigator(controllerTag, provideFragmentManager(), startUpFragmentCls, uiContainerCls);
-    }
 
     @NonNull
     Class<? extends NavigationFragment> provideDefaultDetailFragment();
@@ -39,7 +23,7 @@ public interface SplitRouter extends BaseSplitRouter {
 
         // chưa tồn tại right router, tạo một cái với startup là fragment chỉ định
         if(controller == null) {
-            presentNavigator(saver.getRightTag(), provideFragmentManager(), saver.getRightSubContainerId(), provideDefaultDetailFragment(), ExpandContainer.class);
+            presentController(saver.getRightTag(), saver.getRightSubContainerId(), provideDefaultDetailFragment(), ExpandContainer.class);
         } else try {
             controller.switchNew(fragmentClazz.newInstance());
         } catch (Exception ignored) {
@@ -79,12 +63,12 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default NavigationController presentLeftRouter(String leftControllerTag, int leftContainerViewId) {
-        return presentNavigator(leftControllerTag, provideFragmentManager(), leftContainerViewId, provideDefaultMasterFragment(), ExpandStaticContainer.class);
+        return presentController(leftControllerTag, leftContainerViewId, provideDefaultMasterFragment(), ExpandStaticContainer.class);
     }
 
     @Override
     @NonNull
     default NavigationController presentRightRouter(String rightControllerTag, int rightContainerViewId) {
-        return presentNavigator(rightControllerTag, provideFragmentManager(), rightContainerViewId, provideDefaultDetailFragment(), ExpandStaticContainer.class);
+        return presentController(rightControllerTag, rightContainerViewId, provideDefaultDetailFragment(), ExpandStaticContainer.class);
     }
 }

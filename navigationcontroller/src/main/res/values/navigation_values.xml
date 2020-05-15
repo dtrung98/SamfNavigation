@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NavHostFragmentNavigator">
+        <!--Provide a custom NavHostFragmentNavigator here-->
+        <attr name="android:name"/>
+        <attr name="android:label"/>
+        <attr name="graph" format="reference"/>
+        <attr name="uiContainer" format="string|enum">
+            <enum name="expand_container" value="0"/>
+            <enum name="scalable_dialog_container" value="1"/>
+            <enum name="bottom_sheet_container" value="2"/>
+            <enum name="new_flow_container" value="3"/>
+        </attr>
+        <attr name="presentStyle" format="enum">
+            <enum name="undefined" value="0"/>
+            <enum name="accordion_left" value="1"/>
+            <enum name="accordion_right" value="2"/>
+            <enum name="accordion_up" value="3"/>
+            <enum name="accordion_down" value="4"/>
+            <enum name="card_flip_left" value="5"/>
+            <enum name="card_flip_right" value="6"/>
+            <enum name="card_flip_up" value="7"/>
+            <enum name="card_flip_down" value="8"/>
+            <enum name="cube_left" value="9"/>
+            <enum name="cube_right" value="10"/>
+            <enum name="cube_up" value="11"/>
+            <enum name="cube_down" value="12"/>
+            <enum name="fade" value="13"/>
+            <enum name="glide" value="14"/>
+            <enum name="rotate_down_left" value="15"/>
+            <enum name="rotate_down_right" value="16"/>
+            <enum name="rotate_up_left" value="17"/>
+            <enum name="rotate_up_right" value="18"/>
+            <enum name="rotate_left_up" value="19"/>
+            <enum name="rotate_left_down" value="20"/>
+            <enum name="rotate_right_up" value="21"/>
+            <enum name="rotate_right_down" value="22"/>
+            <enum name="scalex" value="23"/>
+            <enum name="scaley" value="24"/>
+            <enum name="scalexy" value="25"/>
+            <enum name="slide_left" value="26"/>
+            <enum name="slide_right" value="27"/>
+            <enum name="slide_up" value="28"/>
+            <enum name="slide_down" value="29"/>
+            <enum name="stack_left" value="30"/>
+            <enum name="stack_right" value="31"/>
+            <enum name="table_left" value="32"/>
+            <enum name="table_right" value="33"/>
+            <enum name="table_up" value="34"/>
+            <enum name="table_down" value="35"/>
+            <enum name="zoom_from_left_top_corner" value="36"/>
+            <enum name="zoom_from_right_top_corner" value="37"/>
+            <enum name="zoom_from_left_bottom_corner" value="38"/>
+            <enum name="zoom_from_right_bottom_corner" value="39"/>
+            <enum name="default_fragment_open_close" value="40"/>
+        </attr>
+    </declare-styleable>
+</resources>
