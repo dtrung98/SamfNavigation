@@ -13,23 +13,24 @@ import com.ldt.navigation.uicontainer.UIContainer;
 import java.util.ArrayList;
 
 /**
- * Cung cấp phương thức giúp điều khiển một stack các NavigationController nằm chồng lên nhau
+ *  Interface cung cấp logic cho {@link androidx.fragment.app.FragmentActivity} or {@link androidx.fragment.app.Fragment} giúp điều khiển một stack các NavigationController nằm chồng lên nhau
  */
 public interface FlexRouter extends Router {
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
+    FragmentManager provideFragmentManager();
+
     RouterSaver getRouterSaver();
 
-    default NavigationController presentNavigator(@NonNull String tag,
-                                                  @NonNull FragmentManager fragmentManager,
-                                                  @IdRes int navContainerId,
-                                                  Class<? extends NavigationFragment> startUpFragmentCls,
-                                                  Class<? extends UIContainer> uiContainerCls) {
+    default NavigationController presentController(@NonNull String tag,
+                                                   @IdRes int navContainerId,
+                                                   Class<? extends NavigationFragment> startUpFragmentCls,
+                                                   Class<? extends UIContainer> uiContainerCls) {
         RouterSaver saver = getRouterSaver();
         NavigationController controller = saver.findController(tag);
 
         if(controller == null) {
-            controller = NavigationController.getInstance(tag, fragmentManager, navContainerId, startUpFragmentCls, uiContainerCls);
+            controller = NavigationController.getInstance(tag, provideFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
             saver.push(controller);
         }
 
@@ -54,18 +55,19 @@ public interface FlexRouter extends Router {
         outState.putStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER,list);
     }
 
-    default void onCreateRouter(Bundle bundle, @NonNull FragmentManager fragmentManager) {
+    default void onCreateRouter(Bundle bundle) {
         // restore all controller tags
         RouterSaver saver = getRouterSaver();
         if(saver.doesRouterNeedToRestore() && bundle!=null) {
-            onRestoreRouterState(bundle, fragmentManager);
+            onRestoreRouterState(bundle);
             saver.routerRestored();
         }
     }
 
-    default void onRestoreRouterState(Bundle bundle, @NonNull FragmentManager fragmentManager) {
+    default void onRestoreRouterState(Bundle bundle) {
         ArrayList<String> list;
         RouterSaver saver = getRouterSaver();
+        FragmentManager fragmentManager = provideFragmentManager();
         list = bundle.getStringArrayList(NAVIGATION_CONTROLLERS_OF_ROUTER);
         if(list!=null) {
             saver.clear();
@@ -125,6 +127,10 @@ public interface FlexRouter extends Router {
         NavigationController controller = saver.controllerTop();
 
         if(controller != null) controller.navigateTo(nav, animated);
+    }
+
+    default NavigationController findController(String controllerTag) {
+        return getRouterSaver().findController(controllerTag);
     }
 
     @Override

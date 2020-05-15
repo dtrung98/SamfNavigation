@@ -73,16 +73,16 @@ public class NavigationController extends NavigationFragment {
 
     public NavigationController presentNavigator(String tag, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
-        if(router instanceof FlexRouter && getFragmentManager() != null) {
-            return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), mNavContainerId, startUpFragmentCls, uiContainerCls);
+        if(router instanceof FlexRouter) {
+            return ((FlexRouter) router).presentController(tag, mNavContainerId, startUpFragmentCls, uiContainerCls);
         }
         return null;
     }
 
     public NavigationController presentNavigator(String tag, int navContainerId, Class<? extends NavigationFragment> startUpFragmentCls, Class<? extends UIContainer> uiContainerCls) {
         Router router = getRouter();
-        if(router instanceof FlexRouter && getFragmentManager() != null) {
-            return ((FlexRouter) router).presentNavigator(tag, getFragmentManager(), navContainerId, startUpFragmentCls, uiContainerCls);
+        if(router instanceof FlexRouter) {
+            return ((FlexRouter) router).presentController(tag, navContainerId, startUpFragmentCls, uiContainerCls);
         }
         return null;
     }

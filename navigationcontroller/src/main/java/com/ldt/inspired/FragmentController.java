@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
  * thông qua lớp cung cấp giao diện UI Container
  *
   */
-public class FragmentController extends NavController<Fragment> {
+public class FragmentController extends NavigationController<Fragment> {
     @Override
     public void navigateTo(Fragment nextOne) {
 

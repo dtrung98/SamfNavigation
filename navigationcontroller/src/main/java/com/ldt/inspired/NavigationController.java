@@ -4,16 +4,16 @@ import androidx.fragment.app.Fragment;
 
 import java.lang.ref.WeakReference;
 
-public abstract class NavController<T extends Fragment> extends Fragment {
+public abstract class NavigationController<T extends Fragment> extends Fragment {
 
-    private WeakReference<NavController<?>> mParenController;
-    public NavController<?> getParentController() {
+    private WeakReference<NavigationController<?>> mParenController;
+    public NavigationController<?> getParentController() {
         return mParenController==null ? null : mParenController.get();
     }
 
-    public NavController<?> getRootController() {
-        NavController<?> current = this;
-        NavController<?> parent = null;
+    public NavigationController<?> getRootController() {
+        NavigationController<?> current = this;
+        NavigationController<?> parent = null;
 
         do {
             parent = current.getParentController();
@@ -26,8 +26,11 @@ public abstract class NavController<T extends Fragment> extends Fragment {
 
     public abstract void navigateTo(T nextOne);
     public abstract void switchNew(T newOne);
+    public void popBackStack() {
 
-    public static NavController findController(String tag) {
+    }
+
+    public static NavigationController findController(String tag) {
         return null;
     }
 

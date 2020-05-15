@@ -6,12 +6,12 @@ package com.ldt.inspired;
  */
 public class PageContainerController extends StackContainerController {
     @Override
-    public void navigateTo(NavController<?> nextOne) {
+    public void navigateTo(NavigationController<?> nextOne) {
 
     }
 
     @Override
-    public void switchNew(NavController<?> newOne) {
+    public void switchNew(NavigationController<?> newOne) {
 
     }
 }
