@@ -34,6 +34,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     private WeakReference<NavigationController> weakNavigationController = null;
     protected boolean mAnimatable = true;
     protected boolean mIsOnConfigurationAnimation = false;
+    private String mFragmentTag;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

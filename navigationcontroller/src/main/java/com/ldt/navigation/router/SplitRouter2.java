@@ -78,6 +78,14 @@ public interface SplitRouter2 extends BaseSplitRouter2{
 
     @Override
     default void onCreateRouter(Bundle bundle) {
+        /* restore super router stack */
+        BaseSplitRouter2.super.onCreateRouter(bundle);
+        /* get router saver */
+        SplitRouterSaver2 saver = getRouterSaver();
+
+    }
+
+    default void onCreateRouterOld(Bundle bundle) {
 
         /*Get Router Saver */
         SplitRouterSaver2 saver = getRouterSaver();
