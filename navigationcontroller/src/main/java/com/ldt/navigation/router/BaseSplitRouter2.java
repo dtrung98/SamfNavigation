@@ -1,12 +1,11 @@
 package com.ldt.navigation.router;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 
-public interface BaseSplitRouter2 extends  FlexRouter {
+public interface BaseSplitRouter2 extends Router {
     String MASTER_CONTROLLER_TAG = "master-controller";
     String DETAIL_CONTROLLER_TAG = "detail-controller";
 
@@ -56,6 +55,7 @@ public interface BaseSplitRouter2 extends  FlexRouter {
     default void masterControllerNavigateTo(NavigationFragment fragment) {
         masterControllerNavigateTo(fragment, true);
     }
+
     default void detailControllerNavigateTo(NavigationFragment fragment) {
         masterControllerNavigateTo(fragment, true);
     }

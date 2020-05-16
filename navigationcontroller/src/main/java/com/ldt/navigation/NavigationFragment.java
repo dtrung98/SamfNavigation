@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
-import com.ldt.navigation.router.Router;
+import com.ldt.navigation.router.BaseRouter;
 
 import java.lang.ref.WeakReference;
 
@@ -148,8 +148,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         return controller != null && controller.onNavigateBack();
     }
 
-    private boolean isRootLayoutWrapped = false;
-    public boolean shouldForceWrapLayout() {
+    public boolean shouldWrapLayout() {
         return false;
     }
 
@@ -162,7 +161,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
 
         // nếu root không phải effectview
         // hoặc nếu yêu cầu ép buộc wrap layout
-        if( !(v instanceof EffectView) || shouldForceWrapLayout()) {
+        if( !(v instanceof EffectView) || shouldWrapLayout()) {
             root = new EffectFrameLayout(inflater.getContext());
             root.setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             ((ViewGroup)root).addView(v);
@@ -188,7 +187,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         }
     }
 
-    public Router getRouter() {
+    public BaseRouter getRouter() {
         NavigationController controller = getNavigationController();
         if(controller == null) return null;
             return controller.getRouter();
@@ -218,7 +217,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         }
 
         NavigationController nav =  getNavigationController();
-        /* Không được gắn Controller và bản thân không phải Controller */
+        /* Không được gắn vào Controller và bản thân không phải Controller */
         if(nav == null && !(this instanceof NavigationController)) {
             return null; //no animatable
         }

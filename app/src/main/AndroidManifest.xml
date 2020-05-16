@@ -11,18 +11,14 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.ldt.nav.sample.activity.MainActivity"
             android:windowSoftInputMode="stateHidden">
-
-        </activity>
-        <activity android:name=".activity.ActionActivity" >
-
-        </activity>
-        <activity android:name=".x.NavigationXActivity"
-            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.ActionActivity" >
+
         </activity>
     </application>
 

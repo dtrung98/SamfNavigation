@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 6
-        versionName "2.6-beta"
+        versionCode 7
+        versionName "2.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -39,7 +39,4 @@ dependencies {
 
     // Design
     implementation 'com.google.android.material:material:1.2.0-alpha06'
-
-    // Navigation JetPack
-    implementation 'androidx.navigation:navigation-fragment:2.3.0-alpha06'
 }

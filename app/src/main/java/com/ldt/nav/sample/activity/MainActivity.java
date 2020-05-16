@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(provideLayout(this));
-        onCreateRouter(savedInstanceState, getSupportFragmentManager());
+        onCreateRouter(savedInstanceState);
     }
 
     @Override
@@ -29,7 +29,16 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
         onSaveRouterState(outState);
         super.onSaveInstanceState(outState);
     }
-    
+
+    @Override
+    public void onConfigureSplitRouter(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
+        splitWhen
+                .widerThan(800)
+                .tallerThan(-1)
+                .configLeftWide(350)
+                .configRightWide(-1);
+    }
+
     @Override
     public void onBackPressed() {
     if(onNavigateBack())

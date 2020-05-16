@@ -14,9 +14,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.NavHostController;
-import androidx.navigation.fragment.NavHostFragment;
 
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
