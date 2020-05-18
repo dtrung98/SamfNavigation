@@ -1,27 +1,18 @@
 package com.ldt.navigation.router;
 
 import com.ldt.navigation.NavigationController;
-import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-
-public class SplitRouterSaver2 extends RouterSaver {
-    /**
-     * The stack stores fragment tag stack in master controller
-     */
-    public final HashMap<String, Boolean> mFragmentType = new HashMap<>();
-
+public class SplitRouterSaverObsolete extends RouterSaver {
     final String mMasterControllerTag;
     final String mDetailControllerTag;
 
-    public int getMasterSubContainerId() {
-        return mMasterSubContainerId;
+    public int getLeftSubContainerId() {
+        return mLeftSubContainerId;
     }
 
-    public int getDetailSubContainerId() {
-        return mDetailSubContainerId;
+    public int getRightSubContainerId() {
+        return mRightSubContainerId;
     }
 
     public String getMasterControllerTag() {
@@ -36,11 +27,11 @@ public class SplitRouterSaver2 extends RouterSaver {
         return mFloatingSubContainerId;
     }
 
-    int mMasterSubContainerId = R.id.left_container;
-    int mDetailSubContainerId = R.id.right_container;
+    int mLeftSubContainerId = R.id.left_container;
+    int mRightSubContainerId = R.id.right_container;
     int mFloatingSubContainerId = R.id.floating_container;
 
-    public SplitRouterSaver2(String leftRouterTag, String rightRouterTag) {
+    public SplitRouterSaverObsolete(String leftRouterTag, String rightRouterTag) {
         mMasterControllerTag = leftRouterTag;
         mDetailControllerTag = rightRouterTag;
     }
@@ -60,7 +51,7 @@ public class SplitRouterSaver2 extends RouterSaver {
     int leftWide = 350;
     int rightWide = -1;
     boolean mInSplitScreen = false;
-    String mRightRouterIntroFragmentTag = null;
+    String mDetailControllerInitialFragment = null;
     boolean mRightRouterHasIntro = false;
     void sort() {
         NavigationController controller = findController(mDetailControllerTag);
@@ -69,7 +60,7 @@ public class SplitRouterSaver2 extends RouterSaver {
             mControllers.add(1, mControllers.remove(index));
         }
     }
-    void setUp(BaseSplitRouter.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
+    void setUp(BaseSplitRouterObsolete.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
         if(!mAlreadyConfig || !mConfigOnce) {
             mConfigOnce = condition.configOnce;
 

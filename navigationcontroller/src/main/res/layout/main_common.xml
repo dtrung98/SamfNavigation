@@ -12,10 +12,10 @@
         android:id="@+id/left_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <com.ldt.navigation.effectview.EffectFrameLayout
+<!--    <com.ldt.navigation.effectview.EffectFrameLayout
         android:id="@+id/right_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"/>-->
     <com.ldt.navigation.effectview.EffectFrameLayout
         android:id="@+id/floating_container"
         android:layout_width="match_parent"

@@ -8,12 +8,10 @@ import androidx.fragment.app.FragmentManager;
 
 import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
-import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.router.SplitRouter;
+import com.ldt.navigation.router.BaseSplitRouterObsolete;
 import com.ldt.navigation.router.SplitRouterSaver;
-import com.ldt.navigation.router.BaseSplitRouter;
-import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 
 public class MainActivity extends AppCompatActivity implements SplitRouter {
 
@@ -30,8 +28,10 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
         super.onSaveInstanceState(outState);
     }
 
+
+
     @Override
-    public void onConfigureSplitRouter(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
+    public void onConfigureSplitRouter(BaseSplitRouterObsolete.SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
         splitWhen
                 .widerThan(800)
                 .tallerThan(-1)
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     super.onBackPressed();
     }
 
-    private final SplitRouterSaver mRouterSaver = new SplitRouterSaver("left-router","right-router");
+    private final SplitRouterSaver mRouterSaver = new SplitRouterSaver();
 
     @Override
     public FragmentManager provideFragmentManager() {
@@ -70,4 +70,5 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     public SplitRouterSaver getRouterSaver() {
         return mRouterSaver;
     }
+
 }

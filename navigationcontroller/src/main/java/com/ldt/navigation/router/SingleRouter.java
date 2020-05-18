@@ -7,7 +7,7 @@ import com.ldt.navigation.NavigationFragment;
  * <br> SingleRouter là interface cung cấp các phương thức điều khiển 1 NAVIGATION CONTROLLER duy nhất cho {@link androidx.fragment.app.FragmentActivity} or {@link androidx.fragment.app.Fragment}.
  * <br>
  */
-public interface SingleRouter extends BaseRouter {
+public interface SingleRouter extends Router {
     NavigationController getNavigationController();
 
     @Override
@@ -41,7 +41,7 @@ public interface SingleRouter extends BaseRouter {
 
     @Override
     default void navigateTo(NavigationFragment fragment, boolean animated) {
-        if(isNavigationAvailable()) getNavigationController().navigateTo(fragment, animated);
+        if(isNavigationAvailable()) getNavigationController().navigateTo(null, fragment, animated);
     }
 
 }

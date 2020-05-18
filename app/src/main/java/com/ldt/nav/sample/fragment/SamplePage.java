@@ -13,12 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
-import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.uicontainer.ExpandContainer;
+import com.ldt.navigation.router.SplitRouter;
 import com.ldt.navigation.uicontainer.NewFlowContainer;
-
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,19 +79,15 @@ public class SamplePage extends NavigationFragment {
     @OnClick(R.id.button_2)
     void openSetting() {
         getNavigationController().presentFragmentInNewController("setting-nav",R.id.floating_container,
-               NewFlowContainer.class, SamplePage.class, null);
+               NewFlowContainer.class, SamplePage.newInstance(0,0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-
-         NavigationController controller =  NavigationController.findInstance("right-router", getNavigationController().getFragmentManager());
-                  if(controller == null) {
-                      getNavigationController()
-                              .presentFragmentInNewController("right-router",R.id.right_container, ExpandContainer.class, SamplePage.class, null)
-                              .switchNew(new SamplePage());
-                  }
-                  else controller.switchNew(new SamplePage());
+        SplitRouter router = (SplitRouter) getActivity();
+            if(router != null) {
+                router.detailControllerSwitchNew(new SamplePage());
+            }
     }
     @BindView(R.id.edit_text)
     EditText mEditText;
@@ -176,7 +169,7 @@ public class SamplePage extends NavigationFragment {
 
     private int defaultP = -1;
 
-    @Override
+  /*  @Override
     public int defaultTransition() {
       
         if(defaultP ==-1) {
@@ -185,7 +178,7 @@ public class SamplePage extends NavigationFragment {
         }
         
         return defaultP;
-    }
+    }*/
 
 
     @BindView(R.id.status_bar)

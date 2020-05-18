@@ -3,16 +3,31 @@ package com.ldt.navigation.router;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.R;
 
-public class SplitRouterSaver extends RouterSaver {
-    final String mMasterControllerTag;
-    final String mDetailControllerTag;
+import java.util.HashMap;
 
-    public int getLeftSubContainerId() {
-        return mLeftSubContainerId;
+public class SplitRouterSaver extends RouterSaver {
+    /**
+     * The stack stores fragment tag stack in master controller
+     */
+    public final HashMap<String, Boolean> mFragmentTypesForCompactMode = new HashMap<>();
+    public void putFragmentType(String tag,  boolean isPushInDetail) {
+        mFragmentTypesForCompactMode.put(tag, isPushInDetail);
     }
 
-    public int getRightSubContainerId() {
-        return mRightSubContainerId;
+    public boolean isDetailFragment(String tag) {
+        Boolean value = mFragmentTypesForCompactMode.get(tag);
+        return value != null ? value : false;
+    }
+
+    private final String mMasterControllerTag;
+    private final String mDetailControllerTag;
+
+    public int getMasterContainerViewId() {
+        return mMasterContainerViewId;
+    }
+
+    public int getDetailContainerViewId() {
+        return mDetailContainerViewId;
     }
 
     public String getMasterControllerTag() {
@@ -23,17 +38,37 @@ public class SplitRouterSaver extends RouterSaver {
         return mDetailControllerTag;
     }
 
-    public int getFloatingSubContainerId() {
-        return mFloatingSubContainerId;
+    public int getFloatingContainerViewId() {
+        return mFloatingContainerViewId;
     }
 
-    int mLeftSubContainerId = R.id.left_container;
-    int mRightSubContainerId = R.id.right_container;
-    int mFloatingSubContainerId = R.id.floating_container;
+    final int mMasterContainerViewId;
+    final int mDetailContainerViewId;
+
+    public SplitRouterSaver(String masterControllerTag, String detailControllerTag, int masterContainerViewId, int detailContainerViewId, int floatingContainerViewId) {
+        mMasterControllerTag = masterControllerTag;
+        mDetailControllerTag = detailControllerTag;
+        mMasterContainerViewId = masterContainerViewId;
+        mDetailContainerViewId = detailContainerViewId;
+        mFloatingContainerViewId = floatingContainerViewId;
+    }
+
+    final int mFloatingContainerViewId;
+
+    public SplitRouterSaver() {
+        mMasterControllerTag = "master-controller-tag";
+        mDetailControllerTag = "detail-controller-tag";
+        mMasterContainerViewId = R.id.left_container;
+        mDetailContainerViewId = R.id.right_container;
+        mFloatingContainerViewId = R.id.floating_container;
+    }
 
     public SplitRouterSaver(String leftRouterTag, String rightRouterTag) {
         mMasterControllerTag = leftRouterTag;
         mDetailControllerTag = rightRouterTag;
+        mMasterContainerViewId = R.id.left_container;
+        mDetailContainerViewId = R.id.right_container;
+        mFloatingContainerViewId = R.id.floating_container;
     }
 
 /*    void setContainerTags(String leftTag, String rightTag) {
@@ -51,7 +86,7 @@ public class SplitRouterSaver extends RouterSaver {
     int leftWide = 350;
     int rightWide = -1;
     boolean mInSplitScreen = false;
-    String mDetailControllerInitialFragment = null;
+    String mRightRouterIntroFragmentTag = null;
     boolean mRightRouterHasIntro = false;
     void sort() {
         NavigationController controller = findController(mDetailControllerTag);
@@ -60,7 +95,7 @@ public class SplitRouterSaver extends RouterSaver {
             mControllers.add(1, mControllers.remove(index));
         }
     }
-    void setUp(BaseSplitRouter.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
+    void setUp(BaseSplitRouterObsolete.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
         if(!mAlreadyConfig || !mConfigOnce) {
             mConfigOnce = condition.configOnce;
 

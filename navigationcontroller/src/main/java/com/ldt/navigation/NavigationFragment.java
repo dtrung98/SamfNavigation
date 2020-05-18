@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
-import com.ldt.navigation.router.BaseRouter;
+import com.ldt.navigation.router.Router;
 
 import java.lang.ref.WeakReference;
 
@@ -31,10 +31,28 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     public static final String SELF_OPEN_EXIT_PRESENT_STYLE_TYPE = "self_open_exit_present_style_type";
     public static final int SELF_OPEN_EXIT_TYPE_NO_SET = -3;
 
+    private static int sIdCount = 1;
+
+    private static int nextId() {
+        return ++sIdCount;
+    }
+
+    private static String generateNavigationFragmentTag() {
+        return "com.ldt.navigation.fragment:"+nextId();
+    }
+
     private WeakReference<NavigationController> weakNavigationController = null;
     protected boolean mAnimatable = true;
     protected boolean mIsOnConfigurationAnimation = false;
-    private String mFragmentTag;
+    private String mIdentifyTag;
+
+    public final String getIdentifyTag() {
+        String tag = getTag();
+        if(tag != null) {
+            mIdentifyTag = tag;
+        } else if(mIdentifyTag == null) mIdentifyTag = generateNavigationFragmentTag();
+        return mIdentifyTag;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +86,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     public void navigateTo(NavigationFragment fragment) {
         NavigationController controller = getNavigationController();
         if(controller != null)
-            controller.navigateTo(fragment);
+            controller.navigateTo(this, fragment, true);
     }
 
 
@@ -187,7 +205,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         }
     }
 
-    public BaseRouter getRouter() {
+    public Router getRouter() {
         NavigationController controller = getNavigationController();
         if(controller == null) return null;
             return controller.getRouter();
