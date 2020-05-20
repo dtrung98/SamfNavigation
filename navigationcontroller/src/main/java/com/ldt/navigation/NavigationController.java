@@ -46,6 +46,7 @@ public class NavigationController extends NavigationFragment {
     public static final String SUB_CONTAINER_ID = "sub-container-id";
     public static final String NAV_CONTAINER_ID = "nav-container-id";
     public static final String FRAGMENT_NAVIGATION_TAGS = "fragment-navigation-tags";
+    public static final String UI_CONTAINER_CLASS_NAME = "ui-container-class-name";
 
     private final Stack<NavigationFragment> mFragments = new Stack<>();
     public @IdRes int mNavContainerViewId;
@@ -100,6 +101,16 @@ public class NavigationController extends NavigationFragment {
                 mController.mPendingTransaction.mOps.addAll(mOps);
                 mController.mPendingTransaction.withAnimation(mAnimated);
                 return;
+            }
+
+            // execute pending transaction before any other
+            if(!mController.mPendingTransaction.mOps.isEmpty()) {
+                List<Op> ops = new ArrayList<>(mOps);
+                mOps.clear();
+                mOps.addAll(mController.mPendingTransaction.mOps);
+                mOps.addAll(ops);
+                ops.clear();
+                ops = null;
             }
 
             FragmentTransaction transaction = mController.provideFragmentManager().beginTransaction();
@@ -313,7 +324,10 @@ public class NavigationController extends NavigationFragment {
             mSubContainerViewId = savedInstanceState.getInt(SUB_CONTAINER_ID, R.id.sub_container);
             mControllerTag = savedInstanceState.getString(CONTROLLER_TAG);
             mInitialFragmentTag = savedInstanceState.getString(INITIAL_FRAGMENT_TAG, mInitialFragmentTag);
-            mUiContainer = UIContainer.instantiate(getContext(), mControllerTag);
+            String uiContainerClassName = savedInstanceState.getString(UI_CONTAINER_CLASS_NAME);
+
+            if(uiContainerClassName != null)
+            mUiContainer = UIContainer.instantiate(getContext(), uiContainerClassName);
 
             mFragmentsNeedToRestore = savedInstanceState.getStringArrayList(FRAGMENT_NAVIGATION_TAGS);
         }
@@ -339,6 +353,9 @@ public class NavigationController extends NavigationFragment {
 
         outState.putString(CONTROLLER_TAG, mControllerTag);
 
+        if(mUiContainer != null)
+        outState.putString(UI_CONTAINER_CLASS_NAME, mUiContainer.getClass().getName());
+
         ArrayList<String> list = new ArrayList<>();
         for (NavigationFragment f :
                 mFragments) {
@@ -348,7 +365,10 @@ public class NavigationController extends NavigationFragment {
         outState.putStringArrayList(FRAGMENT_NAVIGATION_TAGS, list);
         outState.putString(INITIAL_FRAGMENT_TAG, mInitialFragmentTag);
 
-        UIContainer.save(mControllerTag, mUiContainer.getClass());
+        if(mUiContainer != null)
+        UIContainer.save(mUiContainer.getClass().getName(), mUiContainer.getClass());
+
+        if(mUiContainer != null)
         mUiContainer.saveState(this, outState);
     }
 
@@ -907,10 +927,10 @@ public class NavigationController extends NavigationFragment {
 
     public boolean navigateBack(boolean withAnimation) {
 
-        // mFragStack only has root fragment
+        // mFragStack has only the root fragment
         if(mFragments.size() == 1) {
 
-            // navigateBack whole navigation
+            // dismiss navigation
             return false;
         }
 
@@ -943,13 +963,6 @@ public class NavigationController extends NavigationFragment {
         if(mUiContainer != null) mUiContainer.stackChanged(this);
 
         return true;
-    }
-
-    public void navigateBackToRootFragment() {
-
-        while (mFragments.size() >= 2) {
-            navigateBack();
-        }
     }
 
     @Override

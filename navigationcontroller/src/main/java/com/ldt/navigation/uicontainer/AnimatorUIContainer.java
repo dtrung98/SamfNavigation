@@ -15,6 +15,9 @@ public abstract class AnimatorUIContainer implements UIContainer {
     private View mSubContainerView;
     private View mDimView;
     private PresentStyle mFade;
+    public boolean shouldDim() {
+        return true;
+    }
     public View getDimView() {
         return mDimView;
     }
@@ -36,7 +39,7 @@ public abstract class AnimatorUIContainer implements UIContainer {
     }
 
     public void executeDimAnimator(Animator containerAnimator, int transit, boolean enter, int nextAnim) {
-        if(mDimView == null) return;
+        if(mDimView == null || !shouldDim()) return;
         if(mFade == null) mFade = PresentStyle.inflate(PresentStyle.FADE);
         long duration = (containerAnimator == null) ?  125 : containerAnimator.getDuration();
         Animator dimAnimator = PresentStyle.inflateAnimator(mDimView.getContext(), mFade, transit, enter);

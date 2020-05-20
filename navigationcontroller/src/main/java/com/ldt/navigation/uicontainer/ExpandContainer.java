@@ -1,13 +1,9 @@
 package com.ldt.navigation.uicontainer;
 
-import android.animation.Animator;
-import android.os.Bundle;
 import android.view.View;
 import android.content.Context;
 
-import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
@@ -17,7 +13,7 @@ public class ExpandContainer extends AnimatorUIContainer {
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int providedSubContainerId) {
     // provide container layout
     // provide sub container layout
-    View v = inflater.inflate(R.layout.aninator_expand_container, viewGroup, false);
+    View v = inflater.inflate(R.layout.animator_expand_container, viewGroup, false);
     v.findViewById(R.id.sub_container).setId(providedSubContainerId);
     return v;
   }

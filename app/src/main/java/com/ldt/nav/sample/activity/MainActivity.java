@@ -10,7 +10,6 @@ import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.router.SplitRouter;
-import com.ldt.navigation.router.BaseSplitRouterObsolete;
 import com.ldt.navigation.router.SplitRouterSaver;
 
 public class MainActivity extends AppCompatActivity implements SplitRouter {
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
 
 
     @Override
-    public void onConfigureSplitRouter(BaseSplitRouterObsolete.SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
+    public void onConfigureSplitRouter(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
         splitWhen
                 .widerThan(800)
                 .tallerThan(-1)
