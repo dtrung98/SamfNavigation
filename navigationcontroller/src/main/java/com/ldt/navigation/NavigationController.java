@@ -770,7 +770,7 @@ public class NavigationController extends NavigationFragment {
                 provideFragmentManager()
                         .beginTransaction();
         if(animated)
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
         int pos = Math.min(positionAt, count - 1);
         NavigationFragment removeFragment;
