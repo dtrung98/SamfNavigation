@@ -32,7 +32,7 @@ public class BottomSheetContainer extends AnimatorUIContainer implements View.On
     View subView = getSubContainerView();
     subView.setTranslationY(mTopMargin);
     subView.setPadding(subView.getPaddingLeft(), subView.getPaddingTop(), subView.getPaddingRight(), subView.getPaddingBottom());
-    return null;
+    return new int[] {left, 0, right, bottom};
   }
 
   @Override
