@@ -86,7 +86,7 @@ public class SplitRouterSaver extends RouterSaver {
     int leftWide = 350;
     int rightWide = -1;
     boolean mInSplitScreen = false;
-    String mRightRouterIntroFragmentTag = null;
+    String mDefaultDetailFragmentTag = null;
     boolean mRightRouterHasIntro = false;
     void sort() {
         NavigationController controller = findController(mDetailControllerTag);
@@ -126,5 +126,28 @@ public class SplitRouterSaver extends RouterSaver {
 
     void popAt(int position) {
         if(position < count()) mControllers.remove(position);
+    }
+
+    public void setDetailController(NavigationController controller) {
+        int find = mControllers.indexOf(controller);
+        if(find != -1) {
+            throw new IllegalArgumentException("There are another detail controller in this split router");
+        } else {
+            if(mControllers.size() <= 1)
+                mControllers.add(controller);
+            else
+            mControllers.add(1, controller);
+        }
+    }
+
+    public void setMasterController(NavigationController controller) {
+        int find = mControllers.indexOf(controller);
+        if(find != -1) {
+            throw new IllegalArgumentException("There are another master controller in this split router");
+        } else {
+            if(mControllers.isEmpty()) mControllers.add(controller);
+            else
+            mControllers.add(0, controller);
+        }
     }
 }

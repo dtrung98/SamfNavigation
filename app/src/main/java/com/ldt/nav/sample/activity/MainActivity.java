@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     @Override
     public void onConfigureSplitRouter(SplitCondition splitWhen, int screenWidthDp, int screenHeightDp) {
         splitWhen
-                .widerThan(800)
+                .widerThan(600)
                 .tallerThan(-1)
                 .configLeftWide(350)
                 .configRightWide(-1);
