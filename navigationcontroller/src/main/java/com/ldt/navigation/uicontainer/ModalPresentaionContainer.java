@@ -10,12 +10,12 @@ import com.ldt.navigation.NavigationController;
  *  dạng bottom sheet nếu màn hình vừa và dọc
  *  dạng toàn màn hình nếu màn hình nhỏ
  */
-public class NewFlowContainer extends FlexibleContainer {
+public class ModalPresentaionContainer extends FlexibleContainer {
   @NonNull
   @Override
   protected UIContainer createSubContainer(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     if(hQualifier >= 432 && wQualifier >= 432) return new ScalableDialogContainer();
-    else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new BottomSheetContainer();
+    else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new StandardBottomSheetContainer();
     else return new ExpandContainer();
   }
 }

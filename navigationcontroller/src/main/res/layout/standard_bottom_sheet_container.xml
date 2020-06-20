@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:clickable="true"
+    android:focusable="true"
+    android:theme="@style/NavigationTheme">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/dim_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?navDimColor"
+            android:focusable="false"
+            android:importantForAccessibility="no"
+            android:soundEffectsEnabled="false" />
+
+        <com.ldt.navigation.effectview.EffectFrameLayout
+            android:id="@+id/design_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|top"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <com.ldt.navigation.effectview.EffectCardView
+                android:id="@+id/sub_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="25dp"
+                android:translationY="25dp"
+                app:cardBackgroundColor="?navBackColor"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp" />
+        </com.ldt.navigation.effectview.EffectFrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</FrameLayout>

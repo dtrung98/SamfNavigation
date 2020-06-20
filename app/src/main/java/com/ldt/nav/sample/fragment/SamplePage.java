@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.router.SplitRouter;
-import com.ldt.navigation.uicontainer.NewFlowContainer;
+import com.ldt.navigation.uicontainer.ModalPresentaionContainer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,7 +79,7 @@ public class SamplePage extends NavigationFragment {
     @OnClick(R.id.button_2)
     void openSetting() {
         getNavigationController().presentFragmentInNewController("setting-nav",R.id.floating_container,
-               NewFlowContainer.class, SamplePage.newInstance(0,0));
+               ModalPresentaionContainer.class, SamplePage.newInstance(0,0));
     }
 
     @OnClick(R.id.button_view1)

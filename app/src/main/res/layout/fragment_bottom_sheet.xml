@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ldt.navigation.effectview.EffectConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
+
+    <com.ldt.navigation.effectview.EffectFrameLayout
+        android:id="@+id/viewFrame"
+        android:layout_width="match_parent"
+        android:layout_height="750dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="#AAFFFFFF">
+        <com.ldt.navigation.effectview.EffectConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/actionOne"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Touch to show another"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:background="@drawable/background_round_border_yellow"/>
+        </com.ldt.navigation.effectview.EffectConstraintLayout>
+    </com.ldt.navigation.effectview.EffectFrameLayout>
+</com.ldt.navigation.effectview.EffectConstraintLayout>
