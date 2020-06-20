@@ -10,7 +10,7 @@ import com.ldt.navigation.NavigationController;
  *  dạng bottom sheet nếu màn hình vừa và dọc
  *  dạng toàn màn hình nếu màn hình nhỏ
  */
-public class ModalPresentaionContainer extends FlexibleContainer {
+public class ModalPresentationContainer extends FlexibleContainer {
   @NonNull
   @Override
   protected UIContainer createSubContainer(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
