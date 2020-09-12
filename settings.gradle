@@ -1,2 +1,2 @@
-include ':app', ':navigationcontroller'
-rootProject.name='NavigationController'
+include ':app', ':samf'
+rootProject.name='Samf'
