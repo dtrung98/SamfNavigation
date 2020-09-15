@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="uiContainer" format="reference"/>
+    <attr name="defaultFragment" format="reference"/>
+    <declare-styleable name="Router">
+        <attr name="uiContainer"/>
+        <attr name="defaultFragment"/>
+    </declare-styleable>
+</resources>
