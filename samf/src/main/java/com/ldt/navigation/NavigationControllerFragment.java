@@ -30,8 +30,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.WeakHashMap;
 
-import com.ldt.navigation.router.FlexRouter;
 import com.ldt.navigation.router.Router;
+import com.ldt.navigation.router.ContainerNavigator;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 
@@ -257,45 +257,45 @@ public class NavigationController extends NavigationFragment {
         return null;
     }
 
-    private WeakReference<Router> mWeakRouter;
-    public Router getRouter() {
+    private WeakReference<ContainerNavigator> mWeakRouter;
+    public ContainerNavigator getRouter() {
         if(mWeakRouter==null) return null;
         return mWeakRouter.get();
     }
 
     public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
-        Router router = getRouter();
-        if(router instanceof FlexRouter) {
-            return ((FlexRouter) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, initialFragmentClass, initialFragmentArgument);
+        ContainerNavigator router = getRouter();
+        if(router instanceof Router) {
+            return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, initialFragmentClass, initialFragmentArgument);
         }
         return null;
     }
 
     public NavigationController presentFragmentInNewController(String controllerTag, int navContainerId, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
-        Router router = getRouter();
-        if(router instanceof FlexRouter) {
-            return ((FlexRouter) router).presentController(controllerTag, navContainerId,  uiContainerCls, initialFragmentClass, initialFragmentArgument);
+        ContainerNavigator router = getRouter();
+        if(router instanceof Router) {
+            return ((Router) router).presentController(controllerTag, navContainerId,  uiContainerCls, initialFragmentClass, initialFragmentArgument);
         }
         return null;
     }
 
     public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, NavigationFragment startUpFragment) {
-        Router router = getRouter();
-        if(router instanceof FlexRouter) {
-            return ((FlexRouter) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, startUpFragment);
+        ContainerNavigator router = getRouter();
+        if(router instanceof Router) {
+            return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, startUpFragment);
         }
         return null;
     }
 
     public NavigationController presentFragmentInNewController(String controllerTag, int navContainerViewId, Class<? extends UIContainer> uiContainerCls, NavigationFragment fragments) {
-        Router router = getRouter();
-        if(router instanceof FlexRouter) {
-            return ((FlexRouter) router).presentController(controllerTag, navContainerViewId,  uiContainerCls, fragments);
+        ContainerNavigator router = getRouter();
+        if(router instanceof Router) {
+            return ((Router) router).presentController(controllerTag, navContainerViewId,  uiContainerCls, fragments);
         }
         return null;
     }
 
-    public void setRouter(Router router) {
+    public void setRouter(ContainerNavigator router) {
         mWeakRouter = new WeakReference<>(router);
     }
 
@@ -697,8 +697,8 @@ public class NavigationController extends NavigationFragment {
     }
 
     public void quit() {
-        Router router = getRouter();
-        if(router != null) router.finishController(this);
+        ContainerNavigator router = getRouter();
+        if(router != null) router.dismissNavigationController(this);
     }
 
     public NavigationFragment getTopFragment() {
@@ -801,6 +801,11 @@ public class NavigationController extends NavigationFragment {
 
     public void navigateTo(NavigationFragment fragment) {
         navigateTo(null, fragment, true);
+    }
+
+    @Override
+    public void navigateTo(NavigationFragment nav, boolean animated) {
+        navigateTo(null, nav, animated);
     }
 
     public void navigateTo(@Nullable Object sender, NavigationFragment fragmentToPush, boolean withAnimation) {
