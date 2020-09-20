@@ -1,6 +1,5 @@
 package com.ldt.nav.sample.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,7 +11,7 @@ import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.router.SplitRouter;
-import com.ldt.navigation.router.SplitRouterSaver;
+import com.ldt.navigation.router.SplitRouterAttribute;
 
 public class MainActivity extends AppCompatActivity implements SplitRouter {
 
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     super.onBackPressed();
     }
 
-    private final SplitRouterSaver mRouterSaver = new SplitRouterSaver();
+    private final SplitRouterAttribute mRouterSaver = new SplitRouterAttribute();
 
     @Override
     public FragmentManager provideFragmentManager() {
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     }
 
     @Override
-    public SplitRouterSaver getRouterSaver() {
+    public SplitRouterAttribute getRouterAttribute() {
         return mRouterSaver;
     }
 

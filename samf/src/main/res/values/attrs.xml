@@ -2,7 +2,7 @@
 <resources>
     <attr name="uiContainer" format="reference"/>
     <attr name="defaultFragment" format="reference"/>
-    <declare-styleable name="Router">
+    <declare-styleable name="ContainerNavigator">
         <attr name="uiContainer"/>
         <attr name="defaultFragment"/>
     </declare-styleable>

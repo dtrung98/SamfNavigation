@@ -14,8 +14,7 @@ import androidx.annotation.Nullable;
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.FragmentRouter;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.router.FlexRouter;
-import com.ldt.navigation.router.SplitRouter;
+import com.ldt.navigation.router.Router;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
@@ -85,7 +84,7 @@ public class SampleNavPage extends NavigationFragment {
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        FlexRouter router = (FlexRouter) getRouter();
+        Router router = (Router) getRouter();
 
         if (router != null) {
             router.navigateTo(new SampleNavPage());

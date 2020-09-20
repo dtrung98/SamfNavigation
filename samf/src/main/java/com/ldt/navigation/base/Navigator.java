@@ -1,6 +1,4 @@
-package com.ldt.navigation.router;
-
-import com.ldt.navigation.NavigationFragment;
+package com.ldt.navigation.base;
 
 public interface Navigator<T extends Navigator<?>> {
     boolean onNavigateBack();

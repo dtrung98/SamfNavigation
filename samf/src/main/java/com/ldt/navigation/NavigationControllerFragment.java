@@ -39,7 +39,7 @@ import com.ldt.navigation.uicontainer.ExpandContainer;
  * Created by burt on 2016. 5. 24..
  * Upgraded by dtrung98
  */
-public class NavigationController extends NavigationFragment {
+public class NavigationControllerFragment extends NavigationFragment {
     private static final String TAG = "NavigationController";
     public static final String INITIAL_FRAGMENT_TAG = "initial-fragment-tag";
     public static final String CONTROLLER_TAG = "controller-tag";
@@ -219,8 +219,8 @@ public class NavigationController extends NavigationFragment {
             return this;
         }
 
-        final NavigationController mController;
-        ControllerTransaction(NavigationController controller) {
+        final NavigationControllerFragment mController;
+        ControllerTransaction(NavigationControllerFragment controller) {
             mController = controller;
         }
         public Stack<NavigationFragment> getFragments() {
@@ -263,7 +263,7 @@ public class NavigationController extends NavigationFragment {
         return mWeakRouter.get();
     }
 
-    public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
+    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
         ContainerNavigator router = getRouter();
         if(router instanceof Router) {
             return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, initialFragmentClass, initialFragmentArgument);
@@ -271,7 +271,7 @@ public class NavigationController extends NavigationFragment {
         return null;
     }
 
-    public NavigationController presentFragmentInNewController(String controllerTag, int navContainerId, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
+    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, int navContainerId, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
         ContainerNavigator router = getRouter();
         if(router instanceof Router) {
             return ((Router) router).presentController(controllerTag, navContainerId,  uiContainerCls, initialFragmentClass, initialFragmentArgument);
@@ -279,7 +279,7 @@ public class NavigationController extends NavigationFragment {
         return null;
     }
 
-    public NavigationController presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, NavigationFragment startUpFragment) {
+    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, NavigationFragment startUpFragment) {
         ContainerNavigator router = getRouter();
         if(router instanceof Router) {
             return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, startUpFragment);
@@ -287,7 +287,7 @@ public class NavigationController extends NavigationFragment {
         return null;
     }
 
-    public NavigationController presentFragmentInNewController(String controllerTag, int navContainerViewId, Class<? extends UIContainer> uiContainerCls, NavigationFragment fragments) {
+    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, int navContainerViewId, Class<? extends UIContainer> uiContainerCls, NavigationFragment fragments) {
         ContainerNavigator router = getRouter();
         if(router instanceof Router) {
             return ((Router) router).presentController(controllerTag, navContainerViewId,  uiContainerCls, fragments);
@@ -528,19 +528,19 @@ public class NavigationController extends NavigationFragment {
         return mRestoredFragment;
     }
 
-    public static NavigationController createNewOrGetController(
+    public static NavigationControllerFragment createNewOrGetController(
             @NonNull String tag,
             @NonNull FragmentManager fragmentManager,
             @IdRes int navContainerViewId,
             Class<? extends UIContainer> uiContainerClass,
             NavigationFragment initialFragment)
     {
-        NavigationController f = findInstance(tag, fragmentManager);
-        if(f == null) f = newInstance(NavigationController.class, tag, fragmentManager, navContainerViewId, uiContainerClass, null, initialFragment);
+        NavigationControllerFragment f = findInstance(tag, fragmentManager);
+        if(f == null) f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerViewId, uiContainerClass, null, initialFragment);
         return f;
     }
 
-    public static NavigationController createNewOrGetController(
+    public static NavigationControllerFragment createNewOrGetController(
             @NonNull String controllerTag,
             @NonNull FragmentManager fragmentManagerThatHostsController,
             @IdRes int navContainerViewId,
@@ -548,27 +548,27 @@ public class NavigationController extends NavigationFragment {
             @NonNull Class<? extends NavigationFragment> initialFragmentClass,
             @Nullable Bundle initialFragmentArguments)
     {
-        NavigationController f = findInstance(controllerTag, fragmentManagerThatHostsController);
+        NavigationControllerFragment f = findInstance(controllerTag, fragmentManagerThatHostsController);
         if(f == null) f = newInstance(controllerTag, fragmentManagerThatHostsController, navContainerViewId,uiContainerClass, initialFragmentClass, initialFragmentArguments);
         return f;
     }
 
-    public static NavigationController createNewOrGetController(
+    public static NavigationControllerFragment createNewOrGetController(
             @NonNull String tag,
             @NonNull FragmentManager fragmentManager,
             @IdRes int navContainerId,
             Class<? extends UIContainer> uiContainerCls,
             NavigationFragment... initialFragments)
     {
-        NavigationController f = findInstance(tag, fragmentManager);
-        if(f == null) f = newInstance(NavigationController.class, tag, fragmentManager, navContainerId,uiContainerCls, initialFragments);
+        NavigationControllerFragment f = findInstance(tag, fragmentManager);
+        if(f == null) f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerId,uiContainerCls, initialFragments);
         return f;
     }
 
-    public static NavigationController findInstance(String tag, @NonNull FragmentManager fragmentManager) {
+    public static NavigationControllerFragment findInstance(String tag, @NonNull FragmentManager fragmentManager) {
 
         // find restored controller if any
-        NavigationController f = (NavigationController)fragmentManager.findFragmentByTag(tag);
+        NavigationControllerFragment f = (NavigationControllerFragment)fragmentManager.findFragmentByTag(tag);
         if(f!=null) {
 
             if(f.mControllerTag ==null || f.mControllerTag.isEmpty()) f.mControllerTag = tag;
@@ -583,7 +583,7 @@ public class NavigationController extends NavigationFragment {
     }
 
     /**
-     * Create new controller by calling {@link NavigationController#newInstance(Class, String, FragmentManager, int, Class, NavigationFragment...)} #
+     * Create new controller by calling {@link NavigationControllerFragment#newInstance(Class, String, FragmentManager, int, Class, NavigationFragment...)} #
      * with an initial fragment instantiated from provided fragment class
      * @param controllerTag the unique tag of the controller
      * @param fragmentManager fragment manager that manages controller
@@ -592,12 +592,12 @@ public class NavigationController extends NavigationFragment {
      * @param initialFragmentClass the initial fragment
      * @return controller
      */
-    public static NavigationController newInstance(String controllerTag,
-                                                      @NonNull FragmentManager fragmentManager,
-                                                      @IdRes int navContainerViewId,
-                                                      Class<? extends UIContainer> uiContainerClass,
-                                                      Class<? extends NavigationFragment> initialFragmentClass,
-                                                      @Nullable Bundle initialFragmentArgument) {
+    public static NavigationControllerFragment newInstance(String controllerTag,
+                                                           @NonNull FragmentManager fragmentManager,
+                                                           @IdRes int navContainerViewId,
+                                                           Class<? extends UIContainer> uiContainerClass,
+                                                           Class<? extends NavigationFragment> initialFragmentClass,
+                                                           @Nullable Bundle initialFragmentArgument) {
         NavigationFragment initialFragment = null;
         try {
             initialFragment = initialFragmentClass.newInstance();
@@ -607,15 +607,15 @@ public class NavigationController extends NavigationFragment {
             throw new IllegalArgumentException("Unable to create new instance from initial fragment class");
 
         initialFragment.setArguments(initialFragmentArgument);
-        return newInstance(NavigationController.class, controllerTag, fragmentManager, navContainerViewId, uiContainerClass, initialFragment);
+        return newInstance(NavigationControllerFragment.class, controllerTag, fragmentManager, navContainerViewId, uiContainerClass, initialFragment);
     }
 
-    public static <T extends NavigationController> T newInstance(Class<T> controllerClass,
-                                                                String controllerTag,
-                                                      @NonNull FragmentManager fragmentManager,
-                                                      @IdRes int navContainerViewId,
-                                                      Class<? extends UIContainer> uiContainerClass,
-                                                      NavigationFragment... initialFragments ) {
+    public static <T extends NavigationControllerFragment> T newInstance(Class<T> controllerClass,
+                                                                         String controllerTag,
+                                                                         @NonNull FragmentManager fragmentManager,
+                                                                         @IdRes int navContainerViewId,
+                                                                         Class<? extends UIContainer> uiContainerClass,
+                                                                         NavigationFragment... initialFragments ) {
 
         T controller = null;
         try {

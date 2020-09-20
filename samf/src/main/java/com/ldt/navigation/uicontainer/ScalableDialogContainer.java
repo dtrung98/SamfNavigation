@@ -1,19 +1,16 @@
 package com.ldt.navigation.uicontainer;
 
-import android.animation.Animator;
 import android.view.View;
 import android.content.Context;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 /**
  *  Container hiển thị giao diện dialog có w/h lớn hơn 3/4 và bé thua 4/3,
@@ -91,7 +88,7 @@ public class ScalableDialogContainer extends AnimatorUIContainer implements View
 
   @Override
   public void onClick(View v) {
-    if(mController instanceof NavigationController) ((NavigationController)mController).quit();
+    if(mController instanceof NavigationControllerFragment) ((NavigationControllerFragment)mController).quit();
   }
 
   @Override

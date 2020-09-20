@@ -3,15 +3,15 @@ package com.ldt.navigation.router;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
 
-public interface BaseSplitRouter extends FlexRouter {
+public interface BaseSplitRouter extends Router {
     String DETAIL_CONTROLLER_HAS_DEFAULT_FRAGMENT = "detail-controller-has-default-fragment";
     String DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG = "detail-controller-default-fragment";
 
     @Override
-    SplitRouterSaver getRouterSaver();
+    SplitRouterAttribute getRouterAttribute();
 
     @NonNull
     Class<? extends NavigationFragment> provideDefaultDetailFragment();
@@ -24,21 +24,21 @@ public interface BaseSplitRouter extends FlexRouter {
      * @param initialFragment the initial fragment, will use default master fragment if this parameter is null
      * @return master controller
      */
-    NavigationController presentMasterController(@Nullable NavigationFragment... initialFragment);
+    NavigationControllerFragment presentMasterController(@Nullable NavigationFragment... initialFragment);
 
     /**
      * Present detail controller into split router with provided initial fragment. If controller exists, nothing happen
      * @param initialFragment the initial fragment, will use default detail fragment if this parameter is null
      * @return
      */
-    NavigationController presentDetailController(@Nullable NavigationFragment... initialFragment);
+    NavigationControllerFragment presentDetailController(@Nullable NavigationFragment... initialFragment);
 
-    default NavigationController findMasterController() {
-        return getRouterSaver().findController(getRouterSaver().getMasterControllerTag());
+    default NavigationControllerFragment findMasterController() {
+        return getRouterAttribute().findController(getRouterAttribute().getMasterControllerTag());
     }
 
-    default NavigationController findDetailController() {
-        return getRouterSaver().findController(getRouterSaver().getDetailControllerTag());
+    default NavigationControllerFragment findDetailController() {
+        return getRouterAttribute().findController(getRouterAttribute().getDetailControllerTag());
     }
 
     /**

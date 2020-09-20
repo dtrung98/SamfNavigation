@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
@@ -94,6 +94,6 @@ public class StandardBottomSheetContainer extends AnimatorUIContainer{
   }
 
   private void quit() {
-    if(mController instanceof NavigationController) ((NavigationController)mController).quit();
+    if(mController instanceof NavigationControllerFragment) ((NavigationControllerFragment)mController).quit();
   }
 }

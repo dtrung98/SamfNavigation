@@ -14,8 +14,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.ldt.navigation.effectview.EffectFrameLayout;
-import com.ldt.navigation.router.FlexRouter;
-import com.ldt.navigation.router.RouterSaver;
+import com.ldt.navigation.router.Router;
+import com.ldt.navigation.router.RouterAttribute;
 import com.ldt.navigation.uicontainer.UIContainer;
 
 public class FragmentRouter extends NavigationFragment {
@@ -27,7 +27,7 @@ public class FragmentRouter extends NavigationFragment {
         mRouter.presentController(uniqueTag, R.id.fragmentRouterRootView, uiContainerClass, initialFragments);
     }
 
-    public NavigationController findController(String controllerTag) {
+    public NavigationControllerFragment findController(String controllerTag) {
         return mRouter.findController(controllerTag);
     }
 
@@ -35,9 +35,9 @@ public class FragmentRouter extends NavigationFragment {
         mRouter.findController(controllerTag);
     }
 
-    private static class InnerRouter extends OnBackPressedCallback implements FlexRouter {
+    private static class InnerRouter extends OnBackPressedCallback implements Router {
         private final FragmentRouter mFragment;
-        private RouterSaver mRouterSaver = new RouterSaver();
+        private RouterAttribute mRouterAttribute = new RouterAttribute();
 
         private InnerRouter(@NonNull FragmentRouter fragment) {
             super(true);
@@ -50,12 +50,12 @@ public class FragmentRouter extends NavigationFragment {
         }
 
         @Override
-        public RouterSaver getRouterSaver() {
-            return mRouterSaver;
+        public RouterAttribute getRouterAttribute() {
+            return mRouterAttribute;
         }
 
         @Override
-        public void finish() {
+        public void dismiss() {
             setEnabled(false);
             remove();
             if (mFragment.getActivity() != null) {
@@ -66,7 +66,7 @@ public class FragmentRouter extends NavigationFragment {
         @Override
         public void handleOnBackPressed() {
             if (!onNavigateBack()) {
-                finish();
+                dismiss();
             }
         }
     }
@@ -120,7 +120,7 @@ public class FragmentRouter extends NavigationFragment {
     }
 
     public void finish() {
-        mRouter.finish();
+        mRouter.dismiss();
     }
 
     @Override

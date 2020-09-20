@@ -13,9 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.ldt.navigation.base.Navigator;
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
-import com.ldt.navigation.router.Router;
+import com.ldt.navigation.router.ContainerNavigator;
 
 import java.lang.ref.WeakReference;
 
@@ -23,7 +24,7 @@ import java.lang.ref.WeakReference;
  * Created by burt on 2016. 5. 24..
  * Updated by dtrung98 on 2019. 12
  */
-public abstract class NavigationFragment extends Fragment implements WindowInsetsListener {
+public abstract class NavigationFragment extends Fragment implements Navigator<NavigationFragment>, WindowInsetsListener {
     private static final String TAG ="NavigationFragment";
     public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
@@ -41,7 +42,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         return "com.ldt.navigation.fragment:"+nextId();
     }
 
-    private WeakReference<NavigationController> weakNavigationController = null;
+    private WeakReference<NavigationControllerFragment> weakNavigationController = null;
     protected boolean mAnimatable = true;
     protected boolean mIsOnConfigurationAnimation = false;
     private String mIdentifyTag;
@@ -78,25 +79,25 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     private PresentStyle mOpenExitPresentStyle = null;
 
     public boolean navigateBack() {
-        NavigationController controller = getNavigationController();
+        NavigationControllerFragment controller = getNavigationController();
         return controller != null &&
         controller.navigateBack();
     }
 
     public void navigateTo(NavigationFragment fragment) {
-        NavigationController controller = getNavigationController();
+        NavigationControllerFragment controller = getNavigationController();
         if(controller != null)
             controller.navigateTo(this, fragment, true);
     }
 
 
-    public NavigationController getNavigationController() {
+    public NavigationControllerFragment getNavigationController() {
         if(weakNavigationController == null)
             return null;
         return weakNavigationController.get();
     }
 
-    protected void setNavigationController(NavigationController navigationController) {
+    protected void setNavigationController(NavigationControllerFragment navigationController) {
         weakNavigationController = new WeakReference<>(navigationController);
     }
 
@@ -162,7 +163,7 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
     }
 
     public boolean requestBack() {
-        NavigationController controller = getNavigationController();
+        NavigationControllerFragment controller = getNavigationController();
         return controller != null && controller.onNavigateBack();
     }
 
@@ -195,9 +196,9 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         super.onActivityCreated(savedInstanceState);
 
         /* self re-set window inset after created */
-        NavigationController controller = getNavigationController();
+        NavigationControllerFragment controller = getNavigationController();
         if(controller == null) {
-            int[] insets = NavigationController.getWindowInsets();
+            int[] insets = NavigationControllerFragment.getWindowInsets();
             onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
         } else {
             int[] navInset = controller.mNavWindowInsets;
@@ -205,14 +206,14 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
         }
     }
 
-    public Router getRouter() {
-        NavigationController controller = getNavigationController();
+    public ContainerNavigator getRouter() {
+        NavigationControllerFragment controller = getNavigationController();
         if(controller == null) return null;
             return controller.getRouter();
     }
 
     public TimeInterpolator defaultInterpolator() {
-        NavigationController controller = getNavigationController();
+        NavigationControllerFragment controller = getNavigationController();
         if(controller != null) return controller.defaultInterpolator();
         return new AccelerateDecelerateInterpolator();
     }
@@ -234,9 +235,9 @@ public abstract class NavigationFragment extends Fragment implements WindowInset
             return null;
         }
 
-        NavigationController nav =  getNavigationController();
+        NavigationControllerFragment nav =  getNavigationController();
         /* Không được gắn vào Controller và bản thân không phải Controller */
-        if(nav == null && !(this instanceof NavigationController)) {
+        if(nav == null && !(this instanceof NavigationControllerFragment)) {
             return null; //no animatable
         }
 

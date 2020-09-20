@@ -2,12 +2,12 @@ package com.ldt.navigation.router;
 
 import androidx.annotation.NonNull;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class RouterSaver {
+public class RouterAttribute {
         private boolean mRouterNeedToRestore = true;
         boolean doesRouterNeedToRestore() {
             return  mRouterNeedToRestore;
@@ -17,13 +17,13 @@ public class RouterSaver {
             mRouterNeedToRestore = false;
         }
 
-        protected Stack<NavigationController> mControllers = new Stack<>();
+        protected Stack<NavigationControllerFragment> mControllers = new Stack<>();
         public int count() {
             //updateLast();
             return mControllers.size();
         }
 
-        public NavigationController controllerTop() {
+        public NavigationControllerFragment controllerTop() {
             //updateLast();
             if(mControllers.isEmpty()) return  null;
             return mControllers.lastElement();
@@ -35,14 +35,14 @@ public class RouterSaver {
 
         public ArrayList<String> obtainTagList() {
             ArrayList<String> list = new ArrayList<>();
-            for (NavigationController c :
+            for (NavigationControllerFragment c :
                     mControllers) {
                 if(c.isControllerAvailable()) list.add(c.mControllerTag);
             }
             return list;
         }
 
-        public NavigationController findController(@NonNull String tag) {
+        public NavigationControllerFragment findController(@NonNull String tag) {
             //updateLast();
             int index = -1;
             int size = mControllers.size();
@@ -53,7 +53,7 @@ public class RouterSaver {
                 }
             }
             if(index == -1) return null;
-            NavigationController controller = mControllers.get(index);
+            NavigationControllerFragment controller = mControllers.get(index);
             if(!controller.isControllerAvailable()) {
                 mControllers.remove(controller);
                 return null;
@@ -61,7 +61,7 @@ public class RouterSaver {
             return controller;
         }
 
-        public NavigationController controllerAt(int index) {
+        public NavigationControllerFragment controllerAt(int index) {
             return mControllers.get(index);
         }
 
@@ -69,11 +69,11 @@ public class RouterSaver {
             mControllers.pop();
         }
 
-        public void push(NavigationController controller) {
+        public void push(NavigationControllerFragment controller) {
             if(mControllers.indexOf(controller)==-1) mControllers.push(controller);
         }
 
-    public void remove(NavigationController controller) {
+    public void remove(NavigationControllerFragment controller) {
         mControllers.remove(controller);
     }
 }

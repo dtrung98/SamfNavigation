@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 
 import androidx.fragment.app.Fragment;
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
@@ -64,6 +64,6 @@ public class BottomSheetContainer extends AnimatorUIContainer implements View.On
 
   @Override
   public void onClick(View v) {
-    if(mController instanceof NavigationController) ((NavigationController)mController).quit();
+    if(mController instanceof NavigationControllerFragment) ((NavigationControllerFragment)mController).quit();
   }
 }

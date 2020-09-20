@@ -1,11 +1,11 @@
 package com.ldt.navigation.router;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.R;
 
 import java.util.HashMap;
 
-public class SplitRouterSaver extends RouterSaver {
+public class SplitRouterAttribute extends RouterAttribute {
     /**
      * The stack stores fragment tag stack in master controller
      */
@@ -45,7 +45,7 @@ public class SplitRouterSaver extends RouterSaver {
     final int mMasterContainerViewId;
     final int mDetailContainerViewId;
 
-    public SplitRouterSaver(String masterControllerTag, String detailControllerTag, int masterContainerViewId, int detailContainerViewId, int floatingContainerViewId) {
+    public SplitRouterAttribute(String masterControllerTag, String detailControllerTag, int masterContainerViewId, int detailContainerViewId, int floatingContainerViewId) {
         mMasterControllerTag = masterControllerTag;
         mDetailControllerTag = detailControllerTag;
         mMasterContainerViewId = masterContainerViewId;
@@ -55,7 +55,7 @@ public class SplitRouterSaver extends RouterSaver {
 
     final int mFloatingContainerViewId;
 
-    public SplitRouterSaver() {
+    public SplitRouterAttribute() {
         mMasterControllerTag = "master-controller-tag";
         mDetailControllerTag = "detail-controller-tag";
         mMasterContainerViewId = R.id.left_container;
@@ -63,7 +63,7 @@ public class SplitRouterSaver extends RouterSaver {
         mFloatingContainerViewId = R.id.floating_container;
     }
 
-    public SplitRouterSaver(String leftRouterTag, String rightRouterTag) {
+    public SplitRouterAttribute(String leftRouterTag, String rightRouterTag) {
         mMasterControllerTag = leftRouterTag;
         mDetailControllerTag = rightRouterTag;
         mMasterContainerViewId = R.id.left_container;
@@ -89,7 +89,7 @@ public class SplitRouterSaver extends RouterSaver {
     String mDefaultDetailFragmentTag = null;
     boolean mRightRouterHasIntro = false;
     void sort() {
-        NavigationController controller = findController(mDetailControllerTag);
+        NavigationControllerFragment controller = findController(mDetailControllerTag);
         int index = mControllers.indexOf(controller);
         if(index != 1&&index !=-1) {
             mControllers.add(1, mControllers.remove(index));
@@ -128,7 +128,7 @@ public class SplitRouterSaver extends RouterSaver {
         if(position < count()) mControllers.remove(position);
     }
 
-    public void setDetailController(NavigationController controller) {
+    public void setDetailController(NavigationControllerFragment controller) {
         int find = mControllers.indexOf(controller);
         if(find != -1) {
             throw new IllegalArgumentException("There are another detail controller in this split router");
@@ -140,7 +140,7 @@ public class SplitRouterSaver extends RouterSaver {
         }
     }
 
-    public void setMasterController(NavigationController controller) {
+    public void setMasterController(NavigationControllerFragment controller) {
         int find = mControllers.indexOf(controller);
         if(find != -1) {
             throw new IllegalArgumentException("There are another master controller in this split router");

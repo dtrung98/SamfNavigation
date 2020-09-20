@@ -7,16 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.util.ArrayList;
 
 /**
- *  Interface cung cấp logic cho 1 {@link androidx.fragment.app.FragmentActivity}, hoặc {@link androidx.fragment.app.Fragment} để quản lý một stack các NavigationController
+ * Router provides logic to control multiple NavigationController inside
  */
-public interface ControllerRouter extends Router {
+public interface Router extends ContainerNavigator {
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
     /**
@@ -35,10 +35,10 @@ public interface ControllerRouter extends Router {
      * @param uiContainerClass  the ui container that will manage layout ui for controller
      * @return the Controller
      */
-    default NavigationController presentController(@NonNull String uniqueTag,
-                                                   @IdRes int viewContainerId,
-                                                   Class<? extends UIContainer> uiContainerClass,
-                                                   Class<? extends NavigationFragment> initialFragmentClass) {
+    default NavigationControllerFragment presentController(@NonNull String uniqueTag,
+                                                           @IdRes int viewContainerId,
+                                                           Class<? extends UIContainer> uiContainerClass,
+                                                           Class<? extends NavigationFragment> initialFragmentClass) {
         return presentController(uniqueTag, viewContainerId, uiContainerClass, initialFragmentClass, null);
     }
 
@@ -50,16 +50,16 @@ public interface ControllerRouter extends Router {
      * @param uiContainerClass  the ui container that will manage layout ui for controller
      * @return the Controller
      */
-    default NavigationController presentController(@NonNull String uniqueTag,
-                                                   @IdRes int viewContainerId,
-                                                   Class<? extends UIContainer> uiContainerClass,
-                                                   Class<? extends NavigationFragment> initialFragmentClass,
-                                                   @Nullable Bundle initialFragmentArgument) {
+    default NavigationControllerFragment presentController(@NonNull String uniqueTag,
+                                                           @IdRes int viewContainerId,
+                                                           Class<? extends UIContainer> uiContainerClass,
+                                                           Class<? extends NavigationFragment> initialFragmentClass,
+                                                           @Nullable Bundle initialFragmentArgument) {
         RouterAttribute saver = getRouterAttribute();
-        NavigationController controller = saver.findController(uniqueTag);
+        NavigationControllerFragment controller = saver.findController(uniqueTag);
 
         if(controller == null) {
-            controller = NavigationController.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragmentClass, null);
+            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragmentClass, null);
             saver.push(controller);
         }
 
@@ -75,16 +75,16 @@ public interface ControllerRouter extends Router {
      * @param uiContainerClass  the ui container that will manage layout ui for controller
      * @return the Controller
      */
-    default NavigationController presentController(@NonNull String uniqueTag,
-                                                   @IdRes int viewContainerId,
-                                                   Class<? extends UIContainer> uiContainerClass,
-                                                   NavigationFragment... initialFragments
+    default NavigationControllerFragment presentController(@NonNull String uniqueTag,
+                                                           @IdRes int viewContainerId,
+                                                           Class<? extends UIContainer> uiContainerClass,
+                                                           NavigationFragment... initialFragments
                                                    ) {
         RouterAttribute saver = getRouterAttribute();
-        NavigationController controller = saver.findController(uniqueTag);
+        NavigationControllerFragment controller = saver.findController(uniqueTag);
 
         if(controller == null) {
-            controller = NavigationController.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragments);
+            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragments);
             saver.push(controller);
         }
 
@@ -93,7 +93,7 @@ public interface ControllerRouter extends Router {
     }
 
     @Override
-    default void dismissNavigationController(@NonNull NavigationController controller) {
+    default void dismissNavigationController(@NonNull NavigationControllerFragment controller) {
         RouterAttribute saver = getRouterAttribute();
         saver.remove(controller);
 
@@ -129,11 +129,11 @@ public interface ControllerRouter extends Router {
             // restore controllers stack
             int size = list.size();
             String t;
-            NavigationController f;
+            NavigationControllerFragment f;
 
             for(int i = 0; i < size; i++) {
                 t = list.get(i);
-                f = NavigationController.findInstance(t, fragmentManager);
+                f = NavigationControllerFragment.findInstance(t, fragmentManager);
                 if(f != null) {
                     saver.push(f);
                     f.setRouter(this);
@@ -156,7 +156,7 @@ public interface ControllerRouter extends Router {
     @Override
     default boolean navigateBack(boolean animated) {
         RouterAttribute saver = getRouterAttribute();
-        NavigationController controller = getRouterAttribute().controllerTop();
+        NavigationControllerFragment controller = getRouterAttribute().controllerTop();
         if(controller==null) return false;
         boolean result = controller.navigateBack();
         if(!result) {
@@ -182,13 +182,13 @@ public interface ControllerRouter extends Router {
      * This method has no effect
      */
     @Override
-    default void navigateTo(NavigationController nav, boolean animated) {}
+    default void navigateTo(NavigationControllerFragment nav, boolean animated) {}
 
     /**
      * This method is unused and has no effect
      */
     @Override
-    default void navigateTo(NavigationController nav) {}
+    default void navigateTo(NavigationControllerFragment nav) {}
 
     /**
      * Find the current focus child navigation controller then navigate it to this fragment
@@ -196,12 +196,12 @@ public interface ControllerRouter extends Router {
      */
     default void navigateTo(NavigationFragment nav, boolean animated) {
         RouterAttribute saver = getRouterAttribute();
-        NavigationController controller = saver.controllerTop();
+        NavigationControllerFragment controller = saver.controllerTop();
 
         if(controller != null) controller.navigateTo(null, nav, animated);
     }
 
-    default NavigationController findController(String controllerTag) {
+    default NavigationControllerFragment findController(String controllerTag) {
         return getRouterAttribute().findController(controllerTag);
     }
 

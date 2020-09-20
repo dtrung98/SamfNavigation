@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.R;
 import com.ldt.navigation.uicontainer.ExpandStaticContainer;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-FlexRouter cung cấp sẵn 2 Navigation Controller Master-Detail.
+SplitRouter cung cấp sẵn 2 Navigation Controller Master-Detail.
 <br> Ở giao diện Side-by-side, Master nằm bên trái và Detail nằm bên phải, chúng là 2 controller riêng biệt
 <br> Ở giao diện Compact, Detail biến mất, toàn bộ Fragment trong Detail được gộp vào Master
  */
@@ -45,7 +45,7 @@ public interface SplitRouter extends BaseSplitRouter {
      * @return View
      */
     default View provideLayout(@NonNull Context context) {
-        SplitRouterSaver saver = getRouterSaver();
+        SplitRouterAttribute saver = getRouterAttribute();
 
         SplitCondition condition = new SplitCondition();
 
@@ -59,8 +59,8 @@ public interface SplitRouter extends BaseSplitRouter {
         View rootView = (saver.isInSplitMode()) ? inflateSplitModeLayout(context, null) : inflateSingleModeLayout(context, null);
 
         if(saver.isInSplitMode()) {
-            View leftContainer = rootView.findViewById(getRouterSaver().getMasterContainerViewId());
-            View rightContainer = rootView.findViewById(getRouterSaver().getDetailContainerViewId());
+            View leftContainer = rootView.findViewById(getRouterAttribute().getMasterContainerViewId());
+            View rightContainer = rootView.findViewById(getRouterAttribute().getDetailContainerViewId());
             if(saver.leftWide!=-1) {
                 leftContainer.getLayoutParams().width = (int) (saver.leftWide*dpUnit);
                 rightContainer.getLayoutParams().width = 0;
@@ -74,40 +74,6 @@ public interface SplitRouter extends BaseSplitRouter {
             }
         }
         return rootView;
-    }
-
-    default void onCreateRouterOld(Bundle bundle) {
-
-        /*Get Router Saver */
-        SplitRouterSaver saver = getRouterSaver();
-        /* Restore controller stack properties*/
-        BaseSplitRouter.super.onCreateRouter(bundle);
-        /* Present Master Controller if not exists */
-        presentMasterController();
-
-        /* Thêm và hiển thị Detail Controller ở giao diện split nếu chưa có */
-        if(saver.isInSplitMode()) {
-            NavigationController controller = saver.findController(saver.getDetailControllerTag());
-            if(controller == null)
-                presentDetailController();
-        } else if(bundle != null && saver.mDefaultDetailFragmentTag != null) {
-            // Xóa bỏ intro fragment tự sinh ra ở giao diện split
-            NavigationController controller = saver.findController(saver.getDetailControllerTag());
-            if(controller != null) {
-                NavigationFragment introFragment = controller.findFragment(saver.mDefaultDetailFragmentTag);
-                if(introFragment != null) {
-                    Log.d(TAG, "router will dismiss initial fragment in detail controller soon");
-                    int count = controller.getFragmentCount();
-                    if(count==1) controller.quit();
-                    else controller.dismissFragment(introFragment, false);
-                } else {
-                    Log.d(TAG, "no initial fragment in detail controller found");
-                }
-            } else Log.d(TAG, "detail controller doesn't exist");
-        }
-
-        // đảm bảo thứ tự left-router là 1, right-router là 2 trong stack
-        saver.sort();
     }
 
     class SplitCondition {
@@ -169,10 +135,10 @@ public interface SplitRouter extends BaseSplitRouter {
         // back tới fragment root của right router rồi tới left router, không quit right router và left router
         // khi cả left và right đều chỉ còn root, thì trả về false
 
-        SplitRouterSaver saver = getRouterSaver();
+        SplitRouterAttribute saver = getRouterAttribute();
         if(saver.isInSplitMode()) {
             // lấy controller hợp lệ
-            NavigationController controller;
+            NavigationControllerFragment controller;
             int count = saver.count();
             boolean result = true;
 
@@ -217,8 +183,8 @@ public interface SplitRouter extends BaseSplitRouter {
     Class<? extends NavigationFragment> provideDefaultMasterFragment();
     @Override
     default void masterControllerNavigateTo(NavigationFragment fragment, boolean animated) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = findMasterController();
+        SplitRouterAttribute saver = getRouterAttribute();
+        NavigationControllerFragment controller = findMasterController();
 
         if(controller == null) {
             presentMasterController(fragment);
@@ -238,10 +204,10 @@ public interface SplitRouter extends BaseSplitRouter {
 
 
     @Override
-    default NavigationController presentMasterController(@Nullable NavigationFragment... initialFragment) {
-        SplitRouterSaver saver = getRouterSaver();
+    default NavigationControllerFragment presentMasterController(@Nullable NavigationFragment... initialFragment) {
+        SplitRouterAttribute saver = getRouterAttribute();
 
-        NavigationController controller = findMasterController();
+        NavigationControllerFragment controller = findMasterController();
         if(controller == null) {
             Class<? extends NavigationFragment> clazz = provideDefaultMasterFragment();
             if (initialFragment == null || initialFragment.length == 0) {
@@ -253,14 +219,14 @@ public interface SplitRouter extends BaseSplitRouter {
 
                 if (fragment == null)
                     throw new IllegalArgumentException("Unable to create new default fragment for master controller");
-                controller = NavigationController.newInstance(MasterNavigationController.class,
+                controller = NavigationControllerFragment.newInstance(MasterNavigationControllerFragment.class,
                         saver.getMasterControllerTag(),
                         provideFragmentManager(),
                         saver.getMasterContainerViewId(),
                         provideMasterUIContainer(),
                         fragment);
             } else
-                controller = NavigationController.newInstance(MasterNavigationController.class, saver.getMasterControllerTag(), provideFragmentManager(), saver.getMasterContainerViewId(), provideMasterUIContainer(), initialFragment);
+                controller = NavigationControllerFragment.newInstance(MasterNavigationControllerFragment.class, saver.getMasterControllerTag(), provideFragmentManager(), saver.getMasterContainerViewId(), provideMasterUIContainer(), initialFragment);
                 saver.setMasterController(controller);
         }
 
@@ -269,10 +235,10 @@ public interface SplitRouter extends BaseSplitRouter {
     }
 
     @Override
-    default NavigationController presentDetailController(@Nullable NavigationFragment... initialFragment) {
-        SplitRouterSaver saver = getRouterSaver();
+    default NavigationControllerFragment presentDetailController(@Nullable NavigationFragment... initialFragment) {
+        SplitRouterAttribute saver = getRouterAttribute();
 
-        NavigationController controller = findDetailController();
+        NavigationControllerFragment controller = findDetailController();
         if(controller == null) {
             Class<? extends NavigationFragment> clazz = provideDefaultDetailFragment();
             if (initialFragment == null || initialFragment.length == 0) {
@@ -285,7 +251,7 @@ public interface SplitRouter extends BaseSplitRouter {
                 if (fragment == null)
                     throw new IllegalArgumentException("Unable to create new default fragment for detail controller");
 
-                controller = NavigationController.newInstance(NavigationController.class,
+                controller = NavigationControllerFragment.newInstance(NavigationControllerFragment.class,
                         saver.getDetailControllerTag(),
                         provideFragmentManager(),
                         saver.getDetailContainerViewId(),
@@ -298,8 +264,8 @@ public interface SplitRouter extends BaseSplitRouter {
                 /* save detail fragment tag into saver */
                 saver.putFragmentType(fragment.getIdentifyTag(), true);
             } else {
-                controller = NavigationController.newInstance(
-                        NavigationController.class,
+                controller = NavigationControllerFragment.newInstance(
+                        NavigationControllerFragment.class,
                         saver.getDetailControllerTag(),
                         provideFragmentManager(),
                         saver.getDetailContainerViewId(),
@@ -321,8 +287,8 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default void masterControllerSwitchNew(NavigationFragment fragment) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = findMasterController();
+        SplitRouterAttribute saver = getRouterAttribute();
+        NavigationControllerFragment controller = findMasterController();
 
         if(controller == null)
             presentMasterController(fragment);
@@ -335,13 +301,13 @@ public interface SplitRouter extends BaseSplitRouter {
     default void onSaveRouterState(Bundle outState) {
         /* save controllers stack */
         BaseSplitRouter.super.onSaveRouterState(outState);
-        SplitRouterSaver saver = getRouterSaver();
+        SplitRouterAttribute saver = getRouterAttribute();
         outState.putString(DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG, saver.mDefaultDetailFragmentTag);
         /* if current mode is split, we save the initial fragment tag to remove it if next mode is non-split */
         if (!saver.isInSplitMode()) {
             /* in compact mode */
             /* save the detail fragment tags these have been pushed to master, then the router can automatically push them to detail controller when the next mode is split */
-            NavigationController master = findMasterController();
+            NavigationControllerFragment master = findMasterController();
             if(master != null) {
                 int masterCount = master.getFragmentCount();
                 ArrayList<String> detailTags = new ArrayList<>();
@@ -360,8 +326,8 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default void detailControllerNavigateTo(NavigationFragment fragment, boolean animated) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = (saver.isInSplitMode()) ? findDetailController() : findMasterController();
+        SplitRouterAttribute saver = getRouterAttribute();
+        NavigationControllerFragment controller = (saver.isInSplitMode()) ? findDetailController() : findMasterController();
 
         if(controller == null)
             controller = (saver.isInSplitMode()) ? presentDetailController(fragment) : presentMasterController(fragment);
@@ -375,7 +341,7 @@ public interface SplitRouter extends BaseSplitRouter {
         /* restore states's controller in routers  */
         BaseSplitRouter.super.onCreateRouter(bundle);
         /* get router saver */
-        SplitRouterSaver saver = getRouterSaver();
+        SplitRouterAttribute saver = getRouterAttribute();
 
         /* first-time initializing, simply present needed controllers */
         if(bundle == null) {
@@ -387,7 +353,7 @@ public interface SplitRouter extends BaseSplitRouter {
         } else {
             /* we try to re-initialize router to fit current mode */
             /* master controller should not be null. however, if it is null, we still try to initialize it */
-            NavigationController master = presentMasterController();
+            NavigationControllerFragment master = presentMasterController();
 
             if (saver.isInSplitMode()) {
                 /* in split mode */
@@ -410,14 +376,14 @@ public interface SplitRouter extends BaseSplitRouter {
                     int detailInMasterCount = fragments.size();
 
                     // dismiss detail fragments in master controller
-                    NavigationController.ControllerTransaction controllerTransaction = master.beginTransaction();
+                    NavigationControllerFragment.ControllerTransaction controllerTransaction = master.beginTransaction();
                     for (NavigationFragment nf : fragments)
                         controllerTransaction.dismiss(nf);
                     controllerTransaction.withAnimation(false).executeTransaction();
 
                     // try to find detail controller
                     // detail controller should be null. If not, we call switch new method
-                    NavigationController detailController = findDetailController();
+                    NavigationControllerFragment detailController = findDetailController();
 
                     // present detail fragment in detail controller
 
@@ -456,7 +422,7 @@ public interface SplitRouter extends BaseSplitRouter {
                 }
 
                 /* find detail controller, if router's previous mode is split, it will available */
-                NavigationController detail = findDetailController();
+                NavigationControllerFragment detail = findDetailController();
                 if(detail != null) {
                     /* detail fragment count */
                     int detailCount = detail.getFragmentCount();
@@ -473,7 +439,7 @@ public interface SplitRouter extends BaseSplitRouter {
                     }
 
                     /* dismiss all fragments in detail controller */
-                    NavigationController.ControllerTransaction detailTransaction = detail.beginTransaction();
+                    NavigationControllerFragment.ControllerTransaction detailTransaction = detail.beginTransaction();
                     for (NavigationFragment nf :
                             fragments) {
                         detailTransaction.dismiss(nf);
@@ -489,7 +455,7 @@ public interface SplitRouter extends BaseSplitRouter {
                         fragments.clear();
 
                     /* add all other detail fragments into master controller */
-                    NavigationController.ControllerTransaction masterTransaction = master.beginTransaction();
+                    NavigationControllerFragment.ControllerTransaction masterTransaction = master.beginTransaction();
                     for(NavigationFragment nf: fragments)
                         masterTransaction.navigateTo(nf);
                     masterTransaction.withAnimation(false).executeTransaction();
@@ -500,8 +466,8 @@ public interface SplitRouter extends BaseSplitRouter {
 
     @Override
     default void detailControllerSwitchNew(NavigationFragment fragment) {
-        SplitRouterSaver saver = getRouterSaver();
-        NavigationController controller = null;
+        SplitRouterAttribute saver = getRouterAttribute();
+        NavigationControllerFragment controller = null;
         if(saver.isInSplitMode()) {
             /* In Split mode, we normally switch new in detail controller */
             controller = findDetailController();
@@ -525,7 +491,7 @@ public interface SplitRouter extends BaseSplitRouter {
                     }
                 }
 
-                NavigationController.ControllerTransaction controllerTransaction = controller.beginTransaction();
+                NavigationControllerFragment.ControllerTransaction controllerTransaction = controller.beginTransaction();
                 for (NavigationFragment nf :
                         fragments) {
                     controllerTransaction.dismiss(nf);

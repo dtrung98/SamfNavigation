@@ -1,5 +1,5 @@
 package com.ldt.navigation.router;
-import com.ldt.navigation.NavigationController;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
 
 /**
@@ -8,7 +8,7 @@ import com.ldt.navigation.NavigationFragment;
  * <br>
  */
 public interface SingleRouter extends Router {
-    NavigationController getNavigationController();
+    NavigationControllerFragment getNavigationController();
 
     @Override
     default boolean requestBack() {

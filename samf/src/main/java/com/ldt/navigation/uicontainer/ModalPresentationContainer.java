@@ -3,8 +3,6 @@ package com.ldt.navigation.uicontainer;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.ldt.navigation.NavigationController;
-
 /**
  *  Container hiển thị giao diện navigation là dialog nếu màn hình rộng,
  *  dạng bottom sheet nếu màn hình vừa và dọc
