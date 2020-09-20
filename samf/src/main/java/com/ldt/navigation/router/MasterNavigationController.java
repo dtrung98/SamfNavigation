@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import com.ldt.navigation.NavigationController;
 import com.ldt.navigation.NavigationFragment;
 
+/**
+ * Custom NavigationController is used as the master navigation controller of the SplitNavigationContainerController
+ */
 public class MasterNavigationController extends NavigationController {
     @Override
     public void switchNew(@Nullable Object sender, NavigationFragment fragment, boolean withAnimation) {
