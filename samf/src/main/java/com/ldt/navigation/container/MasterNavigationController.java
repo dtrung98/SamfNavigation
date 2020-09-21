@@ -11,7 +11,7 @@ import com.ldt.navigation.NavigationFragment;
 public class MasterNavigationController extends NavigationControllerFragment {
     @Override
     public void switchNew(@Nullable Object sender, NavigationFragment fragment, boolean withAnimation) {
-        SplitContainerNavigator router = (SplitContainerNavigator) getParentNavigator();
+        FragmentSplitContainerNavigator router = (FragmentSplitContainerNavigator) getParentNavigator();
 
         if(router != null && sender instanceof NavigationFragment) {
             /* This is the detail fragment wanting to push to detail controller */
@@ -26,10 +26,10 @@ public class MasterNavigationController extends NavigationControllerFragment {
     @Override
     public void navigate(@Nullable Object sender, NavigationFragment fragmentToPush, boolean withAnimation) {
         ContainerNavigator router = getParentNavigator();
-        if(router instanceof SplitContainerNavigator && sender instanceof NavigationFragment) {
-            if(((SplitContainerNavigator) router).requireSplitRouterAttribute().isDetailFragment(((NavigationFragment) sender).getIdentifyTag()))
-                ((SplitContainerNavigator) router).detailControllerNavigateTo(fragmentToPush);
-            else ((SplitContainerNavigator) router).masterControllerNavigateTo(fragmentToPush);
+        if(router instanceof FragmentSplitContainerNavigator && sender instanceof NavigationFragment) {
+            if(((FragmentSplitContainerNavigator) router).requireSplitRouterAttribute().isDetailFragment(((NavigationFragment) sender).getIdentifyTag()))
+                ((FragmentSplitContainerNavigator) router).detailControllerNavigateTo(fragmentToPush);
+            else ((FragmentSplitContainerNavigator) router).masterControllerNavigateTo(fragmentToPush);
         } else super.navigate(sender, fragmentToPush, withAnimation);
     }
 }

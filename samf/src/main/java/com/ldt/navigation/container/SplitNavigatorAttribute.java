@@ -95,7 +95,7 @@ public class SplitNavigatorAttribute extends NavigatorAttribute {
             mControllers.add(1, mControllers.remove(index));
         }
     }
-    void setUp(SplitContainerNavigator.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
+    void setUp(FragmentSplitContainerNavigator.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
         if(!mAlreadyConfig || !mConfigOnce) {
             mConfigOnce = condition.configOnce;
 

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.container.SplitContainerNavigator;
+import com.ldt.navigation.container.FragmentSplitContainerNavigator;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
@@ -84,7 +84,7 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        SplitContainerNavigator router = (SplitContainerNavigator) getActivity();
+        FragmentSplitContainerNavigator router = (FragmentSplitContainerNavigator) getActivity();
             if(router != null) {
                 router.detailControllerSwitchNew(new SamplePage());
             }

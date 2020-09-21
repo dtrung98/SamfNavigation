@@ -5,10 +5,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.ldt.navigation.container.NavigatorAttribute;
-import com.ldt.navigation.container.SplitContainerNavigator;
+import com.ldt.navigation.container.FragmentSplitContainerNavigator;
 import com.ldt.navigation.container.SplitNavigatorAttribute;
 
-public class SplitNavigationControllerFragment extends ContainerNavigationControllerFragment implements SplitContainerNavigator {
+public class SplitNavigationControllerFragment extends ContainerNavigationControllerFragment implements FragmentSplitContainerNavigator {
 
     @Override
     protected NavigatorAttribute onCreateAttribute() {
@@ -17,12 +17,12 @@ public class SplitNavigationControllerFragment extends ContainerNavigationContro
 
     @Override
     public void onCreateNavigator(Bundle bundle) {
-        SplitContainerNavigator.super.onCreateNavigator(bundle);
+        FragmentSplitContainerNavigator.super.onCreateNavigator(bundle);
     }
 
     @Override
     public boolean navigateBackInternal(boolean animated) {
-        return SplitContainerNavigator.super.navigateBack(animated);
+        return FragmentSplitContainerNavigator.super.navigateBack(animated);
     }
 
     @NonNull
