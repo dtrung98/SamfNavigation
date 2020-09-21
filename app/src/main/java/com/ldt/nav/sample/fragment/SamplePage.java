@@ -13,9 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
-import com.ldt.navigation.FragmentRouter;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.router.SplitRouter;
+import com.ldt.navigation.container.SplitContainerNavigator;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
@@ -63,9 +62,9 @@ public class SamplePage extends NavigationFragment {
         int value;
         try {
         value = Integer.parseInt(text);
-        navigateTo(SamplePage.newInstance(mIndex + 1, value));
+        navigate(SamplePage.newInstance(mIndex + 1, value));
         } catch (Exception e) {
-            navigateTo(SamplePage.newInstance(mIndex + 1, -1));
+            navigate(SamplePage.newInstance(mIndex + 1, -1));
         }
         
        /* if(getFragmentManager()!=null)
@@ -79,13 +78,13 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        getNavigationController().presentFragmentInNewController("setting-nav", R.id.floating_container,
+        getNavigationController().presentTo("setting-nav",
                ModalPresentationContainer.class, SamplePage.newInstance(0,0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        SplitRouter router = (SplitRouter) getActivity();
+        SplitContainerNavigator router = (SplitContainerNavigator) getActivity();
             if(router != null) {
                 router.detailControllerSwitchNew(new SamplePage());
             }

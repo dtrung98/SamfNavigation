@@ -5,5 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+<fragment
+    android:id="@+id/containerControllerFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:name="com.ldt.navigation.ContainerNavigationControllerFragment"
+    app:uiContainer="com.ldt.navigation.uicontainer.ExpandStaticContainer"
+    app:defaultFragment="com.ldt.nav.sample.fragment.SampleNavPage"/>
 </com.ldt.navigation.effectview.EffectFrameLayout>

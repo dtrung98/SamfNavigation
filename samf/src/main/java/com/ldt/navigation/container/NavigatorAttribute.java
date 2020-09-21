@@ -1,4 +1,4 @@
-package com.ldt.navigation.router;
+package com.ldt.navigation.container;
 
 import androidx.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import com.ldt.navigation.NavigationControllerFragment;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class RouterAttribute {
+public class NavigatorAttribute {
         private boolean mRouterNeedToRestore = true;
         boolean doesRouterNeedToRestore() {
             return  mRouterNeedToRestore;

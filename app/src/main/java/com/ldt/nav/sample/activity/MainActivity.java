@@ -10,25 +10,24 @@ import androidx.fragment.app.FragmentManager;
 import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.router.SplitRouter;
-import com.ldt.navigation.router.SplitRouterAttribute;
+import com.ldt.navigation.container.SplitContainerNavigator;
+import com.ldt.navigation.container.SplitNavigatorAttribute;
 
-public class MainActivity extends AppCompatActivity implements SplitRouter {
+public class MainActivity extends AppCompatActivity implements SplitContainerNavigator {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         setContentView(provideLayout(this));
-        onCreateRouter(savedInstanceState);
+        onCreateNavigator(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        onSaveRouterState(outState);
+        onSaveNavigatorState(outState);
         super.onSaveInstanceState(outState);
     }
-
 
 
     @Override
@@ -42,13 +41,18 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
 
     @Override
     public void onBackPressed() {
-    if(onNavigateBack())
-    return;
-    
-    super.onBackPressed();
+        // false: not allow to back
+        // true: allowed to back & backing executed
+        requestBack();
+        //super.onBackPressed();
     }
 
-    private final SplitRouterAttribute mRouterSaver = new SplitRouterAttribute();
+    private final SplitNavigatorAttribute mRouterSaver = new SplitNavigatorAttribute();
+
+    @Override
+    public void dismiss() {
+        super.onBackPressed();
+    }
 
     @Override
     public FragmentManager provideFragmentManager() {
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SplitRouter {
     }
 
     @Override
-    public SplitRouterAttribute getRouterAttribute() {
+    public SplitNavigatorAttribute getNavigatorAttribute() {
         return mRouterSaver;
     }
 

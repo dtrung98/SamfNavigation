@@ -1,11 +1,11 @@
-package com.ldt.navigation.router;
+package com.ldt.navigation.container;
 
 import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.R;
 
 import java.util.HashMap;
 
-public class SplitRouterAttribute extends RouterAttribute {
+public class SplitNavigatorAttribute extends NavigatorAttribute {
     /**
      * The stack stores fragment tag stack in master controller
      */
@@ -45,7 +45,7 @@ public class SplitRouterAttribute extends RouterAttribute {
     final int mMasterContainerViewId;
     final int mDetailContainerViewId;
 
-    public SplitRouterAttribute(String masterControllerTag, String detailControllerTag, int masterContainerViewId, int detailContainerViewId, int floatingContainerViewId) {
+    public SplitNavigatorAttribute(String masterControllerTag, String detailControllerTag, int masterContainerViewId, int detailContainerViewId, int floatingContainerViewId) {
         mMasterControllerTag = masterControllerTag;
         mDetailControllerTag = detailControllerTag;
         mMasterContainerViewId = masterContainerViewId;
@@ -55,7 +55,7 @@ public class SplitRouterAttribute extends RouterAttribute {
 
     final int mFloatingContainerViewId;
 
-    public SplitRouterAttribute() {
+    public SplitNavigatorAttribute() {
         mMasterControllerTag = "master-controller-tag";
         mDetailControllerTag = "detail-controller-tag";
         mMasterContainerViewId = R.id.left_container;
@@ -63,7 +63,7 @@ public class SplitRouterAttribute extends RouterAttribute {
         mFloatingContainerViewId = R.id.floating_container;
     }
 
-    public SplitRouterAttribute(String leftRouterTag, String rightRouterTag) {
+    public SplitNavigatorAttribute(String leftRouterTag, String rightRouterTag) {
         mMasterControllerTag = leftRouterTag;
         mDetailControllerTag = rightRouterTag;
         mMasterContainerViewId = R.id.left_container;
@@ -95,7 +95,7 @@ public class SplitRouterAttribute extends RouterAttribute {
             mControllers.add(1, mControllers.remove(index));
         }
     }
-    void setUp(SplitRouter.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
+    void setUp(SplitContainerNavigator.SplitCondition condition, int screenWidthDp, int screenHeightDp) {
         if(!mAlreadyConfig || !mConfigOnce) {
             mConfigOnce = condition.configOnce;
 

@@ -12,9 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
-import com.ldt.navigation.FragmentRouter;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.router.Router;
+import com.ldt.navigation.container.FragmentContainerNavigator;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
@@ -62,9 +61,9 @@ public class SampleNavPage extends NavigationFragment {
         int value;
         try {
             value = Integer.parseInt(text);
-            navigateTo(SampleNavPage.newInstance(mIndex + 1, value));
+            navigate(SampleNavPage.newInstance(mIndex + 1, value));
         } catch (Exception e) {
-            navigateTo(SampleNavPage.newInstance(mIndex + 1, -1));
+            navigate(SampleNavPage.newInstance(mIndex + 1, -1));
         }
         
        /* if(getFragmentManager()!=null)
@@ -78,16 +77,15 @@ public class SampleNavPage extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        getNavigationController().presentFragmentInNewController("setting-nav", FragmentRouter.CONTAINER_ROOT_VIEW,
-                ModalPresentationContainer.class, SampleNavPage.newInstance(0, 0));
+        present("setting-nav", ModalPresentationContainer.class, SampleNavPage.newInstance(0, 0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        Router router = (Router) getRouter();
+        FragmentContainerNavigator router = (FragmentContainerNavigator) getParentNavigator();
 
         if (router != null) {
-            router.navigateTo(new SampleNavPage());
+            router.navigate(new SampleNavPage());
         }
     }
 

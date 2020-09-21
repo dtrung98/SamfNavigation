@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <public name="defaultFragment" type="attr" />
+    <public name="uiContainer" type="attr" />
+
+    <public name="defaultMasterFragment" type="attr" />
+    <public name="defaultDetailFragment" type="attr" />
+
+    <public name="defaultMasterUIContainer" type="attr" />
+    <public name="defaultDetailUIContainer" type="attr" />
+    <attr name="uiContainer"/>
+    <attr name="defaultFragment"/>
+    <declare-styleable name="ContainerNavigator">
+        <attr name="uiContainer" />
+        <attr name="defaultFragment" />
+    </declare-styleable>
+</resources>

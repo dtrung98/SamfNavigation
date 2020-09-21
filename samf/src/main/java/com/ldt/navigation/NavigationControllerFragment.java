@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,8 +31,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.WeakHashMap;
 
-import com.ldt.navigation.router.Router;
-import com.ldt.navigation.router.ContainerNavigator;
+import com.ldt.navigation.container.ContainerNavigator;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;
 
@@ -49,7 +49,8 @@ public class NavigationControllerFragment extends NavigationFragment {
     public static final String UI_CONTAINER_CLASS_NAME = "ui-container-class-name";
 
     private final Stack<NavigationFragment> mFragments = new Stack<>();
-    public @IdRes int mNavContainerViewId;
+    public @IdRes
+    int mNavContainerViewId;
     protected int mSubContainerViewId;
     private final Object mSync = new Object();
     public String mControllerTag;
@@ -63,6 +64,7 @@ public class NavigationControllerFragment extends NavigationFragment {
     private static class Op {
         private final int mType;
         private final NavigationFragment mAssociationFragment;
+
         private Op(int type, NavigationFragment associationFragment) {
             mType = type;
             mAssociationFragment = associationFragment;
@@ -84,6 +86,7 @@ public class NavigationControllerFragment extends NavigationFragment {
         private static final int OP_DISMISS = 2;
         private final ArrayList<Op> mOps = new ArrayList<>();
         private boolean mAnimated = false;
+
         public ControllerTransaction withAnimation(boolean animated) {
             mAnimated = animated;
             return this;
@@ -96,15 +99,15 @@ public class NavigationControllerFragment extends NavigationFragment {
          * <br><b>Note:</b> Nếu controller chưa được attach, transaction được đưa vào pending transaction, pending được thực thi khi controller được attach
          */
         public void executeTransaction() {
-            if(mOps.isEmpty()) return;
-            if(!mController.isAdded()) {
+            if (mOps.isEmpty()) return;
+            if (!mController.isAdded()) {
                 mController.mPendingTransaction.mOps.addAll(mOps);
                 mController.mPendingTransaction.withAnimation(mAnimated);
                 return;
             }
 
             // execute pending transaction before any other
-            if(!mController.mPendingTransaction.mOps.isEmpty()) {
+            if (!mController.mPendingTransaction.mOps.isEmpty()) {
                 List<Op> ops = new ArrayList<>(mOps);
                 mOps.clear();
                 mOps.addAll(mController.mPendingTransaction.mOps);
@@ -132,13 +135,13 @@ public class NavigationControllerFragment extends NavigationFragment {
                 switch (op.mType) {
                     case OP_DISMISS:
                         NavigationFragment f = mController.findFragment(op.mAssociationFragment.getIdentifyTag());
-                        if(f != null) {
+                        if (f != null) {
                             transaction.remove(op.mAssociationFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                             mController.mFragments.remove(f);
                         }
                         break;
                     case OP_NAVIGATE_BACK:
-                        if(mController.getFragmentCount() != 0) {
+                        if (mController.getFragmentCount() != 0) {
                             NavigationFragment top = mController.getTopFragment();
                             transaction.remove(top).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                             mController.mFragments.remove(top);
@@ -151,7 +154,7 @@ public class NavigationControllerFragment extends NavigationFragment {
                         NavigationFragment prevFragment = (mController.mFragments.isEmpty()) ? null : mController.getTopFragment();
                         int openExit = addedFragment.defaultOpenExitTransition();
 
-                        if(prevFragment != null) {
+                        if (prevFragment != null) {
                             if (openExit == PresentStyle.SAME_AS_OPEN)
                                 prevFragment.overrideOpenExitCloseEnterTransition(
                                         addedFragment.getOpenEnterPresentStyle(),
@@ -166,29 +169,29 @@ public class NavigationControllerFragment extends NavigationFragment {
                             prevFragment.setAnimatable(mAnimated);
                         }
                         transaction.add(mController.mSubContainerViewId, op.mAssociationFragment, op.mAssociationFragment.getIdentifyTag())
-                        .hide(op.mAssociationFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                .hide(op.mAssociationFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                         mController.mFragments.add(op.mAssociationFragment);
                         break;
                 }
             }
 
             // show the top fragment
-            if(mController.getFragmentCount() != 0) {
+            if (mController.getFragmentCount() != 0) {
                 String newTop = mController.getTopFragment().getIdentifyTag();
-                if(newTop != null && !newTop.equals(topTag)) {
+                if (newTop != null && !newTop.equals(topTag)) {
                     NavigationFragment oldTop = mController.findFragment(topTag);
-                    if(oldTop != null) transaction.hide(oldTop);
+                    if (oldTop != null) transaction.hide(oldTop);
                     transaction.show(mController.getTopFragment());
                 }
             }
 
-            transaction.commit();
-            mController.provideFragmentManager().executePendingTransactions();
+            transaction.commitNow();
         }
 
         /**
          * Dismiss
          * <br>Remove fragment chỉ định khỏi controller
+         *
          * @param fragment
          * @return
          */
@@ -200,6 +203,7 @@ public class NavigationControllerFragment extends NavigationFragment {
         /**
          * Navigate back
          * <br>Remove fragment top hiện tại khỏi controller
+         *
          * @return
          */
         public ControllerTransaction navigateBack() {
@@ -211,6 +215,7 @@ public class NavigationControllerFragment extends NavigationFragment {
          * Navigate to
          * <br>Add và show fragment chỉ định
          * <br> Hide fragment hiện đang show
+         *
          * @param fragment
          * @return
          */
@@ -220,9 +225,11 @@ public class NavigationControllerFragment extends NavigationFragment {
         }
 
         final NavigationControllerFragment mController;
+
         ControllerTransaction(NavigationControllerFragment controller) {
             mController = controller;
         }
+
         public Stack<NavigationFragment> getFragments() {
             return mController.mFragments;
         }
@@ -234,9 +241,10 @@ public class NavigationControllerFragment extends NavigationFragment {
 
     /**
      * Check if the current root fragment is the initial fragment. The initial fragment is the root fragment created the same time with controller)
+     *
      * @return
      */
-    public boolean isInitialFragmentRootFragment() {
+    public boolean isInitialFragment() {
 
         return !mFragments.isEmpty() && mInitialFragmentTag != null && mInitialFragmentTag.equals(mFragments.get(0).getTag());
     }
@@ -252,51 +260,27 @@ public class NavigationControllerFragment extends NavigationFragment {
     }
 
     public String getFragmentTagAt(int position) {
-        if(position < getFragmentCount())
-        return mFragments.get(position).getIdentifyTag();
+        if (position < getFragmentCount())
+            return mFragments.get(position).getIdentifyTag();
         return null;
     }
 
-    private WeakReference<ContainerNavigator> mWeakRouter;
-    public ContainerNavigator getRouter() {
-        if(mWeakRouter==null) return null;
-        return mWeakRouter.get();
+    private WeakReference<ContainerNavigator> mContainerNavigatorWeakReference;
+
+    public ContainerNavigator getParentNavigator() {
+        if (mContainerNavigatorWeakReference == null) return null;
+        return mContainerNavigatorWeakReference.get();
     }
 
-    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
-        ContainerNavigator router = getRouter();
-        if(router instanceof Router) {
-            return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, initialFragmentClass, initialFragmentArgument);
+    public void presentTo(String uniquePresentName, Class<? extends UIContainer> uiContainerCls, NavigationFragment... fragmentToPresent) {
+        ContainerNavigator parentNavigator = getParentNavigator();
+        if (parentNavigator != null) {
+            parentNavigator.present(uniquePresentName, uiContainerCls, fragmentToPresent);
         }
-        return null;
     }
 
-    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, int navContainerId, Class<? extends UIContainer> uiContainerCls, Class<? extends NavigationFragment> initialFragmentClass, @Nullable Bundle initialFragmentArgument) {
-        ContainerNavigator router = getRouter();
-        if(router instanceof Router) {
-            return ((Router) router).presentController(controllerTag, navContainerId,  uiContainerCls, initialFragmentClass, initialFragmentArgument);
-        }
-        return null;
-    }
-
-    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, Class<? extends UIContainer> uiContainerCls, NavigationFragment startUpFragment) {
-        ContainerNavigator router = getRouter();
-        if(router instanceof Router) {
-            return ((Router) router).presentController(controllerTag, mNavContainerViewId, uiContainerCls, startUpFragment);
-        }
-        return null;
-    }
-
-    public NavigationControllerFragment presentFragmentInNewController(String controllerTag, int navContainerViewId, Class<? extends UIContainer> uiContainerCls, NavigationFragment fragments) {
-        ContainerNavigator router = getRouter();
-        if(router instanceof Router) {
-            return ((Router) router).presentController(controllerTag, navContainerViewId,  uiContainerCls, fragments);
-        }
-        return null;
-    }
-
-    public void setRouter(ContainerNavigator router) {
-        mWeakRouter = new WeakReference<>(router);
+    public void setParentNavigator(ContainerNavigator parentNavigator) {
+        mContainerNavigatorWeakReference = new WeakReference<>(parentNavigator);
     }
 
     public FragmentManager provideFragmentManager() {
@@ -308,10 +292,10 @@ public class NavigationControllerFragment extends NavigationFragment {
     }
 
     public final NavigationFragment findFragment(String tag) {
-        if(tag == null) return null;
+        if (tag == null) return null;
         for (NavigationFragment f :
                 mFragments) {
-            if(tag.equals(f.getIdentifyTag())) return f;
+            if (tag.equals(f.getIdentifyTag())) return f;
         }
         return null;
     }
@@ -319,24 +303,24 @@ public class NavigationControllerFragment extends NavigationFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             mNavContainerViewId = savedInstanceState.getInt(NAV_CONTAINER_ID, -1);
             mSubContainerViewId = savedInstanceState.getInt(SUB_CONTAINER_ID, R.id.sub_container);
             mControllerTag = savedInstanceState.getString(CONTROLLER_TAG);
             mInitialFragmentTag = savedInstanceState.getString(INITIAL_FRAGMENT_TAG, mInitialFragmentTag);
             String uiContainerClassName = savedInstanceState.getString(UI_CONTAINER_CLASS_NAME);
 
-            if(uiContainerClassName != null)
-            mUiContainer = UIContainer.instantiate(getContext(), uiContainerClassName);
+            if (uiContainerClassName != null)
+                mUiContainer = UIContainer.instantiate(getContext(), uiContainerClassName);
 
             mFragmentsNeedToRestore = savedInstanceState.getStringArrayList(FRAGMENT_NAVIGATION_TAGS);
         }
 
         int w = (getContext() == null) ? 1 : getContext().getResources().getConfiguration().screenWidthDp;
 
-        int h = (getContext() == null) ? 1 :  getContext().getResources().getConfiguration().screenHeightDp;
+        int h = (getContext() == null) ? 1 : getContext().getResources().getConfiguration().screenHeightDp;
 
-        float dpUnit = (getContext() == null) ? 1 :  getContext().getResources().getDimension(R.dimen.dpUnit);
+        float dpUnit = (getContext() == null) ? 1 : getContext().getResources().getDimension(R.dimen.dpUnit);
         if (mUiContainer == null) mUiContainer = new ExpandContainer();
         mUiContainer.provideQualifier(this, w, h, dpUnit);
 
@@ -353,8 +337,8 @@ public class NavigationControllerFragment extends NavigationFragment {
 
         outState.putString(CONTROLLER_TAG, mControllerTag);
 
-        if(mUiContainer != null)
-        outState.putString(UI_CONTAINER_CLASS_NAME, mUiContainer.getClass().getName());
+        if (mUiContainer != null)
+            outState.putString(UI_CONTAINER_CLASS_NAME, mUiContainer.getClass().getName());
 
         ArrayList<String> list = new ArrayList<>();
         for (NavigationFragment f :
@@ -365,25 +349,25 @@ public class NavigationControllerFragment extends NavigationFragment {
         outState.putStringArrayList(FRAGMENT_NAVIGATION_TAGS, list);
         outState.putString(INITIAL_FRAGMENT_TAG, mInitialFragmentTag);
 
-        if(mUiContainer != null)
-        UIContainer.save(mUiContainer.getClass().getName(), mUiContainer.getClass());
+        if (mUiContainer != null)
+            UIContainer.save(mUiContainer.getClass().getName(), mUiContainer.getClass());
 
-        if(mUiContainer != null)
-        mUiContainer.saveState(this, outState);
+        if (mUiContainer != null)
+            mUiContainer.saveState(this, outState);
     }
 
     private void initialize() {
         boolean initNoRestore = mFragments.isEmpty() && (mFragmentsNeedToRestore == null || mFragmentsNeedToRestore.isEmpty());
-        if(!mPendingFragments.isEmpty()) {
+        if (!mPendingFragments.isEmpty()) {
             /*There're some pending fragment in stack */
             for (NavigationFragment fragment :
                     mPendingFragments) {
-                navigateTo(fragment);
+                navigate(fragment);
             }
             mPendingFragments.clear();
         }
 
-        if(initNoRestore)
+        if (initNoRestore)
             mInitialFragmentTag = mFragments.get(0).getTag();
     }
 
@@ -425,11 +409,11 @@ public class NavigationControllerFragment extends NavigationFragment {
     }
 
     private static final int[] mWindowInsets = new int[4];
-    public final int[] mNavWindowInsets = new int[] {0,0,0,0};
+    public final int[] mNavWindowInsets = new int[]{0, 0, 0, 0};
 
     public static int[] getWindowInsets() {
         int[] insets = new int[4];
-        System.arraycopy(mWindowInsets,0, insets, 0, 4);
+        System.arraycopy(mWindowInsets, 0, insets, 0, 4);
         return insets;
     }
 
@@ -437,14 +421,15 @@ public class NavigationControllerFragment extends NavigationFragment {
     //private static ArrayList<String> sControllerWICLKeys = new ArrayList<>();
 
     private static WeakReference<OnApplyWindowInsetsListener> sListener;
+
     private static void unregisterWindowInsetsListener(String key) {
         sControllerWICLs.remove(key);
     }
 
     private static void registerWindowInsetsListener(Activity activity, String key, WindowInsetsListener listener) {
-        if(key != null && !key.isEmpty() && listener != null) sControllerWICLs.put(key, listener);
+        if (key != null && !key.isEmpty() && listener != null) sControllerWICLs.put(key, listener);
 
-        if(activity != null) {
+        if (activity != null) {
             OnApplyWindowInsetsListener applyListener = new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
@@ -453,7 +438,7 @@ public class NavigationControllerFragment extends NavigationFragment {
                     int right = insets.getSystemWindowInsetRight();
                     int bottom = insets.getSystemWindowInsetBottom();
 
-                    if(left!=mWindowInsets[0] || top != mWindowInsets[1] || right != mWindowInsets[2] || bottom != mWindowInsets[3]) {
+                    if (left != mWindowInsets[0] || top != mWindowInsets[1] || right != mWindowInsets[2] || bottom != mWindowInsets[3]) {
                         mWindowInsets[0] = left;
                         mWindowInsets[1] = top;
                         mWindowInsets[2] = right;
@@ -493,9 +478,9 @@ public class NavigationControllerFragment extends NavigationFragment {
     @NonNull
     @Override
     public LayoutInflater getLayoutInflater(@Nullable Bundle savedFragmentState) {
-        if(mUiContainer != null) {
+        if (mUiContainer != null) {
             LayoutInflater inflater = mUiContainer.provideLayoutInflater(savedFragmentState);
-            if(inflater!=null) return inflater;
+            if (inflater != null) return inflater;
         }
         return super.getLayoutInflater(savedFragmentState);
     }
@@ -505,25 +490,26 @@ public class NavigationControllerFragment extends NavigationFragment {
     protected void restoreFragmentStack() {
         FragmentManager fm = provideFragmentManager();
 
-        if(fm==null || mFragmentsNeedToRestore == null) return;
+        if (fm == null || mFragmentsNeedToRestore == null) return;
         int size = mFragmentsNeedToRestore.size();
         String t;
         NavigationFragment f;
         mFragments.clear();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             t = mFragmentsNeedToRestore.get(i);
-            f = (NavigationFragment)fm.findFragmentByTag(t);
-            if(f != null) {
+            f = (NavigationFragment) fm.findFragmentByTag(t);
+            if (f != null) {
                 f.setNavigationController(this);
                 mFragments.push(f);
             }
         }
         mFragmentsNeedToRestore = null;
-        if(mUiContainer != null) mUiContainer.stackChanged(this);
+        if (mUiContainer != null) mUiContainer.stackChanged(this);
     }
 
     // This flag will become true after a successful restoration
     protected boolean mRestoredFragment = false;
+
     public boolean isRestoredFragment() {
         return mRestoredFragment;
     }
@@ -533,10 +519,10 @@ public class NavigationControllerFragment extends NavigationFragment {
             @NonNull FragmentManager fragmentManager,
             @IdRes int navContainerViewId,
             Class<? extends UIContainer> uiContainerClass,
-            NavigationFragment initialFragment)
-    {
+            NavigationFragment initialFragment) {
         NavigationControllerFragment f = findInstance(tag, fragmentManager);
-        if(f == null) f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerViewId, uiContainerClass, null, initialFragment);
+        if (f == null)
+            f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerViewId, uiContainerClass, null, initialFragment);
         return f;
     }
 
@@ -546,10 +532,10 @@ public class NavigationControllerFragment extends NavigationFragment {
             @IdRes int navContainerViewId,
             @NonNull Class<? extends UIContainer> uiContainerClass,
             @NonNull Class<? extends NavigationFragment> initialFragmentClass,
-            @Nullable Bundle initialFragmentArguments)
-    {
+            @Nullable Bundle initialFragmentArguments) {
         NavigationControllerFragment f = findInstance(controllerTag, fragmentManagerThatHostsController);
-        if(f == null) f = newInstance(controllerTag, fragmentManagerThatHostsController, navContainerViewId,uiContainerClass, initialFragmentClass, initialFragmentArguments);
+        if (f == null)
+            f = newInstance(controllerTag, fragmentManagerThatHostsController, navContainerViewId, uiContainerClass, initialFragmentClass, initialFragmentArguments);
         return f;
     }
 
@@ -558,23 +544,23 @@ public class NavigationControllerFragment extends NavigationFragment {
             @NonNull FragmentManager fragmentManager,
             @IdRes int navContainerId,
             Class<? extends UIContainer> uiContainerCls,
-            NavigationFragment... initialFragments)
-    {
+            NavigationFragment... initialFragments) {
         NavigationControllerFragment f = findInstance(tag, fragmentManager);
-        if(f == null) f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerId,uiContainerCls, initialFragments);
+        if (f == null)
+            f = newInstance(NavigationControllerFragment.class, tag, fragmentManager, navContainerId, uiContainerCls, initialFragments);
         return f;
     }
 
     public static NavigationControllerFragment findInstance(String tag, @NonNull FragmentManager fragmentManager) {
 
         // find restored controller if any
-        NavigationControllerFragment f = (NavigationControllerFragment)fragmentManager.findFragmentByTag(tag);
-        if(f!=null) {
+        NavigationControllerFragment f = (NavigationControllerFragment) fragmentManager.findFragmentByTag(tag);
+        if (f != null) {
 
-            if(f.mControllerTag ==null || f.mControllerTag.isEmpty()) f.mControllerTag = tag;
+            if (f.mControllerTag == null || f.mControllerTag.isEmpty()) f.mControllerTag = tag;
 
             // restore fragment stack from restored tag stack
-            if(!f.isRestoredFragment()) {
+            if (!f.isRestoredFragment()) {
                 f.restoreFragmentStack();
                 f.mRestoredFragment = true;
             }
@@ -585,10 +571,11 @@ public class NavigationControllerFragment extends NavigationFragment {
     /**
      * Create new controller by calling {@link NavigationControllerFragment#newInstance(Class, String, FragmentManager, int, Class, NavigationFragment...)} #
      * with an initial fragment instantiated from provided fragment class
-     * @param controllerTag the unique tag of the controller
-     * @param fragmentManager fragment manager that manages controller
-     * @param navContainerViewId container view that host the controller
-     * @param uiContainerClass ui container manages controller' UI
+     *
+     * @param controllerTag        the unique tag of the controller
+     * @param fragmentManager      fragment manager that manages controller
+     * @param navContainerViewId   container view that host the controller
+     * @param uiContainerClass     ui container manages controller' UI
      * @param initialFragmentClass the initial fragment
      * @return controller
      */
@@ -601,9 +588,10 @@ public class NavigationControllerFragment extends NavigationFragment {
         NavigationFragment initialFragment = null;
         try {
             initialFragment = initialFragmentClass.newInstance();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
-        if(initialFragment ==null)
+        if (initialFragment == null)
             throw new IllegalArgumentException("Unable to create new instance from initial fragment class");
 
         initialFragment.setArguments(initialFragmentArgument);
@@ -615,13 +603,16 @@ public class NavigationControllerFragment extends NavigationFragment {
                                                                          @NonNull FragmentManager fragmentManager,
                                                                          @IdRes int navContainerViewId,
                                                                          Class<? extends UIContainer> uiContainerClass,
-                                                                         NavigationFragment... initialFragments ) {
+                                                                         NavigationFragment... initialFragments) {
 
         T controller = null;
         try {
             controller = controllerClass.newInstance();
-        } catch (Exception ignored) {};
-        if(controller == null) throw new IllegalArgumentException("Navigation Controller requires empty constructor");
+        } catch (Exception ignored) {
+        }
+        ;
+        if (controller == null)
+            throw new IllegalArgumentException("Navigation Controller requires empty constructor");
 
         controller.mNavContainerViewId = navContainerViewId;
         controller.mSubContainerViewId = View.generateViewId();
@@ -631,20 +622,22 @@ public class NavigationControllerFragment extends NavigationFragment {
         UIContainer uic = null;
         try {
             uic = uiContainerClass.newInstance();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
-        if(uic == null) {
+        if (uic == null) {
             uic = new ExpandContainer();
             Log.e(TAG, "Can not create new ui container object, will use default container instead");
         }
 
         controller.mUiContainer = uic;
 
-        if(initialFragments == null || initialFragments.length == 0) throw new IllegalArgumentException("Navigation Controller requires at least one fragment object as initial fragment");
+        if (initialFragments == null || initialFragments.length == 0)
+            throw new IllegalArgumentException("Navigation Controller requires at least one fragment object as initial fragment");
 
         /* add initial fragments */
-            controller.mPendingFragments.clear();
-            controller.mPendingFragments.addAll(Arrays.asList(initialFragments));
+        controller.mPendingFragments.clear();
+        controller.mPendingFragments.addAll(Arrays.asList(initialFragments));
 
         /* add controller to host */
         controller.addThenCommitToFragmentManager(fragmentManager);
@@ -654,7 +647,7 @@ public class NavigationControllerFragment extends NavigationFragment {
 
     protected void addThenCommitToFragmentManager(FragmentManager fragmentManager) {
         synchronized (mSync) {
-            if(mUiContainer.shouldAttachToContainerView())
+            if (mUiContainer.shouldAttachToContainerView())
                 addWithContainerView(fragmentManager);
             else addWithoutContainerView(fragmentManager);
         }
@@ -664,7 +657,7 @@ public class NavigationControllerFragment extends NavigationFragment {
         fragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(mNavContainerViewId,this , mControllerTag)
+                .add(mNavContainerViewId, this, mControllerTag)
                 .commitNow();
     }
 
@@ -672,7 +665,7 @@ public class NavigationControllerFragment extends NavigationFragment {
         fragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(this , mControllerTag)
+                .add(this, mControllerTag)
                 .commitNow();
     }
 
@@ -683,12 +676,12 @@ public class NavigationControllerFragment extends NavigationFragment {
     private boolean isControllerRemoved = false;
 
     public void removeFromFragmentManager() {
-        if(isControllerRemoved) return;
+        if (isControllerRemoved) return;
         isControllerRemoved = true;
 
         synchronized (mSync) {
             FragmentManager fragmentManager = getFragmentManager();
-            if(fragmentManager!=null)
+            if (fragmentManager != null)
                 fragmentManager.beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .remove(this)
@@ -697,12 +690,12 @@ public class NavigationControllerFragment extends NavigationFragment {
     }
 
     public void quit() {
-        ContainerNavigator router = getRouter();
-        if(router != null) router.dismissNavigationController(this);
+        ContainerNavigator parentNavigator = getParentNavigator();
+        if (parentNavigator != null) parentNavigator.dismissNavigationController(this);
     }
 
     public NavigationFragment getTopFragment() {
-        if(mFragments.size() != 0)return  mFragments.lastElement();
+        if (mFragments.size() != 0) return mFragments.lastElement();
         return null;
     }
 
@@ -730,6 +723,7 @@ public class NavigationControllerFragment extends NavigationFragment {
     /**
      * Loại bỏ các fragment từ vị trí cho trước
      * Đồng thời thêm một fragment chỉ định
+     *
      * @param fragment
      * @param positionAt
      */
@@ -741,15 +735,17 @@ public class NavigationControllerFragment extends NavigationFragment {
     /**
      * Loại bỏ toàn bộ fragment
      * + Thêm một fragment root
+     *
      * @param fragment
      */
     public void switchNew(NavigationFragment fragment) {
-        switchNew(null, fragment,false);
+        switchNew(null, fragment, false);
     }
 
     /**
-     *  Xóa toàn bộ fragment từ vị trí chỉ định, và hiển thị fragment
-     * @param fragment: Fragment
+     * Xóa toàn bộ fragment từ vị trí chỉ định, và hiển thị fragment
+     *
+     * @param fragment:   Fragment
      * @param positionAt: vị trí
      */
     public void switchAt(@Nullable Object sender, NavigationFragment fragment, int positionAt, boolean animated) {
@@ -758,8 +754,8 @@ public class NavigationControllerFragment extends NavigationFragment {
         int count = getFragmentCount();
 
         /* không có fragment nào, chỉ việc navigate to fragment */
-        if(count == 0|| !isAdded()) {
-            navigateTo(sender, fragment, animated);
+        if (count == 0 || !isAdded()) {
+            navigate(sender, fragment, animated);
             return;
         }
 
@@ -769,28 +765,28 @@ public class NavigationControllerFragment extends NavigationFragment {
         FragmentTransaction ft =
                 provideFragmentManager()
                         .beginTransaction();
-        if(animated)
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        if (animated)
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
         int pos = Math.min(positionAt, count - 1);
         NavigationFragment removeFragment;
-        for (int i = count - 1; i >= pos ; i--) {
+        for (int i = count - 1; i >= pos; i--) {
             removeFragment = getFragmentAt(i);
             removeFragment.setAnimatable(animated);
             ft.remove(removeFragment);
             mFragments.remove(i);
         }
-        ft.add(mSubContainerViewId, fragment, fragment.getIdentifyTag()).commit();
-        provideFragmentManager().executePendingTransactions();
+        ft.add(mSubContainerViewId, fragment, fragment.getIdentifyTag()).commitNow();
 
         mFragments.push(fragment);
-        if(mUiContainer!=null) mUiContainer.stackChanged(this);
+        if (mUiContainer != null) mUiContainer.stackChanged(this);
     }
 
     /**
      * Remove all fragments in stack
      * + add a new root fragment
-     * @param fragment root fragment
+     *
+     * @param fragment      root fragment
      * @param withAnimation execute with animation
      */
     public void switchNew(@Nullable Object sender, NavigationFragment fragment, boolean withAnimation) {
@@ -799,23 +795,23 @@ public class NavigationControllerFragment extends NavigationFragment {
         switchAt(sender, fragment, 0, withAnimation);
     }
 
-    public void navigateTo(NavigationFragment fragment) {
-        navigateTo(null, fragment, true);
+    public void navigate(NavigationFragment fragment) {
+        navigate(null, fragment, true);
     }
 
     @Override
-    public void navigateTo(NavigationFragment nav, boolean animated) {
-        navigateTo(null, nav, animated);
+    public void navigate(NavigationFragment nav, boolean animated) {
+        navigate(null, nav, animated);
     }
 
-    public void navigateTo(@Nullable Object sender, NavigationFragment fragmentToPush, boolean withAnimation) {
+    public void navigate(@Nullable Object sender, NavigationFragment fragmentToPush, boolean withAnimation) {
 
         synchronized (mSync) {
 
             /* add fragment to pending list, this fragment will be added after a success initialization */
-            if(!isAdded()) {
-            mPendingFragments.add(fragmentToPush);
-            return;
+            if (!isAdded()) {
+                mPendingFragments.add(fragmentToPush);
+                return;
             }
 
             fragmentToPush.setNavigationController(this);
@@ -825,19 +821,18 @@ public class NavigationControllerFragment extends NavigationFragment {
                 provideFragmentManager()
                         .beginTransaction()
                         .replace(mSubContainerViewId, fragmentToPush, fragmentToPush.getIdentifyTag())
-                        .commit();
-                provideFragmentManager().executePendingTransactions();
+                        .commitNow();
 
             } else {
                 int openExit = fragmentToPush.defaultOpenExitTransition();
                 NavigationFragment fragmentToHide = getTopFragment();
                 /* fragment to push quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
 
-                if(openExit == PresentStyle.SAME_AS_OPEN)
+                if (openExit == PresentStyle.SAME_AS_OPEN)
                     fragmentToHide.overrideOpenExitCloseEnterTransition(fragmentToPush.getOpenEnterPresentStyle(), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
 
-                /* fragment to push ép fragment nằm sau nó tuân theo hiệu ứng chỉ định */
-                else if(openExit != PresentStyle.SELF_DEFINED)
+                    /* fragment to push ép fragment nằm sau nó tuân theo hiệu ứng chỉ định */
+                else if (openExit != PresentStyle.SELF_DEFINED)
                     fragmentToHide.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToPush.defaultDuration(), fragmentToPush.defaultInterpolator());
                 else {
                     /* fragment nằm sau thích gì thì chạy nấy */
@@ -851,16 +846,15 @@ public class NavigationControllerFragment extends NavigationFragment {
 
                 FragmentTransaction ft = provideFragmentManager()
                         .beginTransaction();
-                if(withAnimation)
-                        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                if (withAnimation)
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
                 ft.hide(hideFragment)
                         .add(mSubContainerViewId, fragmentToPush, fragmentToPush.getIdentifyTag())
-                        .commit();
-                provideFragmentManager().executePendingTransactions();
+                        .commitNow();
             }
             mFragments.add(fragmentToPush);
-            if(mUiContainer != null) mUiContainer.stackChanged(this);
+            if (mUiContainer != null) mUiContainer.stackChanged(this);
         }
     }
 
@@ -869,21 +863,21 @@ public class NavigationControllerFragment extends NavigationFragment {
     }
 
     /**
-     *  Đóng fragment chỉ định, nếu là top fragment thì gọi hàm navigateBack()
-     *  <br>Ngược lại
+     * Đóng fragment chỉ định, nếu là top fragment thì gọi hàm navigateBack()
+     * <br>Ngược lại
      */
     public boolean dismissFragment(NavigationFragment fragment, boolean withAnimation) {
         int count = getFragmentCount();
         int index = mFragments.indexOf(fragment);
 
         // not existed in stack
-        if(index == -1) return false;
+        if (index == -1) return false;
 
         fragment.setAnimatable(false);
         // couldn't remove root fragment, please call quit() instead
-        if(count <= 1) {
+        if (count <= 1) {
             return false;
-        } else if(index == count - 1) {
+        } else if (index == count - 1) {
             return navigateBack(withAnimation);
         } else {
             // not the top fragment
@@ -892,9 +886,8 @@ public class NavigationControllerFragment extends NavigationFragment {
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .remove(fragment)
-                    .commit();
-            provideFragmentManager().executePendingTransactions();
-            if(mUiContainer != null) mUiContainer.stackChanged(this);
+                    .commitNow();
+            if (mUiContainer != null) mUiContainer.stackChanged(this);
             return true;
         }
     }
@@ -902,27 +895,28 @@ public class NavigationControllerFragment extends NavigationFragment {
     @Override
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         Animator containerAnimator = super.onCreateAnimator(transit, enter, nextAnim);
-        if(mUiContainer != null) mUiContainer.executeAnimator(containerAnimator, transit, enter, nextAnim);
+        if (mUiContainer != null)
+            mUiContainer.executeAnimator(containerAnimator, transit, enter, nextAnim);
         Animator delayedAnimator = AnimatorInflater.loadAnimator(getContext(), R.animator.none);
-        delayedAnimator.setDuration(containerAnimator==null ? 0 : containerAnimator.getDuration());
+        delayedAnimator.setDuration(containerAnimator == null ? 0 : containerAnimator.getDuration());
         return delayedAnimator;
     }
 
     @Override
     public int defaultDuration() {
-        if(mUiContainer != null) return mUiContainer.defaultDuration();
+        if (mUiContainer != null) return mUiContainer.defaultDuration();
         return super.defaultDuration();
     }
 
     @Override
     public int defaultTransition() {
-        if(mUiContainer!=null) return mUiContainer.defaultTransition();
+        if (mUiContainer != null) return mUiContainer.defaultTransition();
         return PresentStyle.NONE;
     }
 
     @Override
     public int defaultOpenExitTransition() {
-        if(mUiContainer!=null) return mUiContainer.defaultDuration();
+        if (mUiContainer != null) return mUiContainer.defaultDuration();
         return super.defaultOpenExitTransition();
     }
 
@@ -930,10 +924,15 @@ public class NavigationControllerFragment extends NavigationFragment {
         return navigateBack(true);
     }
 
+    /**
+     * force to navigate back
+     * @param withAnimation back with animation
+     * @return true if current stack size > 0
+     */
     public boolean navigateBack(boolean withAnimation) {
 
         // mFragStack has only the root fragment
-        if(mFragments.size() == 1) {
+        if (mFragments.size() == 1) {
 
             // dismiss navigation
             return false;
@@ -951,9 +950,9 @@ public class NavigationControllerFragment extends NavigationFragment {
 
             int openExit = fragmentToRemove.defaultOpenExitTransition();
             /* fragment to remove quy định rằng, hiệu ứng open/exit fragment nằm sau giống với nó */
-            if(openExit == PresentStyle.SAME_AS_OPEN)
+            if (openExit == PresentStyle.SAME_AS_OPEN)
                 fragmentToShow.overrideOpenExitCloseEnterTransition(fragmentToRemove.getOpenEnterPresentStyle(), fragmentToRemove.defaultDuration(), fragmentToRemove.defaultInterpolator());
-            else if(openExit != PresentStyle.SELF_DEFINED)
+            else if (openExit != PresentStyle.SELF_DEFINED)
                 fragmentToShow.overrideOpenExitCloseEnterTransition(PresentStyle.inflate(openExit), fragmentToRemove.defaultDuration(), fragmentToRemove.defaultInterpolator());
 
             provideFragmentManager()
@@ -961,17 +960,16 @@ public class NavigationControllerFragment extends NavigationFragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                     .show(fragmentToShow)
                     .remove(fragmentToRemove)
-                    .commit();
-            provideFragmentManager().executePendingTransactions();
+                    .commitNow();
         }
 
-        if(mUiContainer != null) mUiContainer.stackChanged(this);
+        if (mUiContainer != null) mUiContainer.stackChanged(this);
 
         return true;
     }
 
     @Override
-    public boolean onNavigateBack(){
+    public boolean isAllowedToBack() {
         // true khi handle
         // false khi ko handle
         NavigationFragment f = getTopFragment();
@@ -979,14 +977,18 @@ public class NavigationControllerFragment extends NavigationFragment {
         // nếu top fragment null -> ko handle -> false
         // nếu top fragment ko back được -> ko navigateBack dc fragment -> bỏ qua lệnh navigate -> true
         // nếu top fragment dc navigateBack -> handle, ngược lại thì false
-        return
-                f!=null && (!f.onNavigateBack() ||
-                        navigateBack());
+        return f != null && f.isAllowedToBack();
     }
 
     @Override
     public boolean requestBack() {
-        return onNavigateBack();
+        return requestBack(true);
+    }
+
+    @Override
+    public boolean requestBack(boolean animated) {
+        return isAllowedToBack() && navigateBack(animated);
+
     }
 
     @Override
@@ -998,17 +1000,17 @@ public class NavigationControllerFragment extends NavigationFragment {
         mNavWindowInsets[2] = right;
         mNavWindowInsets[3] = bottom;
 
-        if(mUiContainer!=null) {
+        if (mUiContainer != null) {
             int[] customInset = mUiContainer.onWindowInsetsChanged(this, left, top, right, bottom);
-            if(customInset != null && customInset.length==4) {
-                System.arraycopy(customInset, 0,mNavWindowInsets, 0, 4);
+            if (customInset != null && customInset.length == 4) {
+                System.arraycopy(customInset, 0, mNavWindowInsets, 0, 4);
             }
         }
 
         for (NavigationFragment f :
                 mFragments) {
-            if(f.isActivityCreatedState())
-            f.onWindowInsetsChanged(mNavWindowInsets[0], mNavWindowInsets[1], mNavWindowInsets[2], mNavWindowInsets[3]);
+            if (f.isActivityCreatedState())
+                f.onWindowInsetsChanged(mNavWindowInsets[0], mNavWindowInsets[1], mNavWindowInsets[2], mNavWindowInsets[3]);
         }
     }
 }

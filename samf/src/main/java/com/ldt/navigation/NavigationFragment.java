@@ -16,7 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.ldt.navigation.base.Navigator;
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.effectview.EffectView;
-import com.ldt.navigation.router.ContainerNavigator;
+import com.ldt.navigation.container.ContainerNavigator;
+import com.ldt.navigation.uicontainer.UIContainer;
 
 import java.lang.ref.WeakReference;
 
@@ -25,7 +26,7 @@ import java.lang.ref.WeakReference;
  * Updated by dtrung98 on 2019. 12
  */
 public abstract class NavigationFragment extends Fragment implements Navigator<NavigationFragment>, WindowInsetsListener {
-    private static final String TAG ="NavigationFragment";
+    private static final String TAG = "NavigationFragment";
     public static final int DEFAULT_DURATION = 275;
     public static final String ANIMATABLE = "animatable";
     public static final int PRESENT_STYLE_DEFAULT = PresentStyle.SLIDE_LEFT;
@@ -39,7 +40,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     }
 
     private static String generateNavigationFragmentTag() {
-        return "com.ldt.navigation.fragment:"+nextId();
+        return "com.ldt.navigation.fragment:" + nextId();
     }
 
     private WeakReference<NavigationControllerFragment> weakNavigationController = null;
@@ -49,19 +50,20 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
 
     public final String getIdentifyTag() {
         String tag = getTag();
-        if(tag != null) {
+        if (tag != null) {
             mIdentifyTag = tag;
-        } else if(mIdentifyTag == null) mIdentifyTag = generateNavigationFragmentTag();
+        } else if (mIdentifyTag == null) mIdentifyTag = generateNavigationFragmentTag();
         return mIdentifyTag;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mAnimatable = savedInstanceState.getBoolean(ANIMATABLE, mAnimatable);
             int savedOpenExitType = savedInstanceState.getInt(SELF_OPEN_EXIT_PRESENT_STYLE_TYPE, SELF_OPEN_EXIT_TYPE_NO_SET);
-            if(savedOpenExitType != SELF_OPEN_EXIT_TYPE_NO_SET) mOpenExitPresentStyle = PresentStyle.inflate(savedOpenExitType);
+            if (savedOpenExitType != SELF_OPEN_EXIT_TYPE_NO_SET)
+                mOpenExitPresentStyle = PresentStyle.inflate(savedOpenExitType);
         }
 
         mIsOnConfigurationAnimation = savedInstanceState != null;
@@ -71,7 +73,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ANIMATABLE, mAnimatable);
-        int openExitType = mOpenExitPresentStyle ==null ? SELF_OPEN_EXIT_TYPE_NO_SET : mOpenExitPresentStyle.getType();
+        int openExitType = mOpenExitPresentStyle == null ? SELF_OPEN_EXIT_TYPE_NO_SET : mOpenExitPresentStyle.getType();
         outState.putInt(SELF_OPEN_EXIT_PRESENT_STYLE_TYPE, openExitType);
     }
 
@@ -79,20 +81,41 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     private PresentStyle mOpenExitPresentStyle = null;
 
     public boolean navigateBack() {
-        NavigationControllerFragment controller = getNavigationController();
-        return controller != null &&
-        controller.navigateBack();
+        return navigateBack(true);
     }
 
-    public void navigateTo(NavigationFragment fragment) {
+    public boolean navigateBack(boolean animated) {
         NavigationControllerFragment controller = getNavigationController();
-        if(controller != null)
-            controller.navigateTo(this, fragment, true);
+        return controller != null && controller.navigateBack(animated);
     }
 
+    public void navigate(NavigationFragment fragment) {
+        navigate(fragment, true);
+    }
+
+    public void navigate(NavigationFragment fragment, boolean animatated) {
+        NavigationControllerFragment controller = getNavigationController();
+        if (controller != null)
+            controller.navigate(this, fragment, animatated);
+    }
+
+    /**
+     * Present one or multiple fragment in front of current fragment.
+     * @param uniquePresentName
+     * @param uiContainerCls
+     * @param fragmentToPresent
+     */
+    public void present(String uniquePresentName, Class<? extends UIContainer> uiContainerCls, NavigationFragment... fragmentToPresent) {
+        ContainerNavigator parentNavigator = getParentNavigator();
+        if (parentNavigator instanceof ContainerNavigationControllerFragment) {
+            ((ContainerNavigationControllerFragment) parentNavigator).presentInternal(uniquePresentName, uiContainerCls, fragmentToPresent);
+        } else if (parentNavigator != null) {
+            parentNavigator.present(uniquePresentName, uiContainerCls, fragmentToPresent);
+        }
+    }
 
     public NavigationControllerFragment getNavigationController() {
-        if(weakNavigationController == null)
+        if (weakNavigationController == null)
             return null;
         return weakNavigationController.get();
     }
@@ -115,8 +138,8 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     }
 
     void overrideOpenExitCloseEnterTransition(PresentStyle newStyle, int duration, TimeInterpolator interpolator) {
-        if(mOpenExitPresentStyle == null || (newStyle != null && mOpenExitPresentStyle.getType() == newStyle.getType()))
-        this.mOpenExitPresentStyle = PresentStyle.inflate(newStyle.getType());
+        if (mOpenExitPresentStyle == null || (newStyle != null && mOpenExitPresentStyle.getType() == newStyle.getType()))
+            this.mOpenExitPresentStyle = PresentStyle.inflate(newStyle.getType());
         mOpenExitCloseEnterDuration = duration;
         mOpenExitCloseEnterInterpolator = interpolator;
     }
@@ -129,13 +152,15 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
 
     private int mOpenExitCloseEnterDuration = -1;
     private TimeInterpolator mOpenExitCloseEnterInterpolator = null;
+
     private boolean useCustomOpenExitCloseEnterTransition() {
         return mOpenExitPresentStyle != null && mOpenExitCloseEnterDuration > -1 && mOpenExitCloseEnterInterpolator != null;
     }
 
     /**
-     *  Cài đặt hiệu ứng chuyển cảnh cho Fragment nằm phía sau
-     * @return  0 : không dùng hiệu ứng
+     * Cài đặt hiệu ứng chuyển cảnh cho Fragment nằm phía sau
+     *
+     * @return 0 : không dùng hiệu ứng
      * <br>  -1 :  hiệu ứng đồng nhất
      * <br> -2 : dùng hiệu ứng biến mất của Fragment nằm phía sau đó
      */
@@ -144,7 +169,8 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     }
 
     public PresentStyle getOpenEnterPresentStyle() {
-        if(mOpenEnterPresentStyle ==null) mOpenEnterPresentStyle = PresentStyle.inflate(defaultTransition());
+        if (mOpenEnterPresentStyle == null)
+            mOpenEnterPresentStyle = PresentStyle.inflate(defaultTransition());
         return mOpenEnterPresentStyle;
     }
 
@@ -153,18 +179,24 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     }
 
     /**
-     *  This method is called when user press the back button
-     * @return true to allow the fragment to be navigateBacked
-     * <br>      false to ignore the navigateBacked.
+     * This method is called when user press the back button
+     *
+     * @return true to allow the navigation controller to be backed
+     * <br>    else to do not
      * <br> To navigateBack the fragment, you need to call method <i>getNavigationController().navigateBack()</i> directly
      */
-    public boolean onNavigateBack(){
+    public boolean isAllowedToBack() {
         return true;
     }
 
     public boolean requestBack() {
+        return requestBack(true);
+    }
+
+    @Override
+    public boolean requestBack(boolean animated) {
         NavigationControllerFragment controller = getNavigationController();
-        return controller != null && controller.onNavigateBack();
+        return controller != null && controller.requestBack(animated);
     }
 
     public boolean shouldWrapLayout() {
@@ -176,14 +208,14 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     final public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root;
         View v = onCreateContentView(inflater, container, savedInstanceState);
-        if(v == null) return null;
+        if (v == null) return null;
 
         // nếu root không phải effectview
         // hoặc nếu yêu cầu ép buộc wrap layout
-        if( !(v instanceof EffectView) || shouldWrapLayout()) {
+        if (!(v instanceof EffectView) || shouldWrapLayout()) {
             root = new EffectFrameLayout(inflater.getContext());
             root.setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            ((ViewGroup)root).addView(v);
+            ((ViewGroup) root).addView(v);
         } else root = v;
         return root;
     }
@@ -197,7 +229,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
 
         /* self re-set window inset after created */
         NavigationControllerFragment controller = getNavigationController();
-        if(controller == null) {
+        if (controller == null) {
             int[] insets = NavigationControllerFragment.getWindowInsets();
             onWindowInsetsChanged(insets[0], insets[1], insets[2], insets[3]);
         } else {
@@ -206,15 +238,15 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
         }
     }
 
-    public ContainerNavigator getRouter() {
+    public ContainerNavigator getParentNavigator() {
         NavigationControllerFragment controller = getNavigationController();
-        if(controller == null) return null;
-            return controller.getRouter();
+        if (controller == null) return null;
+        return controller.getParentNavigator();
     }
 
     public TimeInterpolator defaultInterpolator() {
         NavigationControllerFragment controller = getNavigationController();
-        if(controller != null) return controller.defaultInterpolator();
+        if (controller != null) return controller.defaultInterpolator();
         return new AccelerateDecelerateInterpolator();
     }
 
@@ -224,26 +256,26 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     @Override
     public Animator onCreateAnimator(final int transit, final boolean enter, int nextAnim) {
         /* Fragment trong quá trình restore lại, hãy vô hiệu hóa đi */
-       if(mIsOnConfigurationAnimation) {
+        if (mIsOnConfigurationAnimation) {
             mIsOnConfigurationAnimation = false;
             return null;
         }
 
         /* Fragment bị tắt hiệu ứng */
-        if(!mAnimatable) {
+        if (!mAnimatable) {
             mAnimatable = true;
             return null;
         }
 
-        NavigationControllerFragment nav =  getNavigationController();
+        NavigationControllerFragment nav = getNavigationController();
         /* Không được gắn vào Controller và bản thân không phải Controller */
-        if(nav == null && !(this instanceof NavigationControllerFragment)) {
+        if (nav == null && !(this instanceof NavigationControllerFragment)) {
             return null; //no animatable
         }
 
         /* Open Enter Transition Style */
         PresentStyle openEnterPresentStyle = getOpenEnterPresentStyle();
-        if(openEnterPresentStyle.getType() == PresentStyle.NONE) return null;
+        if (openEnterPresentStyle.getType() == PresentStyle.NONE) return null;
 
         int id = -1;
         int duration = -1;
@@ -261,7 +293,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
                 interpolator = defaultInterpolator();
                 break;
             case PresentStyle.TRANSITION_TYPE_OPEN_EXIT:
-                if(useCustomOpenExitCloseEnterTransition()) {
+                if (useCustomOpenExitCloseEnterTransition()) {
                     id = mOpenExitPresentStyle.getOpenExitAnimatorId();
                     duration = mOpenExitCloseEnterDuration;
                     interpolator = mOpenExitCloseEnterInterpolator;
@@ -272,7 +304,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
                 }
                 break;
             case PresentStyle.TRANSITION_TYPE_CLOSE_ENTER:
-                if(useCustomOpenExitCloseEnterTransition()) {
+                if (useCustomOpenExitCloseEnterTransition()) {
                     id = mOpenExitPresentStyle.getCloseEnterAnimatorId();
                     duration = mOpenExitCloseEnterDuration;
                     interpolator = mOpenExitCloseEnterInterpolator;
@@ -285,13 +317,14 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
 
         //Animator animator = null;
         Animator animator = null;
-        if(id != -1)
-        try {
-            animator = AnimatorInflater.loadAnimator(getContext(), id);
-        } catch (Exception ignored) {}
+        if (id != -1)
+            try {
+                animator = AnimatorInflater.loadAnimator(getContext(), id);
+            } catch (Exception ignored) {
+            }
 
-        if(animator != null && duration != -1)  animator.setDuration(duration);
-        if(animator != null && interpolator != null) animator.setInterpolator(interpolator);
+        if (animator != null && duration != -1) animator.setDuration(duration);
+        if (animator != null && interpolator != null) animator.setInterpolator(interpolator);
         return animator;
     }
 

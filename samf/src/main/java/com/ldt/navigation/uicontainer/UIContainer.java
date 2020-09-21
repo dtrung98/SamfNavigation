@@ -17,130 +17,165 @@ import java.lang.reflect.InvocationTargetException;
 import static com.ldt.navigation.NavigationFragment.DEFAULT_DURATION;
 
 public interface UIContainer {
- SimpleArrayMap<String, Class<?>> sClassMap =
-         new SimpleArrayMap<>();
+    SimpleArrayMap<String, Class<?>> sClassMap =
+            new SimpleArrayMap<>();
 
- static UIContainer instantiate(Context context, String className) {
-/*  try {
-   Class<?> clazz = sClassMap.get(className);
-   if (clazz == null) {
-    // Class not found in the cache, see if it's real, and try to add it
-    clazz = context.getClassLoader().loadClass(className);
-    sClassMap.put(className, clazz);
-   }
-   if(clazz!=null)
-    return  (UIContainer) clazz.newInstance();
-
-  } catch (Exception ignored) {}
-  return null;*/
-
-  try {
-   Class<?> clazz = sClassMap.get(className);
-   if (clazz == null) {
-    // Class not found in the cache, see if it's real, and try to add it
-    clazz = context.getClassLoader().loadClass(className);
-    if (!UIContainer.class.isAssignableFrom(clazz)) {
-     throw new IllegalArgumentException("Trying to instantiate a class " + className
-             + " that is not an UIContainer", new ClassCastException());
+    static Class<?> loadClass(Context context, String className) {
+        Class<?> clazz = sClassMap.get(className);
+        if (clazz == null) {
+            try {
+                // Class not found in the cache, see if it's real, and try to add it
+                clazz = context.getClassLoader().loadClass(className);
+                if (!UIContainer.class.isAssignableFrom(clazz)) {
+                    throw new IllegalArgumentException("Trying to instantiate a class " + className
+                            + " that is not an UIContainer", new ClassCastException());
+                }
+                sClassMap.put(className, clazz);
+            } catch (ClassNotFoundException e) {
+             throw new IllegalArgumentException("Unable to instantiate ui container " + className
+                     + ": make sure class name exists, is public, and has an"
+                     + " empty constructor that is public", e);
+            }
+        }
+        return clazz;
     }
-    sClassMap.put(className, clazz);
-   }
-   return (UIContainer) clazz.getConstructor().newInstance();
-  } catch (ClassNotFoundException e) {
-   throw new IllegalArgumentException("Unable to instantiate ui container " + className
-           + ": make sure class name exists, is public, and has an"
-           + " empty constructor that is public", e);
-  } catch (java.lang.InstantiationException e) {
-   throw new IllegalArgumentException("Unable to instantiate ui container " + className
-           + ": make sure class name exists, is public, and has an"
-           + " empty constructor that is public", e);
-  } catch (IllegalAccessException e) {
-   throw new IllegalArgumentException("Unable to instantiate ui container " + className
-           + ": make sure class name exists, is public, and has an"
-           + " empty constructor that is public", e);
-  } catch (NoSuchMethodException e) {
-   throw new IllegalArgumentException("Unable to instantiate ui container " + className
-           + ": could not find constructor", e);
-  } catch (InvocationTargetException e) {
-   throw new IllegalArgumentException("Unable to instantiate ui container " + className
-           + ": calling ui container constructor caused an exception", e);
-  }
- }
 
- static void save(String name, Class<?> clazz) {
-  if(sClassMap.get(name)==null) sClassMap.put(name, clazz);
- }
+    static UIContainer instantiate(Context context, String className) {
+        try {
+            Class<?> clazz = loadClass(context, className);
+            return (UIContainer) clazz.getConstructor().newInstance();
+        } catch (java.lang.InstantiationException e) {
+            throw new IllegalArgumentException("Unable to instantiate ui container " + className
+                    + ": make sure class name exists, is public, and has an"
+                    + " empty constructor that is public", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Unable to instantiate ui container " + className
+                    + ": make sure class name exists, is public, and has an"
+                    + " empty constructor that is public", e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Unable to instantiate ui container " + className
+                    + ": could not find constructor", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("Unable to instantiate ui container " + className
+                    + ": calling ui container constructor caused an exception", e);
+        }
+    }
 
- /**
-  * Called in onCreate in Fragment
-  * @param wQualifier
-  * @param hQualifier
-  * @param dpUnit
-  */
- default void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {}
+    static void save(String name, Class<?> clazz) {
+        if (sClassMap.get(name) == null) sClassMap.put(name, clazz);
+    }
 
- /**
-  * Equal to onCreateView
-  * @param context
-  * @param inflater
-  * @param viewGroup
-  * @param subContainerId
-  * @return
-  */
- View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId);
+    /**
+     * Called in onCreate in Fragment
+     *
+     * @param wQualifier
+     * @param hQualifier
+     * @param dpUnit
+     */
+    default void provideQualifier(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
+    }
 
- /**
-  *  Called by Navigation Controller
-  */
- default View onCreateLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
-  return provideLayout(context, inflater, viewGroup, subContainerId);
- }
- /**
-  * Equal to onViewCreated
-  * @param view
-  */
- default void bindLayout(View view) {}
+    /**
+     * Equal to onCreateView
+     *
+     * @param context
+     * @param inflater
+     * @param viewGroup
+     * @param subContainerId
+     * @return
+     */
+    View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId);
 
- default Fragment getController() {return null;}
+    /**
+     * Called by Navigation Controller
+     */
+    default View onCreateLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
+        return provideLayout(context, inflater, viewGroup, subContainerId);
+    }
 
- /*
- Call in onCreate, after provideConfig
-  */
- default void created(Fragment controller, Bundle bundle) {}
+    /**
+     * Equal to onViewCreated
+     *
+     * @param view
+     */
+    default void bindLayout(View view) {
+    }
 
- /**
-  * Call in onDestroyView
-  */
- default void destroy(Fragment controller) {}
- default void saveState(Fragment controller, Bundle bundle) {}
- default void restoreState(Fragment controller, Bundle bundle) {}
- default void start(Fragment controller) {};
- default void stop(Fragment controller) {};
- default void resume(Fragment controller) {};
- default void pause(Fragment controller) {};
- default void destroyView(Fragment controller) {}
- default void stackChanged(Fragment controller) {}
- default void activityCreated(Fragment controller, Bundle savedInstanceState) {}
- default LayoutInflater provideLayoutInflater(Bundle savedInstanceState) { return null;}
- default void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {}
+    default Fragment getController() {
+        return null;
+    }
 
- default boolean shouldAttachToContainerView() {
-  return true;
- }
+    /*
+    Call in onCreate, after provideConfig
+     */
+    default void created(Fragment controller, Bundle bundle) {
+    }
 
- default int defaultDuration() {
-  return DEFAULT_DURATION;
- }
+    /**
+     * Call in onDestroyView
+     */
+    default void destroy(Fragment controller) {
+    }
 
- default int defaultTransition() {
-  return PresentStyle.FADE;
- }
+    default void saveState(Fragment controller, Bundle bundle) {
+    }
 
- default int defaultOpenExitTransition() {
-  return PresentStyle.SAME_AS_OPEN;
- }
+    default void restoreState(Fragment controller, Bundle bundle) {
+    }
 
- default int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
-  return null;
- }
+    default void start(Fragment controller) {
+    }
+
+    ;
+
+    default void stop(Fragment controller) {
+    }
+
+    ;
+
+    default void resume(Fragment controller) {
+    }
+
+    ;
+
+    default void pause(Fragment controller) {
+    }
+
+    ;
+
+    default void destroyView(Fragment controller) {
+    }
+
+    default void stackChanged(Fragment controller) {
+    }
+
+    default void activityCreated(Fragment controller, Bundle savedInstanceState) {
+    }
+
+    default LayoutInflater provideLayoutInflater(Bundle savedInstanceState) {
+        return null;
+    }
+
+    default void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {
+    }
+
+    default boolean shouldAttachToContainerView() {
+        return true;
+    }
+
+    default int defaultDuration() {
+        return DEFAULT_DURATION;
+    }
+
+    default int defaultTransition() {
+        return PresentStyle.FADE;
+    }
+
+    default int defaultOpenExitTransition() {
+        return PresentStyle.SAME_AS_OPEN;
+    }
+
+    default int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
+        return null;
+    }
 }
