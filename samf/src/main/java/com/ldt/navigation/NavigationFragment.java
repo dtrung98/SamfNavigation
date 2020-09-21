@@ -12,6 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.ldt.navigation.base.Navigator;
 import com.ldt.navigation.effectview.EffectFrameLayout;
@@ -27,7 +28,7 @@ import java.lang.ref.WeakReference;
  */
 public abstract class NavigationFragment extends Fragment implements Navigator<NavigationFragment>, WindowInsetsListener {
     private static final String TAG = "NavigationFragment";
-    public static final int DEFAULT_DURATION = 275;
+    public static final int DEFAULT_DURATION = 300;
     public static final String ANIMATABLE = "animatable";
     public static final int PRESENT_STYLE_DEFAULT = PresentStyle.SLIDE_LEFT;
     public static final String SELF_OPEN_EXIT_PRESENT_STYLE_TYPE = "self_open_exit_present_style_type";
@@ -247,7 +248,7 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     public TimeInterpolator defaultInterpolator() {
         NavigationControllerFragment controller = getNavigationController();
         if (controller != null) return controller.defaultInterpolator();
-        return new AccelerateDecelerateInterpolator();
+        return new FastOutSlowInInterpolator();
     }
 
     @Nullable

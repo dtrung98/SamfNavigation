@@ -1,5 +1,6 @@
 package com.ldt.navigation.uicontainer;
 
+import android.animation.Animator;
 import android.view.View;
 import android.content.Context;
 
@@ -8,6 +9,8 @@ import com.ldt.navigation.R;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 public class ExpandContainer extends AnimatorUIContainer {
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int providedSubContainerId) {
@@ -20,7 +23,7 @@ public class ExpandContainer extends AnimatorUIContainer {
 
   @Override
   public int defaultDuration() {
-    return 325;
+    return 425;
   }
 
   @Override

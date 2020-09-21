@@ -5,22 +5,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
+
 import androidx.fragment.app.Fragment;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
-public class StandardBottomSheetContainer extends AnimatorUIContainer{
-  private FrameLayout mBottomSheet;
-  private BottomSheetBehavior<FrameLayout> mBehavior;
+public class ViewBottomSheetContainer extends AnimatorUIContainer implements View.OnClickListener {
+  private View mPanel;
   private int mTopMargin = 0;
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
-    View v = inflater.inflate(R.layout.standard_bottom_sheet_container, viewGroup, false);
+    View v = inflater.inflate(R.layout.bottom_sheet_container, viewGroup, false);
     v.findViewById(R.id.sub_container).setId(subContainerId);
     return v;
   }
@@ -32,7 +30,7 @@ public class StandardBottomSheetContainer extends AnimatorUIContainer{
 
   @Override
   public int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
-    mTopMargin = (int) mBottomSheet.getContext().getResources().getDimension(R.dimen.dpUnit)*4 + top;
+    mTopMargin = (int)mPanel.getContext().getResources().getDimension(R.dimen.dpUnit)*4 + top;
     View subView = getSubContainerView();
     subView.setTranslationY(mTopMargin);
     subView.setPadding(subView.getPaddingLeft(), subView.getPaddingTop(), subView.getPaddingRight(), subView.getPaddingBottom());
@@ -40,42 +38,17 @@ public class StandardBottomSheetContainer extends AnimatorUIContainer{
   }
 
   @Override
-  public void start(Fragment controller) {
-    super.start(controller);
-    if (mBehavior != null && mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-      mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-    }
-  }
-
-  @Override
   public void bindLayout(View view) {
-    view.findViewById(R.id.root).setOnClickListener(v -> quit());
-    mBottomSheet = view.findViewById(R.id.design_bottom_sheet);
-    mBehavior = BottomSheetBehavior.from(mBottomSheet);
-    mBehavior.addBottomSheetCallback(mBottomSheetCallback);
-    mBehavior.setHideable(true);
-    mBehavior.setSkipCollapsed(true);
-    mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    view.findViewById(R.id.root).setOnClickListener(this);
+    mPanel = view.findViewById(R.id.panel);
   }
-
-  private BottomSheetBehavior.BottomSheetCallback mBottomSheetCallback =
-          new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(
-                    @NonNull View bottomSheet, @BottomSheetBehavior.State int newState) {
-              if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                quit();
-              }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
-          };
 
   @Override
   public void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {
     if(animator != null) {
-      animator.setTarget(mBottomSheet);
+      animator.setTarget(mPanel);
+      animator.setInterpolator(new FastOutSlowInInterpolator());
+      animator.setDuration(650);
       animator.start();
     }
    executeDimAnimator(animator, transit, enter, nextAnim);
@@ -93,7 +66,8 @@ public class StandardBottomSheetContainer extends AnimatorUIContainer{
     mController = null;
   }
 
-  private void quit() {
+  @Override
+  public void onClick(View v) {
     if(mController instanceof NavigationControllerFragment) ((NavigationControllerFragment)mController).quit();
   }
 }

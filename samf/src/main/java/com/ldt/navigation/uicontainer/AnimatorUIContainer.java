@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+
 import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.R;
 
@@ -52,6 +54,7 @@ public abstract class AnimatorUIContainer implements UIContainer {
     public void executeAnimator(Animator animator, int transit, boolean enter, int nextAnim) {
         if(animator != null) {
             animator.setTarget(mSubContainerView);
+            animator.setInterpolator(new FastOutSlowInInterpolator());
             animator.start();
         }
         // dim background if any dim view

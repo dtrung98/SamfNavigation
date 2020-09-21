@@ -13,7 +13,7 @@ public class ModalPresentationContainer extends FlexibleContainer {
   @Override
   protected UIContainer createSubContainer(Fragment controller, int wQualifier, int hQualifier, float dpUnit) {
     if(hQualifier >= 432 && wQualifier >= 432) return new ScalableDialogContainer();
-    else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new StandardBottomSheetContainer();
+    else if(hQualifier >= 300 &&(float)hQualifier/wQualifier >= 4f/3) return new DesignBottomSheetContainer();
     else return new ExpandContainer();
   }
 }

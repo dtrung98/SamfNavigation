@@ -92,6 +92,9 @@ public class SampleNavPage extends NavigationFragment {
     @BindView(R.id.edit_text)
     EditText mEditText;
 
+    @BindView(R.id.safeView)
+    View mSafeView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +185,7 @@ public class SampleNavPage extends NavigationFragment {
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+        ((ViewGroup.MarginLayoutParams) mSafeView.getLayoutParams()).setMargins(left, top, right, bottom);
         updateDescription();
     }
 }
