@@ -27,7 +27,7 @@ SplitRouter cung cấp sẵn 2 Navigation Controller Master-Detail.
 <br> Ở giao diện Side-by-side, Master nằm bên trái và Detail nằm bên phải, chúng là 2 controller riêng biệt
 <br> Ở giao diện Compact, Detail biến mất, toàn bộ Fragment trong Detail được gộp vào Master
  */
-public interface FragmentSplitContainerNavigator extends SplitContainerNavigator {
+public interface SplitFragmentContainerNavigator extends SplitContainerNavigator {
     String TAG = "SplitRouter2";
     String DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE = "detail-fragment-tags-in-compact-mode";
 
@@ -89,12 +89,12 @@ public interface FragmentSplitContainerNavigator extends SplitContainerNavigator
 
         boolean introStartupInRightRouter = true;
 
-        public FragmentSplitContainerNavigator.SplitCondition configAgain() {
+        public SplitFragmentContainerNavigator.SplitCondition configAgain() {
             configOnce = false;
             return this;
         }
 
-        public FragmentSplitContainerNavigator.SplitCondition configLeftWide(int dp) {
+        public SplitFragmentContainerNavigator.SplitCondition configLeftWide(int dp) {
             leftWide = dp;
             return this;
         }
@@ -106,12 +106,12 @@ public interface FragmentSplitContainerNavigator extends SplitContainerNavigator
             rightWide = dp;
         }
 
-        public FragmentSplitContainerNavigator.SplitCondition widerThan(int dp) {
+        public SplitFragmentContainerNavigator.SplitCondition widerThan(int dp) {
             splitWhenWiderThan = dp;
             return this;
         }
 
-        public FragmentSplitContainerNavigator.SplitCondition tallerThan(int dp) {
+        public SplitFragmentContainerNavigator.SplitCondition tallerThan(int dp) {
             splitWhenTallerThan = dp;
             return this;
         }
@@ -187,15 +187,15 @@ public interface FragmentSplitContainerNavigator extends SplitContainerNavigator
     @NonNull
     Class<? extends NavigationFragment> provideDefaultMasterFragment();
     @Override
-    default void masterControllerNavigateTo(NavigationFragment fragment, boolean animated) {
+    default void masterControllerNavigate(NavigationFragment fragment, boolean animated) {
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = findMasterController();
 
-        if(controller == null) {
+        if(!(controller instanceof MasterNavigationController)) {
             presentMasterController(fragment);
         }
         else
-            controller.navigate(this, fragment, animated);
+            ((MasterNavigationController) controller).navigateInternal(this, fragment, animated);
         saver.putFragmentType(fragment.getIdentifyTag(), false);
     }
 
@@ -330,14 +330,18 @@ public interface FragmentSplitContainerNavigator extends SplitContainerNavigator
     }
 
     @Override
-    default void detailControllerNavigateTo(NavigationFragment fragment, boolean animated) {
+    default void detailControllerNavigate(NavigationFragment fragment, boolean animated) {
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = (saver.isInSplitMode()) ? findDetailController() : findMasterController();
 
-        if(controller == null)
+        if(controller == null) {
             controller = (saver.isInSplitMode()) ? presentDetailController(fragment) : presentMasterController(fragment);
-        else
-            controller.navigate(fragment);
+        }
+        else if(controller instanceof MasterNavigationController) {
+            ((MasterNavigationController) controller).navigateInternal(null, fragment, animated);
+        } else {
+            controller.navigate(fragment, animated);
+        }
         saver.putFragmentType(fragment.getIdentifyTag(), true);
     }
 

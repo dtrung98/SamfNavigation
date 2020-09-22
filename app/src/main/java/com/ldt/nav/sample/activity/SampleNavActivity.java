@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dtrung98.insetsview.ext.WindowThemingKt;
 import com.ldt.nav.sample.R;
-import com.ldt.nav.sample.fragment.SampleNavPage;
+import com.ldt.nav.sample.fragment.SampleNavFragment;
 import com.ldt.navigation.ContainerNavigationControllerFragment;
+import com.ldt.navigation.SplitNavigationControllerFragment;
+import com.ldt.navigation.uicontainer.ExpandStaticContainer;
 
 public class SampleNavActivity extends AppCompatActivity {
 
@@ -16,12 +18,12 @@ public class SampleNavActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        WindowThemingKt.setUpDarkSystemUIVisibility(getWindow());
+        WindowThemingKt.setUpLightSystemUIVisibility(getWindow());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_layout);
 
         if (null == getSupportFragmentManager().findFragmentByTag(TAG_CONTAINER_NAVIGATION_CONTROLLER_FRAGMENT)) {
-            ContainerNavigationControllerFragment fragment = ContainerNavigationControllerFragment.create(SampleNavPage.class);
+            ContainerNavigationControllerFragment fragment = SplitNavigationControllerFragment.create(SampleNavFragment.class, SampleNavFragment.class, ExpandStaticContainer.class);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.rootView, fragment, TAG_CONTAINER_NAVIGATION_CONTROLLER_FRAGMENT)
                     .commitNow();

@@ -62,20 +62,20 @@ public interface SplitContainerNavigator extends FragmentContainerNavigator {
      * @param fragment fragment
      * @param animated should animate
      */
-    void masterControllerNavigateTo(NavigationFragment fragment, boolean animated);
+    void masterControllerNavigate(NavigationFragment fragment, boolean animated);
 
     /**
      * Use to navigate to a fragment in detail controller
      * @param fragment fragment
      * @param animate should animate
      */
-    void detailControllerNavigateTo(NavigationFragment fragment, boolean animate);
+    void detailControllerNavigate(NavigationFragment fragment, boolean animate);
 
-    default void masterControllerNavigateTo(NavigationFragment fragment) {
-        masterControllerNavigateTo(fragment, true);
+    default void masterControllerNavigate(NavigationFragment fragment) {
+        masterControllerNavigate(fragment, true);
     }
 
-    default void detailControllerNavigateTo(NavigationFragment fragment) {
-        detailControllerNavigateTo(fragment, true);
+    default void detailControllerNavigate(NavigationFragment fragment) {
+        detailControllerNavigate(fragment, true);
     }
 }

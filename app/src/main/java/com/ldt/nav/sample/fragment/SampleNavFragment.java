@@ -13,20 +13,21 @@ import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.container.FragmentContainerNavigator;
+import com.ldt.navigation.container.ContainerNavigator;
+import com.ldt.navigation.container.SplitContainerNavigator;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SampleNavPage extends NavigationFragment {
-    private static final String TAG = "SampleNavPage";
+public class SampleNavFragment extends NavigationFragment {
+    private static final String TAG = "SampleNavFragment";
     public static final String DEFAULT_P = "default-p";
     public static final String INDEX = "index";
 
-    public static SampleNavPage newInstance(int index, int value) {
-        SampleNavPage fragment = new SampleNavPage();
+    public static SampleNavFragment newInstance(int index, int value) {
+        SampleNavFragment fragment = new SampleNavFragment();
         Bundle bundle = new Bundle();
 
         bundle.putInt(DEFAULT_P, value);
@@ -61,32 +62,30 @@ public class SampleNavPage extends NavigationFragment {
         int value;
         try {
             value = Integer.parseInt(text);
-            navigate(SampleNavPage.newInstance(mIndex + 1, value));
         } catch (Exception e) {
-            navigate(SampleNavPage.newInstance(mIndex + 1, -1));
+            value = 0;
         }
-        
-       /* if(getFragmentManager()!=null)
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container,new SamplePage(),"sample-page-2")
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-       .commit();*/
+
+
+        NavigationFragment fragment = SampleNavFragment.newInstance(mIndex + 1, value);
+        navigate(fragment);
 
     }
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        present("setting-nav", ModalPresentationContainer.class, SampleNavPage.newInstance(0, 0));
+        present("setting-nav", ModalPresentationContainer.class, SampleNavFragment.newInstance(0, 0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        FragmentContainerNavigator router = (FragmentContainerNavigator) getParentNavigator();
-
-        if (router != null) {
-            router.navigate(new SampleNavPage());
+        ContainerNavigator navigator = getParentNavigator();
+        if(navigator instanceof SplitContainerNavigator) {
+            ((SplitContainerNavigator) navigator).detailControllerNavigate(new SampleNavFragment());
+        } else {
+            navigate(new SampleNavFragment());
         }
+
     }
 
     @BindView(R.id.edit_text)
@@ -186,6 +185,7 @@ public class SampleNavPage extends NavigationFragment {
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
         ((ViewGroup.MarginLayoutParams) mSafeView.getLayoutParams()).setMargins(left, top, right, bottom);
+        mSafeView.requestLayout();
         updateDescription();
     }
 }

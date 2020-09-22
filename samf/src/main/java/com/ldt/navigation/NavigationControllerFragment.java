@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.WeakHashMap;
 
+import com.google.android.material.internal.ViewUtils;
 import com.ldt.navigation.container.ContainerNavigator;
 import com.ldt.navigation.uicontainer.UIContainer;
 import com.ldt.navigation.uicontainer.ExpandContainer;

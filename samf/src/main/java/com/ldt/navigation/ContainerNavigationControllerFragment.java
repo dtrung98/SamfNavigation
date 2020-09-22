@@ -105,12 +105,6 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        presentDefaultNavigationControllerFragment(savedInstanceState);
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -119,6 +113,12 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
             requireActivity().getOnBackPressedDispatcher().addCallback(this, mOnBackPressedCallback);
         }
         onCreateNavigator(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateNavigator(Bundle bundle) {
+        FragmentContainerNavigator.super.onCreateNavigator(bundle);
+        presentDefaultNavigationControllerFragment(bundle);
     }
 
     @SuppressWarnings("unchecked")
@@ -168,7 +168,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     /**
      * Request to back the container navigator
      *
-     * @return True - successful back. False - the back is blocked by
+     * @return True - done. False - the back had been blocked by the focus fragment
      */
     public boolean requestBackInternal(boolean animated) {
         return FragmentContainerNavigator.super.requestBack(animated);
@@ -191,6 +191,35 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
         return true;
     }
 
+    @Override
+    public boolean navigateBack() {
+        return navigateBack(true);
+    }
+
+
+    /**
+     * Navigate to new fragment INSIDE this ContainerNavigator
+     *
+     * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     * @param fragment fragment to navigate
+     */
+    @Override
+    public void navigate(NavigationFragment fragment) {
+        navigateInternal(fragment);
+    }
+
+    /**
+     * Navigate to new fragment INSIDE this ContainerNavigator
+     *
+     * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     * @param fragment fragment to navigate
+     * @param animated run animation for this transaction
+     */
+    @Override
+    public void navigate(NavigationFragment fragment, boolean animated) {
+        navigateInternal(fragment, animated);
+    }
+
     public boolean navigateBackInternal(boolean animated) {
         return FragmentContainerNavigator.super.navigateBack(animated);
     }
@@ -199,12 +228,33 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
         return navigateBackInternal(true);
     }
 
+    /**
+     * Navigate to new fragment INSIDE this ContainerNavigator
+     *
+     * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     * @param nav fragment to navigate
+     * @param animated run animation for this transaction
+     */
     public void navigateInternal(NavigationFragment nav, boolean animated) {
         FragmentContainerNavigator.super.navigate(nav, animated);
     }
 
+    /**
+     * Navigate to new fragment INSIDE this ContainerNavigator
+     *
+     * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     * @param nav fragment to navigate
+     */
     public void navigateInternal(NavigationFragment nav) {
         FragmentContainerNavigator.super.navigate(nav);
+    }
+
+    public void navigateExternal(NavigationFragment nav, boolean animated) {
+        super.navigate(nav, animated);
+    }
+
+    public void navigateExternal(NavigationFragment nav) {
+        super.navigate(nav);
     }
 
     @Override

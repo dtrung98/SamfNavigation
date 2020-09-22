@@ -10,10 +10,10 @@ import androidx.fragment.app.FragmentManager;
 import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.container.FragmentSplitContainerNavigator;
+import com.ldt.navigation.container.SplitFragmentContainerNavigator;
 import com.ldt.navigation.container.SplitNavigatorAttribute;
 
-public class MainActivity extends AppCompatActivity implements FragmentSplitContainerNavigator {
+public class MainActivity extends AppCompatActivity implements SplitFragmentContainerNavigator {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
