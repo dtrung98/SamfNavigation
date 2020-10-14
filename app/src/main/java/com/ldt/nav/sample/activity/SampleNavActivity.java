@@ -18,7 +18,7 @@ public class SampleNavActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        WindowThemingKt.setUpLightSystemUIVisibility(getWindow());
+        WindowThemingKt.setUpDarkSystemUIVisibility(getWindow());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_layout);
 

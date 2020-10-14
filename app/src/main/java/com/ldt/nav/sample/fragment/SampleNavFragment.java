@@ -1,6 +1,7 @@
 package com.ldt.nav.sample.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -187,5 +188,6 @@ public class SampleNavFragment extends NavigationFragment {
         ((ViewGroup.MarginLayoutParams) mSafeView.getLayoutParams()).setMargins(left, top, right, bottom);
         mSafeView.requestLayout();
         updateDescription();
+        Log.d(TAG, "(" + left + ", " + top + ", " + right + ", " + bottom+" )");
     }
 }

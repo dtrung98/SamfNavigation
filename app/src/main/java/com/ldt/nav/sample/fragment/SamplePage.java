@@ -1,6 +1,7 @@
 package com.ldt.nav.sample.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class SamplePage extends NavigationFragment {
         SamplePage fragment = new SamplePage();
         Bundle bundle = new Bundle();
 
-        bundle.putInt(DEFAULT_P,value);
+        bundle.putInt(DEFAULT_P, value);
         bundle.putInt(INDEX, index);
         fragment.setArguments(bundle);
         return fragment;
@@ -57,12 +58,12 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.button)
     void goToSomeWhere() {
-    
+
         String text = mEditText.getText().toString();
         int value;
         try {
-        value = Integer.parseInt(text);
-        navigate(SamplePage.newInstance(mIndex + 1, value));
+            value = Integer.parseInt(text);
+            navigate(SamplePage.newInstance(mIndex + 1, value));
         } catch (Exception e) {
             navigate(SamplePage.newInstance(mIndex + 1, -1));
         }
@@ -79,16 +80,17 @@ public class SamplePage extends NavigationFragment {
     @OnClick(R.id.button_2)
     void openSetting() {
         getNavigationController().presentTo("setting-nav",
-               ModalPresentationContainer.class, SamplePage.newInstance(0,0));
+                ModalPresentationContainer.class, SamplePage.newInstance(0, 0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
         SplitFragmentContainerNavigator router = (SplitFragmentContainerNavigator) getActivity();
-            if(router != null) {
-                router.detailControllerSwitchNew(new SamplePage());
-            }
+        if (router != null) {
+            router.detailControllerSwitchNew(new SamplePage());
+        }
     }
+
     @BindView(R.id.edit_text)
     EditText mEditText;
 
@@ -96,7 +98,7 @@ public class SamplePage extends NavigationFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-        if(bundle != null) {
+        if (bundle != null) {
             defaultP = bundle.getInt(DEFAULT_P, defaultP);
             mIndex = bundle.getInt(INDEX, 0);
         }
@@ -105,47 +107,47 @@ public class SamplePage extends NavigationFragment {
     @Nullable
     @Override
     protected View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.sample_page,container,false);
+        return inflater.inflate(R.layout.sample_page, container, false);
     }
 
     private int[] size = new int[6];
-    private void updateDescription(){
+
+    private void updateDescription() {
         mDescriptionTextView.setText(getString(R.string.dimen_description, size[0], size[1], size[2], size[3], size[4], size[5]));
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
 
-       int w = view.getContext().getResources().getConfiguration().screenWidthDp;//getInteger(R.integer.width_qualifier);
-       
-       int h = view.getContext().getResources().getConfiguration().screenHeightDp;//.getInteger(R.integer.height_qualifier);
+        int w = view.getContext().getResources().getConfiguration().screenWidthDp;//getInteger(R.integer.width_qualifier);
+
+        int h = view.getContext().getResources().getConfiguration().screenHeightDp;//.getInteger(R.integer.height_qualifier);
 
         size[0] = w;
         size[1] = h;
 
-        if(mIndex == 0&& getNavigationController() !=null ) {
+        if (mIndex == 0 && getNavigationController() != null) {
             //mBackButton.setImageResource(R.drawable.ic_home_24dp);
             mBackButton.setVisibility(View.INVISIBLE);
             mQuitButton.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             mBackButton.setVisibility(View.VISIBLE);
             mBackButton.setImageResource(R.drawable.ic_arrow_back_24dp);
-            mTitleTextView.setText("Sample Page "+ mIndex);
+            mTitleTextView.setText("Sample Page " + mIndex);
             mQuitButton.setVisibility(View.INVISIBLE);
         }
 
         int type = mIndex % 3;
-        if(type==0) {
+        if (type == 0) {
             mRoot.setBackgroundResource(R.color.FlatPurple);
             mButton.setBackgroundResource(R.drawable.background_round_green);
 
-        } else if(type == 1) {
+        } else if (type == 1) {
             mRoot.setBackgroundResource(R.color.focusGreen);
             mButton.setBackgroundResource(R.drawable.background_round_dark_blue);
-        } else if(type == 2) {
+        } else if (type == 2) {
             mRoot.setBackgroundResource(R.color.FlatOrange);
             mButton.setBackgroundResource(R.drawable.background_round_pink);
         }
@@ -154,8 +156,8 @@ public class SamplePage extends NavigationFragment {
 
     @OnClick(R.id.quit_button)
     void quit() {
-        if(getNavigationController() != null)
-        getNavigationController().quit();
+        if (getNavigationController() != null)
+            getNavigationController().quit();
     }
 
     @BindView(R.id.root)
@@ -183,5 +185,6 @@ public class SamplePage extends NavigationFragment {
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
         updateDescription();
+        Log.d(TAG, "(" + left + ", " + top + ", " + right + ", " + bottom);
     }
 }
