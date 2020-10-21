@@ -14,9 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ldt.nav.sample.R;
+import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.container.SplitFragmentContainerNavigator;
+import com.ldt.navigation.container.SplitNavigatorImpl;
+import com.ldt.navigation.uicontainer.AdaptiveContainer;
+import com.ldt.navigation.uicontainer.AnimatorUIContainer;
+import com.ldt.navigation.uicontainer.DesignBottomSheetContainer;
+import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
+import com.ldt.navigation.uicontainer.UIContainer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,15 +83,54 @@ public class SamplePage extends NavigationFragment {
 
     }
 
+    private void setUpNavigationBar() {
+        NavigationControllerFragment controllerFragment = getNavigationController();
+        if (controllerFragment != null) {
+            UIContainer uiContainer = controllerFragment.getUiContainer();
+            if (uiContainer instanceof AdaptiveContainer) {
+                uiContainer = ((AdaptiveContainer) uiContainer).getCurrentContainer();
+            }
+
+            if (uiContainer instanceof AnimatorUIContainer) {
+                ViewGroup navigationBar = ((AnimatorUIContainer) uiContainer).getRootView().findViewById(R.id.navigation_bar);
+                if (navigationBar != null) {
+                    TextView textView = navigationBar.findViewById(R.id.title);
+                    ImageView startButton = navigationBar.findViewById(R.id.start_button);
+                    ImageView endButton = navigationBar.findViewById(R.id.end_button);
+                    if (textView != null && startButton != null && endButton != null) {
+                        if (mIndex == 0 && getNavigationController() != null) {
+                            startButton.setImageResource(R.drawable.ic_home_24dp);
+                            startButton.setVisibility(View.INVISIBLE);
+                            endButton.setVisibility(View.VISIBLE);
+                        } else {
+                            startButton.setVisibility(View.VISIBLE);
+                            startButton.setImageResource(R.drawable.ic_arrow_back_24dp);
+                            textView.setText("Sample Page " + mIndex);
+                            endButton.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden) return;
+        setUpNavigationBar();
+    }
+
     @OnClick(R.id.button_2)
     void openSetting() {
         getNavigationController().presentTo("setting-nav",
-                ModalPresentationContainer.class, SamplePage.newInstance(0, 0));
+                new ModalPresentationContainer(), SamplePage.newInstance(0, 0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
-        SplitFragmentContainerNavigator router = (SplitFragmentContainerNavigator) getActivity();
+        SplitNavigatorImpl router = (SplitNavigatorImpl) getActivity();
         if (router != null) {
             router.detailControllerSwitchNew(new SamplePage());
         }
@@ -93,6 +138,9 @@ public class SamplePage extends NavigationFragment {
 
     @BindView(R.id.edit_text)
     EditText mEditText;
+
+    @BindView(R.id.safeView)
+    View mSafeView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,7 +176,7 @@ public class SamplePage extends NavigationFragment {
         size[0] = w;
         size[1] = h;
 
-        if (mIndex == 0 && getNavigationController() != null) {
+       /* if (mIndex == 0 && getNavigationController() != null) {
             //mBackButton.setImageResource(R.drawable.ic_home_24dp);
             mBackButton.setVisibility(View.INVISIBLE);
             mQuitButton.setVisibility(View.VISIBLE);
@@ -137,7 +185,9 @@ public class SamplePage extends NavigationFragment {
             mBackButton.setImageResource(R.drawable.ic_arrow_back_24dp);
             mTitleTextView.setText("Sample Page " + mIndex);
             mQuitButton.setVisibility(View.INVISIBLE);
-        }
+        }*/
+
+        setUpNavigationBar();
 
         int type = mIndex % 3;
         if (type == 0) {
@@ -184,7 +234,9 @@ public class SamplePage extends NavigationFragment {
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
+        ((ViewGroup.MarginLayoutParams) mSafeView.getLayoutParams()).setMargins(left, (int) (top + 82 * getResources().getDimension(R.dimen.dpUnit)), right, bottom);
+        mSafeView.requestLayout();
         updateDescription();
-        Log.d(TAG, "(" + left + ", " + top + ", " + right + ", " + bottom);
+        Log.d(TAG, "(" + left + ", " + top + ", " + right + ", " + bottom + " )");
     }
 }

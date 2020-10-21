@@ -12,11 +12,12 @@ import android.widget.FrameLayout;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
 
-import com.ldt.navigation.container.FragmentContainerNavigator;
+import com.ldt.navigation.container.ContainerNavigatorImpl;
 import com.ldt.navigation.container.NavigatorAttribute;
 import com.ldt.navigation.effectview.EffectFrameLayout;
 import com.ldt.navigation.uicontainer.ExpandStaticContainer;
@@ -28,7 +29,7 @@ import com.ldt.navigation.uicontainer.UIContainer;
  * + the fragment is navigated/presented inside a NavigationControllerFragment
  * + the fragment is traditionally shown using FragmentTransaction
  */
-public class ContainerNavigationControllerFragment extends NavigationFragment implements FragmentContainerNavigator {
+public class ContainerNavigationControllerFragment extends NavigationFragment implements ContainerNavigatorImpl {
     private static final int CONTAINER_ROOT_VIEW = R.id.fragmentRouterRootView;
     private static final int TYPE_STANDALONE = 0;
     public static final String KEY_DEFAULT_FRAGMENT_CLASS = "KEY_DEFAULT_FRAGMENT_CLASS";
@@ -117,7 +118,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
 
     @Override
     public void onCreateNavigator(Bundle bundle) {
-        FragmentContainerNavigator.super.onCreateNavigator(bundle);
+        ContainerNavigatorImpl.super.onCreateNavigator(bundle);
         presentDefaultNavigationControllerFragment(bundle);
     }
 
@@ -125,29 +126,23 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     protected void presentDefaultNavigationControllerFragment(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             Bundle arguments = getArguments();
-            String defaultFragmentArg = arguments == null ? null : arguments.getString(KEY_DEFAULT_FRAGMENT_CLASS);
+            String defaultFragmentClassNameArg = arguments == null ? null : arguments.getString(KEY_DEFAULT_FRAGMENT_CLASS);
             String defaultUIContainerArg = arguments == null ? null : arguments.getString(KEY_DEFAULT_UI_CONTAINER_CLASS);
 
-            Class<? extends NavigationFragment> defaultFragmentClass;
-            Class<? extends UIContainer> defaultUIContainerClass;
+            NavigationFragment defaultFragment;
+            UIContainer defaultUIContainer;
 
-            try {
-                defaultFragmentClass = (Class<? extends NavigationFragment>) FragmentFactory.loadFragmentClass(requireContext().getClassLoader(), defaultFragmentArg);
-            } catch (Exception e) {
+
+            Fragment fragment = defaultFragmentClassNameArg == null ? null : provideFragmentManager().getFragmentFactory().instantiate(requireContext().getClassLoader(), defaultFragmentClassNameArg);
+            if (fragment instanceof NavigationFragment) {
+                defaultFragment = (NavigationFragment) fragment;
+            } else {
                 throw new IllegalAccessError("Could not instantiate default fragment class. Make sure you had already added attribute app:defaultFragment in the layout file");
             }
 
-            if (defaultUIContainerArg == null || defaultUIContainerArg.isEmpty()) {
-                defaultUIContainerClass = ExpandStaticContainer.class;
-            } else {
-                try {
-                    defaultUIContainerClass = (Class<? extends UIContainer>) UIContainer.loadClass(requireContext(), defaultUIContainerArg);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Could not instantiate default ui container class. Make sure you had already added attribute app:uiContainer in the layout file.", new ClassCastException());
-                }
-            }
+            defaultUIContainer = UIContainer.instantiate(getContext(), defaultUIContainerArg);
 
-            present("default", CONTAINER_ROOT_VIEW, defaultUIContainerClass, defaultFragmentClass);
+            present("default", CONTAINER_ROOT_VIEW, defaultUIContainer, defaultFragment);
         }
     }
 
@@ -157,12 +152,18 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     }
 
     public boolean isAllowedToBackInternal() {
-        return FragmentContainerNavigator.super.isAllowedToBack();
+        return ContainerNavigatorImpl.super.isAllowedToBack();
     }
 
     @Override
     public boolean requestBack(boolean animated) {
-        return isAllowedToBack() && navigateBack(animated);
+        if (isAllowedToBack()) {
+            if (!navigateBack(animated)) {
+                dismiss();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -171,7 +172,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
      * @return True - done. False - the back had been blocked by the focus fragment
      */
     public boolean requestBackInternal(boolean animated) {
-        return FragmentContainerNavigator.super.requestBack(animated);
+        return ContainerNavigatorImpl.super.requestBack(animated);
     }
 
     public boolean requestBackInternal() {
@@ -185,10 +186,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
 
     @Override
     public boolean navigateBack(boolean animated) {
-        boolean internalBack = navigateBackInternal(animated);
-        if(!internalBack) dismiss();
-
-        return true;
+        return navigateBackInternal(animated);
     }
 
     @Override
@@ -199,8 +197,9 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
 
     /**
      * Navigate to new fragment INSIDE this ContainerNavigator
-     *
+     * <p>
      * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     *
      * @param fragment fragment to navigate
      */
     @Override
@@ -210,8 +209,9 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
 
     /**
      * Navigate to new fragment INSIDE this ContainerNavigator
-     *
+     * <p>
      * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     *
      * @param fragment fragment to navigate
      * @param animated run animation for this transaction
      */
@@ -221,7 +221,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     }
 
     public boolean navigateBackInternal(boolean animated) {
-        return FragmentContainerNavigator.super.navigateBack(animated);
+        return ContainerNavigatorImpl.super.navigateBack(animated);
     }
 
     public boolean navigateBackInternal() {
@@ -230,23 +230,25 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
 
     /**
      * Navigate to new fragment INSIDE this ContainerNavigator
-     *
+     * <p>
      * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
-     * @param nav fragment to navigate
+     *
+     * @param nav      fragment to navigate
      * @param animated run animation for this transaction
      */
     public void navigateInternal(NavigationFragment nav, boolean animated) {
-        FragmentContainerNavigator.super.navigate(nav, animated);
+        ContainerNavigatorImpl.super.navigate(nav, animated);
     }
 
     /**
      * Navigate to new fragment INSIDE this ContainerNavigator
-     *
+     * <p>
      * <br/>NOTE: If this container navigator is embed in other navigation controller and you want to navigate to the other, use {@link ContainerNavigationControllerFragment#navigateExternal} instead
+     *
      * @param nav fragment to navigate
      */
     public void navigateInternal(NavigationFragment nav) {
-        FragmentContainerNavigator.super.navigate(nav);
+        ContainerNavigatorImpl.super.navigate(nav);
     }
 
     public void navigateExternal(NavigationFragment nav, boolean animated) {
@@ -272,7 +274,7 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
         if (mType == TYPE_STANDALONE) {
             requireFragmentManager().beginTransaction()
                     .setPrimaryNavigationFragment(this)
-                    .commit();
+                    .commitNow();
         }
 
     }
@@ -295,16 +297,16 @@ public class ContainerNavigationControllerFragment extends NavigationFragment im
     }
 
     @Override
-    public void present(@NonNull String uniquePresentName, Class<? extends UIContainer> uiContainerClass, NavigationFragment... initialFragments) {
-        presentExternal(uniquePresentName, uiContainerClass, initialFragments);
+    public void present(@NonNull String uniquePresentName, UIContainer uiContainer, NavigationFragment... initialFragments) {
+        presentExternal(uniquePresentName, uiContainer, initialFragments);
     }
 
-    public void presentInternal(@NonNull String uniquePresentName, Class<? extends UIContainer> uiContainerClass, NavigationFragment... initialFragments) {
-        FragmentContainerNavigator.super.present(uniquePresentName, CONTAINER_ROOT_VIEW, uiContainerClass, initialFragments);
+    public void presentInternal(@NonNull String uniquePresentName, UIContainer uiContainer, NavigationFragment... initialFragments) {
+        ContainerNavigatorImpl.super.present(uniquePresentName, CONTAINER_ROOT_VIEW, uiContainer, initialFragments);
     }
 
-    public void presentExternal(@NonNull String uniquePresentName, Class<? extends UIContainer> uiContainerClass, NavigationFragment... initialFragments) {
-        super.present(uniquePresentName, uiContainerClass, initialFragments);
+    public void presentExternal(@NonNull String uniquePresentName, UIContainer uiContainer, NavigationFragment... initialFragments) {
+        super.present(uniquePresentName, uiContainer, initialFragments);
     }
 
     private final OnBackPressedCallback mOnBackPressedCallback = new OnBackPressedCallback(true) {

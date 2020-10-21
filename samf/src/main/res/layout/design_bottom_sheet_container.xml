@@ -29,19 +29,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal|top"
+            android:paddingTop="25dp"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <com.ldt.navigation.effectview.EffectCardView
-                android:id="@+id/sub_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingBottom="25dp"
-                android:translationY="25dp"
                 app:cardBackgroundColor="?navBackColor"
                 app:cardCornerRadius="14dp"
-                app:cardElevation="0dp" />
+                app:cardElevation="0dp">
+
+                <com.ldt.navigation.effectview.EffectFrameLayout
+                    android:id="@+id/sub_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.ldt.navigation.navigationbar.SamfNavigationBar
+                    android:id="@+id/navigation_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.ldt.navigation.effectview.EffectCardView>
+
         </com.ldt.navigation.effectview.EffectFrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

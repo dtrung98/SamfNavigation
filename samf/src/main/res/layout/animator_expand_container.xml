@@ -18,4 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?navBackColor" />
+    <com.ldt.navigation.navigationbar.SamfNavigationBar
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </com.ldt.navigation.effectview.EffectFrameLayout>

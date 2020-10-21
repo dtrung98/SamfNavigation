@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ldt.navigation.effectview.EffectConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.ldt.nav.sample.fragment.EffectSpringBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
@@ -7,142 +7,155 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:background="@color/FlatWhite">
+    tools:background="@color/FlatOrange">
 
-    <View
-        android:id="@+id/safeView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.ldt.navigation.effectview.EffectNestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:background="@drawable/circle_background_support_touch"
-        android:padding="10dp"
-        app:layout_constraintStart_toStartOf="@id/safeView"
-        app:layout_constraintTop_toTopOf="@id/sample"
-        tools:srcCompat="@drawable/ic_home_24dp" />
+        <com.ldt.navigation.effectview.EffectConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/quit_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/circle_background_support_touch"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@id/safeView"
-        app:layout_constraintTop_toTopOf="@id/sample"
-        app:srcCompat="@drawable/ic_close_24dp" />
+            <View
+                android:id="@+id/safeView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/sample"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="82dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="82dp"
-        android:gravity="center"
-        android:text="Sample Page"
-        android:textColor="@color/FlatWhite"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/safeView"
-        app:layout_constraintStart_toStartOf="@id/safeView"
-        app:layout_constraintTop_toTopOf="@id/safeView" />
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/circle_background_support_touch"
+                android:padding="10dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/safeView"
+                app:layout_constraintTop_toTopOf="@id/sample"
+                tools:srcCompat="@drawable/ic_home_24dp" />
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="40dp"
-        android:textColor="@color/FlatWhite"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/safeView"
-        app:layout_constraintStart_toStartOf="@id/safeView"
-        app:layout_constraintTop_toBottomOf="@id/sample"
-        tools:text="This screen is around 500dp wide and 500dp tall." />
+            <ImageView
+                android:id="@+id/quit_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/circle_background_support_touch"
+                android:padding="10dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/safeView"
+                app:layout_constraintTop_toTopOf="@id/sample"
+                app:srcCompat="@drawable/ic_close_24dp" />
 
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="60dp"
-        android:background="@drawable/rounded_corner_without_border_dark"
-        android:gravity="center"
-        android:hint="Type in a number"
-        android:inputType="numberSigned"
-        android:paddingStart="10dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/FlatWhite"
-        android:textColorHint="#AAF5F5F5"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@id/safeView"
-        app:layout_constraintStart_toStartOf="@id/safeView"
-        app:layout_constraintTop_toBottomOf="@id/description"
-        app:layout_constraintVertical_chainStyle="packed" />
+            <TextView
+                android:id="@+id/sample"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="82dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="82dp"
+                android:gravity="center"
+                android:text="Sample Page"
+                android:textColor="@color/FlatWhite"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/safeView"
+                app:layout_constraintStart_toStartOf="@id/safeView"
+                app:layout_constraintTop_toTopOf="@id/safeView" />
 
-    <TextView
-        android:id="@+id/button"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:gravity="center"
-        android:text="Go To Some Where"
-        android:textAllCaps="true"
-        android:textColor="@android:color/white"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/safeView"
-        app:layout_constraintStart_toStartOf="@id/safeView"
-        app:layout_constraintTop_toBottomOf="@id/edit_text"
-        app:layout_constraintWidth_max="280dp"
-        tools:background="@drawable/background_round_pink" />
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="40dp"
+                android:textColor="@color/FlatWhite"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/safeView"
+                app:layout_constraintStart_toStartOf="@id/safeView"
+                app:layout_constraintTop_toBottomOf="@id/sample"
+                tools:text="This screen is around 500dp wide and 500dp tall." />
 
-    <TextView
-        android:id="@+id/button_view1"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_round_border_white"
-        android:gravity="center"
-        android:text="View content 1"
-        android:textAllCaps="true"
-        android:textColor="@color/FlatWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/button"
-        app:layout_constraintStart_toStartOf="@id/button"
-        app:layout_constraintTop_toBottomOf="@id/button"
-        app:layout_constraintVertical_chainStyle="packed" />
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/rounded_corner_without_border_dark"
+                android:gravity="center"
+                android:hint="Type in a number"
+                android:inputType="numberSigned"
+                android:paddingStart="10dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/FlatWhite"
+                android:textColorHint="#AAF5F5F5"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/safeView"
+                app:layout_constraintStart_toStartOf="@id/safeView"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                app:layout_constraintVertical_chainStyle="packed" />
 
-    <TextView
-        android:id="@+id/button_2"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_round_border_white"
-        android:gravity="center"
-        android:text="Open setting"
-        android:textAllCaps="true"
-        android:textColor="@color/FlatWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/button"
-        app:layout_constraintStart_toStartOf="@id/button_view1"
-        app:layout_constraintTop_toBottomOf="@id/button_view1" />
-</com.ldt.navigation.effectview.EffectConstraintLayout>
+            <TextView
+                android:id="@+id/button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="32dp"
+                android:gravity="center"
+                android:text="Go To Some Where"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/safeView"
+                app:layout_constraintStart_toStartOf="@id/safeView"
+                app:layout_constraintTop_toBottomOf="@id/edit_text"
+                app:layout_constraintWidth_max="280dp"
+                tools:background="@drawable/background_round_pink" />
+
+            <TextView
+                android:id="@+id/button_view1"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_round_border_white"
+                android:gravity="center"
+                android:text="View content 1"
+                android:textAllCaps="true"
+                android:textColor="@color/FlatWhite"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/button"
+                app:layout_constraintStart_toStartOf="@id/button"
+                app:layout_constraintTop_toBottomOf="@id/button"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/button_2"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_round_border_white"
+                android:gravity="center"
+                android:text="Open setting"
+                android:textAllCaps="true"
+                android:textColor="@color/FlatWhite"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/button"
+                app:layout_constraintStart_toStartOf="@id/button_view1"
+                app:layout_constraintTop_toBottomOf="@id/button_view1" />
+        </com.ldt.navigation.effectview.EffectConstraintLayout>
+    </com.ldt.navigation.effectview.EffectNestedScrollView>
+</com.ldt.nav.sample.fragment.EffectSpringBackLayout>

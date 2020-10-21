@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
 
-public interface SplitContainerNavigator extends FragmentContainerNavigator {
+public interface SplitNavigator extends ContainerNavigatorImpl {
     String DETAIL_CONTROLLER_HAS_DEFAULT_FRAGMENT = "detail-controller-has-default-fragment";
     String DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG = "detail-controller-default-fragment";
 
@@ -18,10 +18,10 @@ public interface SplitContainerNavigator extends FragmentContainerNavigator {
     }
 
     @NonNull
-    Class<? extends NavigationFragment> provideDefaultDetailFragment();
+    NavigationFragment provideDefaultDetailFragment();
 
     @NonNull
-    Class<? extends NavigationFragment> provideDefaultMasterFragment();
+    NavigationFragment provideDefaultMasterFragment();
 
     /**
      *  Present master controller into split container with provided initial fragment. If controller exists, nothing happen

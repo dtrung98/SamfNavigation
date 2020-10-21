@@ -1,24 +1,24 @@
 package com.ldt.nav.sample.activity;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.dtrung98.insetsview.ext.WindowThemingKt;
 import com.ldt.nav.sample.fragment.EmptyPage;
 import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
-import com.ldt.navigation.container.SplitFragmentContainerNavigator;
+import com.ldt.navigation.container.SplitNavigatorImpl;
 import com.ldt.navigation.container.SplitNavigatorAttribute;
 
-public class MainActivity extends AppCompatActivity implements SplitFragmentContainerNavigator {
+public class MainActivity extends AppCompatActivity implements SplitNavigatorImpl {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        WindowThemingKt.setUpDarkSystemUIVisibility(getWindow());
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         setContentView(provideLayout(this));
         onCreateNavigator(savedInstanceState);
     }
@@ -61,14 +61,14 @@ public class MainActivity extends AppCompatActivity implements SplitFragmentCont
 
     @NonNull
     @Override
-    public Class<? extends NavigationFragment> provideDefaultDetailFragment() {
-        return EmptyPage.class;
+    public NavigationFragment provideDefaultDetailFragment() {
+        return new EmptyPage();
     }
 
     @NonNull
     @Override
-    public Class<? extends NavigationFragment> provideDefaultMasterFragment() {
-        return SamplePage.class;
+    public NavigationFragment provideDefaultMasterFragment() {
+        return SamplePage.newInstance(0, 0);
     }
 
     @Override

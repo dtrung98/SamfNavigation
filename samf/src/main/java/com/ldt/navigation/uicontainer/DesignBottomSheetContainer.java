@@ -21,7 +21,7 @@ public class DesignBottomSheetContainer extends AnimatorUIContainer{
   private BottomSheetBehavior<FrameLayout> mBehavior;
   private int mTopMargin = 0;
   public View provideLayout(Context context, LayoutInflater inflater, ViewGroup viewGroup, int subContainerId) {
-    View v = inflater.inflate(R.layout.standard_bottom_sheet_container, viewGroup, false);
+    View v = inflater.inflate(R.layout.design_bottom_sheet_container, viewGroup, false);
     v.findViewById(R.id.sub_container).setId(subContainerId);
     return v;
   }
@@ -40,8 +40,8 @@ public class DesignBottomSheetContainer extends AnimatorUIContainer{
   public int[] onWindowInsetsChanged(Fragment controller, int left, int top, int right, int bottom) {
     mTopMargin = (int) mBottomSheet.getContext().getResources().getDimension(R.dimen.dpUnit)*4 + top;
     View subView = getSubContainerView();
-    subView.setTranslationY(mTopMargin);
-    subView.setPadding(subView.getPaddingLeft(), subView.getPaddingTop(), subView.getPaddingRight(), subView.getPaddingBottom());
+    //subView.setTranslationY(mTopMargin);
+    //subView.setPadding(subView.getPaddingLeft(), subView.getPaddingTop(), subView.getPaddingRight(), subView.getPaddingBottom());
     return new int[] {left, 0, right, bottom};
   }
 
@@ -62,6 +62,15 @@ public class DesignBottomSheetContainer extends AnimatorUIContainer{
     mBehavior.setHideable(true);
     mBehavior.setSkipCollapsed(true);
     mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+    View startButton = view.findViewById(R.id.start_button);
+    if(startButton != null) {
+      startButton.setOnClickListener((v) -> {
+        if(mController instanceof NavigationControllerFragment) {
+          ((NavigationControllerFragment) mController).requestBack();
+        }
+      });
+    }
   }
 
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetCallback =

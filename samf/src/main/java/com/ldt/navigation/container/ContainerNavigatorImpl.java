@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Provides logic to control multiple NavigationController inside
  */
-public interface FragmentContainerNavigator extends ContainerNavigator {
+public interface ContainerNavigatorImpl extends ContainerNavigator {
     String NAVIGATION_CONTROLLERS_OF_ROUTER = "navigation-controllers-of-router";
 
     /**
@@ -26,7 +26,7 @@ public interface FragmentContainerNavigator extends ContainerNavigator {
     void dismiss();
 
     @Override
-    void present(@NonNull String uniquePresentName, Class<? extends UIContainer> uiContainerClass, NavigationFragment... initialFragments);
+    void present(@NonNull String uniquePresentName, UIContainer uiContainer, NavigationFragment... initialFragments);
 
     /**
      * Provide the FragmentManager that will be used to manage fragment controllers
@@ -41,14 +41,14 @@ public interface FragmentContainerNavigator extends ContainerNavigator {
      * @param uniqueTag unique tag identify the navigation controller. If any controller has this tag, this command will be ignored
      * @param viewContainerId container view that the controller will be put into
      * @param initialFragmentClass Fragment that will be presented
-     * @param uiContainerClass  the ui container that will manage layout ui for controller
+     * @param uiContainer  the ui container that will manage layout ui for controller
      * @return the Controller
      */
     default NavigationControllerFragment present(@NonNull String uniqueTag,
                                                  @IdRes int viewContainerId,
-                                                 Class<? extends UIContainer> uiContainerClass,
+                                                 UIContainer uiContainer,
                                                  Class<? extends NavigationFragment> initialFragmentClass) {
-        return present(uniqueTag, viewContainerId, uiContainerClass, initialFragmentClass, null);
+        return present(uniqueTag, viewContainerId, uiContainer, initialFragmentClass, null);
     }
 
     /**
@@ -56,19 +56,19 @@ public interface FragmentContainerNavigator extends ContainerNavigator {
      * @param uniqueTag unique tag identify the navigation controller. If any controller has this tag, this command will be ignored
      * @param viewContainerId container view that the controller will be put into
      * @param initialFragmentClass Fragment that will be presented
-     * @param uiContainerClass  the ui container that will manage layout ui for controller
+     * @param uiContainer  the ui container that will manage layout ui for controller
      * @return the Controller
      */
     default NavigationControllerFragment present(@NonNull String uniqueTag,
                                                  @IdRes int viewContainerId,
-                                                 Class<? extends UIContainer> uiContainerClass,
+                                                 UIContainer uiContainer,
                                                  Class<? extends NavigationFragment> initialFragmentClass,
                                                  @Nullable Bundle initialFragmentArgument) {
         NavigatorAttribute saver = getNavigatorAttribute();
         NavigationControllerFragment controller = saver.findController(uniqueTag);
 
         if(controller == null) {
-            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragmentClass, null);
+            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainer, initialFragmentClass, null);
             saver.push(controller);
         }
 
@@ -81,19 +81,19 @@ public interface FragmentContainerNavigator extends ContainerNavigator {
      * @param uniqueTag unique tag identify the navigation controller. If any controller has this tag, this command will be ignored
      * @param viewContainerId container view that the controller will be put into
      * @param initialFragments Fragments that will be presented
-     * @param uiContainerClass  the ui container that will manage layout ui for controller
+     * @param uiContainer  the ui container that will manage layout ui for controller
      * @return the Controller
      */
     default NavigationControllerFragment present(@NonNull String uniqueTag,
                                                  @IdRes int viewContainerId,
-                                                 Class<? extends UIContainer> uiContainerClass,
+                                                 UIContainer uiContainer,
                                                  NavigationFragment... initialFragments
                                                    ) {
         NavigatorAttribute saver = getNavigatorAttribute();
         NavigationControllerFragment controller = saver.findController(uniqueTag);
 
         if(controller == null) {
-            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainerClass, initialFragments);
+            controller = NavigationControllerFragment.createNewOrGetController(uniqueTag, provideFragmentManager(), viewContainerId, uiContainer, initialFragments);
             saver.push(controller);
         }
 
@@ -170,9 +170,20 @@ public interface FragmentContainerNavigator extends ContainerNavigator {
         return requestBack(true);
     }
 
+    /**
+     * False if not be able to back
+     * @param animated
+     * @return
+     */
     @Override
     default boolean requestBack(boolean animated) {
-        return isAllowedToBack() && navigateBack(animated);
+        if(isAllowedToBack()) {
+            if(!navigateBack(animated)) {
+                dismiss();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

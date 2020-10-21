@@ -15,11 +15,11 @@ public interface ContainerNavigator extends Navigator<NavigationFragment> {
     /**
      * Present one or some fragments in new NavigationControllerFragment
      * @param uniquePresentName
-     * @param uiContainerClass
+     * @param uiContainer
      * @param initialFragments
      */
     void present(@NonNull String uniquePresentName,
-                 Class<? extends UIContainer> uiContainerClass,
+                 UIContainer uiContainer,
                  NavigationFragment... initialFragments);
 
     /**

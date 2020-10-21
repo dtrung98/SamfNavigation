@@ -49,6 +49,16 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     protected boolean mIsOnConfigurationAnimation = false;
     private String mIdentifyTag;
 
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        this.mTitle = mTitle;
+    }
+
+    private String mTitle;
+
     public final String getIdentifyTag() {
         String tag = getTag();
         if (tag != null) {
@@ -103,15 +113,15 @@ public abstract class NavigationFragment extends Fragment implements Navigator<N
     /**
      * Present one or multiple fragment in front of current fragment.
      * @param uniquePresentName
-     * @param uiContainerCls
+     * @param uiContainer
      * @param fragmentToPresent
      */
-    public void present(String uniquePresentName, Class<? extends UIContainer> uiContainerCls, NavigationFragment... fragmentToPresent) {
+    public void present(String uniquePresentName, UIContainer uiContainer, NavigationFragment... fragmentToPresent) {
         ContainerNavigator parentNavigator = getParentNavigator();
         if (parentNavigator instanceof ContainerNavigationControllerFragment) {
-            ((ContainerNavigationControllerFragment) parentNavigator).presentInternal(uniquePresentName, uiContainerCls, fragmentToPresent);
+            ((ContainerNavigationControllerFragment) parentNavigator).presentInternal(uniquePresentName, uiContainer, fragmentToPresent);
         } else if (parentNavigator != null) {
-            parentNavigator.present(uniquePresentName, uiContainerCls, fragmentToPresent);
+            parentNavigator.present(uniquePresentName, uiContainer, fragmentToPresent);
         }
     }
 

@@ -27,7 +27,7 @@ SplitRouter cung cấp sẵn 2 Navigation Controller Master-Detail.
 <br> Ở giao diện Side-by-side, Master nằm bên trái và Detail nằm bên phải, chúng là 2 controller riêng biệt
 <br> Ở giao diện Compact, Detail biến mất, toàn bộ Fragment trong Detail được gộp vào Master
  */
-public interface SplitFragmentContainerNavigator extends SplitContainerNavigator {
+public interface SplitNavigatorImpl extends SplitNavigator {
     String TAG = "SplitRouter2";
     String DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE = "detail-fragment-tags-in-compact-mode";
 
@@ -41,6 +41,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
     /**
      * Goị phương thức này trong {@link Activity#setContentView(View)} hoặc onCreateView/onCreateContentView của Fragment/NavigationFragment
+     *
      * @param context Context
      * @return View
      */
@@ -58,13 +59,13 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
         View rootView = (saver.isInSplitMode()) ? inflateSplitModeLayout(context, null) : inflateSingleModeLayout(context, null);
 
-        if(saver.isInSplitMode()) {
+        if (saver.isInSplitMode()) {
             View leftContainer = rootView.findViewById(requireSplitRouterAttribute().getMasterContainerViewId());
             View rightContainer = rootView.findViewById(requireSplitRouterAttribute().getDetailContainerViewId());
-            if(saver.leftWide!=-1) {
-                leftContainer.getLayoutParams().width = (int) (saver.leftWide*dpUnit);
+            if (saver.leftWide != -1) {
+                leftContainer.getLayoutParams().width = (int) (saver.leftWide * dpUnit);
                 rightContainer.getLayoutParams().width = 0;
-            } else if(saver.rightWide !=-1) {
+            } else if (saver.rightWide != -1) {
                 leftContainer.getLayoutParams().width = 0;
                 rightContainer.getLayoutParams().width = (int) (saver.rightWide * dpUnit);
             } else {
@@ -89,12 +90,12 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
         boolean introStartupInRightRouter = true;
 
-        public SplitFragmentContainerNavigator.SplitCondition configAgain() {
+        public SplitNavigatorImpl.SplitCondition configAgain() {
             configOnce = false;
             return this;
         }
 
-        public SplitFragmentContainerNavigator.SplitCondition configLeftWide(int dp) {
+        public SplitNavigatorImpl.SplitCondition configLeftWide(int dp) {
             leftWide = dp;
             return this;
         }
@@ -106,12 +107,12 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
             rightWide = dp;
         }
 
-        public SplitFragmentContainerNavigator.SplitCondition widerThan(int dp) {
+        public SplitNavigatorImpl.SplitCondition widerThan(int dp) {
             splitWhenWiderThan = dp;
             return this;
         }
 
-        public SplitFragmentContainerNavigator.SplitCondition tallerThan(int dp) {
+        public SplitNavigatorImpl.SplitCondition tallerThan(int dp) {
             splitWhenTallerThan = dp;
             return this;
         }
@@ -136,24 +137,24 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         // khi cả left và right đều chỉ còn root, thì trả về false
 
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
-        if(saver.isInSplitMode()) {
+        if (saver.isInSplitMode()) {
             // lấy controller hợp lệ
             NavigationControllerFragment controller;
             int count = saver.count();
             boolean result = true;
 
-            for(int i = count - 1; i >= 0; i--) {
+            for (int i = count - 1; i >= 0; i--) {
                 controller = saver.controllerAt(i);
                 int fragmentCount = controller.getFragmentCount();
                 //  Chưa tới root thì cứ back thôi
-                if(fragmentCount != 1) {
+                if (fragmentCount != 1) {
                     result = controller.navigateBack(animated);
                     break;
                 }
 
-                if(controller.mControllerTag.equals(saver.getDetailControllerTag()) || controller.mControllerTag.equals(saver.getMasterControllerTag())) {
+                if (controller.mControllerTag.equals(saver.getDetailControllerTag()) || controller.mControllerTag.equals(saver.getMasterControllerTag())) {
                     // Tới root và nó là fragment left hoặc right
-                    if(i!=0) continue;
+                    if (i != 0) continue;
 
                     // hết controller rồi, trả về false
                     result = false;
@@ -162,7 +163,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
                 // controller bình thường
                 saver.popAt(i);
-                if(i!=0) {
+                if (i != 0) {
                     controller.removeFromFragmentManager();
                     result = true;
                     break;
@@ -170,41 +171,40 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
             }
             return result;
 
-        }
-        else return SplitContainerNavigator.super.navigateBack(animated);
+        } else return SplitNavigator.super.navigateBack(animated);
     }
 
     @Override
-    default void present(@NonNull String uniquePresentName, Class<? extends UIContainer> uiContainerClass, NavigationFragment... initialFragments) {
-        present(uniquePresentName, R.id.floating_container, uiContainerClass, initialFragments);
+    default void present(@NonNull String uniquePresentName, UIContainer uiContainer, NavigationFragment... initialFragments) {
+        present(uniquePresentName, R.id.floating_container, uiContainer, initialFragments);
     }
 
     FragmentManager provideFragmentManager();
 
     @NonNull
-    Class<? extends NavigationFragment> provideDefaultDetailFragment();
+    NavigationFragment provideDefaultDetailFragment();
 
     @NonNull
-    Class<? extends NavigationFragment> provideDefaultMasterFragment();
+    NavigationFragment provideDefaultMasterFragment();
+
     @Override
     default void masterControllerNavigate(NavigationFragment fragment, boolean animated) {
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = findMasterController();
 
-        if(!(controller instanceof MasterNavigationController)) {
+        if (!(controller instanceof MasterNavigationController)) {
             presentMasterController(fragment);
-        }
-        else
+        } else
             ((MasterNavigationController) controller).navigateInternal(this, fragment, animated);
         saver.putFragmentType(fragment.getIdentifyTag(), false);
     }
 
-    default Class<? extends UIContainer> provideMasterUIContainer() {
-        return ExpandStaticContainer.class;
+    default UIContainer provideMasterUIContainer() {
+        return new ExpandStaticContainer();
     }
 
-    default Class<? extends UIContainer> provideDetailUIContainer() {
-        return ExpandStaticContainer.class;
+    default UIContainer provideDetailUIContainer() {
+        return new ExpandStaticContainer();
     }
 
 
@@ -213,17 +213,9 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
 
         NavigationControllerFragment controller = findMasterController();
-        if(controller == null) {
-            Class<? extends NavigationFragment> clazz = provideDefaultMasterFragment();
+        if (controller == null) {
             if (initialFragment == null || initialFragment.length == 0) {
-                NavigationFragment fragment = null;
-                try {
-                    fragment = clazz.newInstance();
-                } catch (Exception ignored) {
-                }
-
-                if (fragment == null)
-                    throw new IllegalArgumentException("Unable to create new default fragment for master controller");
+                NavigationFragment fragment = provideDefaultMasterFragment();
                 controller = NavigationControllerFragment.newInstance(MasterNavigationController.class,
                         saver.getMasterControllerTag(),
                         provideFragmentManager(),
@@ -232,7 +224,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
                         fragment);
             } else
                 controller = NavigationControllerFragment.newInstance(MasterNavigationController.class, saver.getMasterControllerTag(), provideFragmentManager(), saver.getMasterContainerViewId(), provideMasterUIContainer(), initialFragment);
-                saver.setMasterController(controller);
+            saver.setMasterController(controller);
         }
 
         controller.setParentNavigator(this);
@@ -244,17 +236,10 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
 
         NavigationControllerFragment controller = findDetailController();
-        if(controller == null) {
-            Class<? extends NavigationFragment> clazz = provideDefaultDetailFragment();
-            if (initialFragment == null || initialFragment.length == 0) {
-                NavigationFragment fragment = null;
-                try {
-                    fragment = clazz.newInstance();
-                } catch (Exception ignored) {
-                }
+        if (controller == null) {
 
-                if (fragment == null)
-                    throw new IllegalArgumentException("Unable to create new default fragment for detail controller");
+            if (initialFragment == null || initialFragment.length == 0) {
+                NavigationFragment fragment = provideDefaultDetailFragment();
 
                 controller = NavigationControllerFragment.newInstance(NavigationControllerFragment.class,
                         saver.getDetailControllerTag(),
@@ -295,7 +280,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = findMasterController();
 
-        if(controller == null)
+        if (controller == null)
             presentMasterController(fragment);
         else
             controller.switchNew(fragment);
@@ -305,7 +290,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
     @Override
     default void onSaveNavigatorState(Bundle outState) {
         /* save controllers stack */
-        SplitContainerNavigator.super.onSaveNavigatorState(outState);
+        SplitNavigator.super.onSaveNavigatorState(outState);
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         outState.putString(DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG, saver.mDefaultDetailFragmentTag);
         /* if current mode is split, we save the initial fragment tag to remove it if next mode is non-split */
@@ -313,13 +298,13 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
             /* in compact mode */
             /* save the detail fragment tags these have been pushed to master, then the router can automatically push them to detail controller when the next mode is split */
             NavigationControllerFragment master = findMasterController();
-            if(master != null) {
+            if (master != null) {
                 int masterCount = master.getFragmentCount();
                 ArrayList<String> detailTags = new ArrayList<>();
                 String tag;
                 for (int i = 0; i < masterCount; i++) {
                     tag = master.getFragmentAt(i).getIdentifyTag();
-                    if(saver.isDetailFragment(tag)) detailTags.add(tag);
+                    if (saver.isDetailFragment(tag)) detailTags.add(tag);
                 }
 
                 outState.putStringArrayList(DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE, detailTags);
@@ -334,10 +319,9 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = (saver.isInSplitMode()) ? findDetailController() : findMasterController();
 
-        if(controller == null) {
+        if (controller == null) {
             controller = (saver.isInSplitMode()) ? presentDetailController(fragment) : presentMasterController(fragment);
-        }
-        else if(controller instanceof MasterNavigationController) {
+        } else if (controller instanceof MasterNavigationController) {
             ((MasterNavigationController) controller).navigateInternal(null, fragment, animated);
         } else {
             controller.navigate(fragment, animated);
@@ -351,15 +335,15 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
 
         /* restore controller stack if any*/
-        if(saver.doesRouterNeedToRestore() && bundle != null) {
+        if (saver.doesRouterNeedToRestore() && bundle != null) {
             onRestoreNavigatorState(bundle);
             saver.routerRestored();
         }
 
         /* first-time initializing, simply present needed controllers */
-        if(bundle == null) {
+        if (bundle == null) {
             presentMasterController();
-            if(saver.isInSplitMode())
+            if (saver.isInSplitMode())
                 presentDetailController();
 
             Log.d(TAG, "create router: first time");
@@ -371,9 +355,9 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
             if (saver.isInSplitMode()) {
                 /* in split mode */
                 /* get detail fragment tags pushed-in-compact-mode-master-controller */
-                ArrayList<String> detailTags =  bundle.getStringArrayList(DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE);
+                ArrayList<String> detailTags = bundle.getStringArrayList(DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE);
 
-                if(detailTags != null && !detailTags.isEmpty()) {
+                if (detailTags != null && !detailTags.isEmpty()) {
                     /* there are some detail fragments in master controllers */
                     /* detail controller should be null, if not, we call switch new */
                     ArrayList<NavigationFragment> fragments = new ArrayList<>(detailTags.size());
@@ -414,19 +398,20 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
                             detailController.navigate(fragments.get(i));
                         }
                     } else presentDetailController();
-                } else presentDetailController(); /* else no detail fragments exist in master, nothing to do */
+                } else
+                    presentDetailController(); /* else no detail fragments exist in master, nothing to do */
             } else {
                 /* in compact mode */
                 /*  move all detail fragments into master controller, and save their properties */
 
                 /* get detail fragment tags pushed-in-compact-mode-master-controller */
-                ArrayList<String> detailTags =  bundle.getStringArrayList(DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE);
+                ArrayList<String> detailTags = bundle.getStringArrayList(DETAIL_FRAGMENT_TAGS_IN_COMPACT_MODE);
 
                 /* The default fragment tag, if it hasn't been replaced */
                 saver.mDefaultDetailFragmentTag = bundle.getString(DETAIL_CONTROLLER_DEFAULT_FRAGMENT_TAG);
-                Log.d(TAG, "onCreateRouter: found default fragment tag "+ saver.mDefaultDetailFragmentTag);
+                Log.d(TAG, "onCreateRouter: found default fragment tag " + saver.mDefaultDetailFragmentTag);
                 /* restore fragment types */
-                if(detailTags != null && !detailTags.isEmpty()) {
+                if (detailTags != null && !detailTags.isEmpty()) {
 
                     for (String tag :
                             detailTags) {
@@ -436,7 +421,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
                 /* find detail controller, if router's previous mode is split, it will available */
                 NavigationControllerFragment detail = findDetailController();
-                if(detail != null) {
+                if (detail != null) {
                     /* detail fragment count */
                     int detailCount = detail.getFragmentCount();
                     ArrayList<NavigationFragment> fragments = new ArrayList<>();
@@ -445,7 +430,7 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
                     NavigationFragment temp;
                     for (int i = 0; i < detailCount; i++) {
                         temp = detail.getFragmentAt(i);
-                        if( temp != null) {
+                        if (temp != null) {
                             fragments.add(temp);
                             saver.putFragmentType(temp.getIdentifyTag(), true);
                         }
@@ -464,12 +449,12 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
 
                     /* if the detail controller has only one fragment, and it's default fragment */
                     /* not need to add it to master controller */
-                    if(fragments.size() == 1 && fragments.get(0).getIdentifyTag().equals(saver.mDefaultDetailFragmentTag))
+                    if (fragments.size() == 1 && fragments.get(0).getIdentifyTag().equals(saver.mDefaultDetailFragmentTag))
                         fragments.clear();
 
                     /* add all other detail fragments into master controller */
                     NavigationControllerFragment.ControllerTransaction masterTransaction = master.beginTransaction();
-                    for(NavigationFragment nf: fragments)
+                    for (NavigationFragment nf : fragments)
                         masterTransaction.navigateTo(nf);
                     masterTransaction.withAnimation(false).executeTransaction();
                 }
@@ -481,25 +466,24 @@ public interface SplitFragmentContainerNavigator extends SplitContainerNavigator
     default void detailControllerSwitchNew(NavigationFragment fragment) {
         SplitNavigatorAttribute saver = requireSplitRouterAttribute();
         NavigationControllerFragment controller = null;
-        if(saver.isInSplitMode()) {
+        if (saver.isInSplitMode()) {
             /* In Split mode, we normally switch new in detail controller */
             controller = findDetailController();
-            if(controller == null) presentDetailController(fragment);
+            if (controller == null) presentDetailController(fragment);
             else controller.switchNew(fragment);
         } else {
             /* In Compact mode, we will dismiss all detail fragments in master, then add this fragment to top of master */
             controller = findMasterController();
-            if(controller == null) {
+            if (controller == null) {
                 controller = presentMasterController();
                 controller.navigate(fragment);
-            }
-            else {
+            } else {
                 int masterSize = controller.getFragmentCount();
                 List<NavigationFragment> fragments = new ArrayList<>();
                 NavigationFragment temp;
                 for (int i = masterSize - 1; i >= 0; i--) {
                     temp = controller.getFragmentAt(i);
-                    if(saver.isDetailFragment(temp.getIdentifyTag())) {
+                    if (saver.isDetailFragment(temp.getIdentifyTag())) {
                         fragments.add(temp);
                     }
                 }

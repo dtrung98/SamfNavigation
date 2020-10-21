@@ -20,7 +20,7 @@
         app:srcCompat="@drawable/ic_sentiment_neutral_24dp"
         android:background="@drawable/circle_background_support_touch"
         android:padding="10dp"
-        android:tint="#666"/>
+        app:tint="#666"/>
     <TextView
         android:id="@+id/description"
         android:layout_width="0dp"
@@ -34,5 +34,5 @@
         android:layout_marginEnd="40dp"
         android:gravity="center"
         android:textColor="#666"
-        android:text="Empty Content"/>
+        android:text="Nothing to show here"/>
 </com.ldt.navigation.effectview.EffectConstraintLayout>

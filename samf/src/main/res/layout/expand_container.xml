@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ldt.navigation.effectview.EffectFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sub_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:background="?navBackColor"
     android:focusable="true"
-    android:theme="@style/NavigationTheme"/>
+    android:theme="@style/NavigationTheme">
+    <com.ldt.navigation.effectview.EffectFrameLayout
+        android:id="@+id/sub_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <com.ldt.navigation.navigationbar.SamfNavigationBar
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</com.ldt.navigation.effectview.EffectFrameLayout>

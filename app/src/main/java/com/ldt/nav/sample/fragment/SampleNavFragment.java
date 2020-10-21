@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.container.ContainerNavigator;
-import com.ldt.navigation.container.SplitContainerNavigator;
+import com.ldt.navigation.container.SplitNavigator;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 
 import butterknife.BindView;
@@ -75,14 +75,14 @@ public class SampleNavFragment extends NavigationFragment {
 
     @OnClick(R.id.button_2)
     void openSetting() {
-        present("setting-nav", ModalPresentationContainer.class, SampleNavFragment.newInstance(0, 0));
+        present("setting-nav", new ModalPresentationContainer(), SampleNavFragment.newInstance(0, 0));
     }
 
     @OnClick(R.id.button_view1)
     void viewContent1() {
         ContainerNavigator navigator = getParentNavigator();
-        if(navigator instanceof SplitContainerNavigator) {
-            ((SplitContainerNavigator) navigator).detailControllerNavigate(new SampleNavFragment());
+        if(navigator instanceof SplitNavigator) {
+            ((SplitNavigator) navigator).detailControllerNavigate(new SampleNavFragment());
         } else {
             navigate(new SampleNavFragment());
         }

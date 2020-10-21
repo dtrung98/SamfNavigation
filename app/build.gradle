@@ -43,4 +43,6 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.2.1'
 
     implementation 'com.github.ldt-libs:InsetsView:1.0'
+
+    implementation 'com.github.ldt-libs:SpringBackLayout:1.0'
 }
