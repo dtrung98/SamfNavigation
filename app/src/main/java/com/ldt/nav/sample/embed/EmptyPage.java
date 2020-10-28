@@ -1,4 +1,4 @@
-package com.ldt.nav.sample.fragment;
+package com.ldt.nav.sample.embed;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

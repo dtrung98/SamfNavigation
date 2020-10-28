@@ -373,10 +373,10 @@ public interface SplitNavigatorImpl extends SplitNavigator {
                     int detailInMasterCount = fragments.size();
 
                     // dismiss detail fragments in master controller
-                    NavigationControllerFragment.ControllerTransaction controllerTransaction = master.beginTransaction();
+                    NavigationControllerFragment.NavigationControllerTransaction controllerTransaction = master.beginTransaction();
                     for (NavigationFragment nf : fragments)
                         controllerTransaction.dismiss(nf);
-                    controllerTransaction.withAnimation(false).executeTransaction();
+                    controllerTransaction.withAnimation(false).commitNow();
 
                     // try to find detail controller
                     // detail controller should be null. If not, we call switch new method
@@ -437,12 +437,12 @@ public interface SplitNavigatorImpl extends SplitNavigator {
                     }
 
                     /* dismiss all fragments in detail controller */
-                    NavigationControllerFragment.ControllerTransaction detailTransaction = detail.beginTransaction();
+                    NavigationControllerFragment.NavigationControllerTransaction detailTransaction = detail.beginTransaction();
                     for (NavigationFragment nf :
                             fragments) {
                         detailTransaction.dismiss(nf);
                     }
-                    detailTransaction.withAnimation(false).executeTransaction();
+                    detailTransaction.withAnimation(false).commitNow();
 
                     /* dismiss detail controller */
                     detail.quit();
@@ -453,10 +453,10 @@ public interface SplitNavigatorImpl extends SplitNavigator {
                         fragments.clear();
 
                     /* add all other detail fragments into master controller */
-                    NavigationControllerFragment.ControllerTransaction masterTransaction = master.beginTransaction();
+                    NavigationControllerFragment.NavigationControllerTransaction masterTransaction = master.beginTransaction();
                     for (NavigationFragment nf : fragments)
                         masterTransaction.navigateTo(nf);
-                    masterTransaction.withAnimation(false).executeTransaction();
+                    masterTransaction.withAnimation(false).commitNow();
                 }
             }
         }
@@ -488,13 +488,13 @@ public interface SplitNavigatorImpl extends SplitNavigator {
                     }
                 }
 
-                NavigationControllerFragment.ControllerTransaction controllerTransaction = controller.beginTransaction();
+                NavigationControllerFragment.NavigationControllerTransaction controllerTransaction = controller.beginTransaction();
                 for (NavigationFragment nf :
                         fragments) {
                     controllerTransaction.dismiss(nf);
                 }
                 controllerTransaction.navigateTo(fragment);
-                controllerTransaction.withAnimation(true).executeTransaction(); // :D
+                controllerTransaction.withAnimation(true).commitNow(); // :D
             }
         }
 

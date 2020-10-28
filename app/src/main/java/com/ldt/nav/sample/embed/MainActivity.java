@@ -1,4 +1,4 @@
-package com.ldt.nav.sample.activity;
+package com.ldt.nav.sample.embed;
 
 import android.os.Bundle;
 
@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.dtrung98.insetsview.ext.WindowThemingKt;
-import com.ldt.nav.sample.fragment.EmptyPage;
-import com.ldt.nav.sample.fragment.SamplePage;
 import com.ldt.navigation.NavigationFragment;
 import com.ldt.navigation.container.SplitNavigatorImpl;
 import com.ldt.navigation.container.SplitNavigatorAttribute;
@@ -17,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements SplitNavigatorImp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        WindowThemingKt.setUpDarkSystemUIVisibility(getWindow());
+        WindowThemingKt.setUpLightSystemUIVisibility(getWindow());
         super.onCreate(savedInstanceState);
         setContentView(provideLayout(this));
         onCreateNavigator(savedInstanceState);

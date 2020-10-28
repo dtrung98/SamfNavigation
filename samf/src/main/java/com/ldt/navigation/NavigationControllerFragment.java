@@ -6,7 +6,6 @@ import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,48 +56,57 @@ public class NavigationControllerFragment extends NavigationFragment {
     protected UIContainer mUiContainer = null;
     private String mInitialFragmentTag = null;
 
-    public ControllerTransaction beginTransaction() {
-        return new ControllerTransaction(this);
+    public NavigationControllerTransaction beginTransaction() {
+        return new NavigationControllerTransaction(this);
     }
 
     private static class NavigationOp {
-        private final int mType;
-        private final NavigationFragment mAssociationFragment;
+        private final int mOpType;
+        private final NavigationFragment mFragment;
 
         private NavigationOp(int type, NavigationFragment associationFragment) {
-            mType = type;
-            mAssociationFragment = associationFragment;
+            mOpType = type;
+            mFragment = associationFragment;
         }
     }
 
     private void doNavigateTo(NavigationFragment fragment, boolean animated) {
-        beginTransaction().navigateTo(fragment).withAnimation(animated).executeTransaction();
+        beginTransaction().navigateTo(fragment).withAnimation(animated).commitNow();
     }
 
     private void doSwitchAt(NavigationFragment fragment, boolean animated) {
     }
 
-    private final ControllerTransaction mPendingTransaction = new ControllerTransaction(this);
+    private final NavigationControllerTransaction mPendingTransaction = new NavigationControllerTransaction(this);
 
-    public static class ControllerTransaction {
+    public static class NavigationControllerTransaction {
+        /**
+         * Pop the current top fragment out of stack
+         */
         private static final int OP_NAVIGATE_BACK = 0;
+
+        /**
+         * Push specify fragment to navigation stack (the fragment is not in stack before)
+         */
         private static final int OP_NAVIGATE_TO = 1;
+
+        /**
+         * Remove the specify fragment in stack
+         */
         private static final int OP_DISMISS = 2;
         private final ArrayList<NavigationOp> mOps = new ArrayList<>();
         private boolean mAnimated = false;
 
-        public ControllerTransaction withAnimation(boolean animated) {
+        public NavigationControllerTransaction withAnimation(boolean animated) {
             mAnimated = animated;
             return this;
         }
 
         /**
-         * Thực thi transaction
-         * <br>Đảm bảo đồng bộ với fragment stack
-         * <br> Đảm bảo fragment top đang show, toàn bộ fragment còn lại đang hide
-         * <br><b>Note:</b> Nếu controller chưa được attach, transaction được đưa vào pending transaction, pending được thực thi khi controller được attach
+         * Commit this navigation controller transaction
+         * This execution makes sure the navigation work correctly after the transaction, although it called FragmentTransaction.commitNow() inside
          */
-        public void executeTransaction() {
+        public void commitNow() {
             if (mOps.isEmpty()) return;
             if (!mController.isAdded()) {
                 mController.mPendingTransaction.mOps.addAll(mOps);
@@ -116,39 +124,39 @@ public class NavigationControllerFragment extends NavigationFragment {
                 ops = null;
             }
 
-            FragmentTransaction transaction = mController.provideFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = mController.provideFragmentManager().beginTransaction();
             // Nhiều dismiss ?
             // Nhiều navigate ?
             // Nhiều back ?
 
             // dismiss = remove fragment
-            // navigate = add
-            // back = remove
+            // navigate = add specify fragment and hide all others
+            // back = remove specify fragment
 
-            // commit = transaction + show top fragment
+            // commitNow = transaction + show top fragment
 
             String topTag = (mController.mFragments.isEmpty()) ? null : mController.getTopFragment().getIdentifyTag();
             int opCount = mOps.size();
             NavigationOp op;
             for (int i = 0; i < opCount; i++) {
                 op = mOps.get(i);
-                switch (op.mType) {
+                switch (op.mOpType) {
                     case OP_DISMISS:
-                        NavigationFragment f = mController.findFragment(op.mAssociationFragment.getIdentifyTag());
+                        NavigationFragment f = mController.findFragment(op.mFragment.getIdentifyTag());
                         if (f != null) {
-                            transaction.remove(op.mAssociationFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                            fragmentTransaction.remove(op.mFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                             mController.mFragments.remove(f);
                         }
                         break;
                     case OP_NAVIGATE_BACK:
                         if (mController.getFragmentCount() != 0) {
                             NavigationFragment top = mController.getTopFragment();
-                            transaction.remove(top).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                            fragmentTransaction.remove(top).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                             mController.mFragments.remove(top);
                         }
                         break;
                     case OP_NAVIGATE_TO:
-                        NavigationFragment addedFragment = op.mAssociationFragment;
+                        NavigationFragment addedFragment = op.mFragment;
                         addedFragment.setAnimatable(mAnimated);
                         addedFragment.setNavigationController(mController);
                         NavigationFragment prevFragment = (mController.mFragments.isEmpty()) ? null : mController.getTopFragment();
@@ -168,24 +176,24 @@ public class NavigationControllerFragment extends NavigationFragment {
                             else prevFragment.clearOpenExitCloseEnterTransition();
                             prevFragment.setAnimatable(mAnimated);
                         }
-                        transaction.add(mController.mSubContainerViewId, op.mAssociationFragment, op.mAssociationFragment.getIdentifyTag())
-                                .hide(op.mAssociationFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                        mController.mFragments.add(op.mAssociationFragment);
+                        fragmentTransaction.add(mController.mSubContainerViewId, op.mFragment, op.mFragment.getIdentifyTag())
+                                .hide(op.mFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        mController.mFragments.add(op.mFragment);
                         break;
                 }
             }
 
-            // show the top fragment
+            // make sure top fragment always visible
             if (mController.getFragmentCount() != 0) {
                 String newTop = mController.getTopFragment().getIdentifyTag();
                 if (newTop != null && !newTop.equals(topTag)) {
                     NavigationFragment oldTop = mController.findFragment(topTag);
-                    if (oldTop != null) transaction.hide(oldTop);
-                    transaction.show(mController.getTopFragment());
+                    if (oldTop != null) fragmentTransaction.hide(oldTop);
+                    fragmentTransaction.show(mController.getTopFragment());
                 }
             }
 
-            transaction.commitNow();
+            fragmentTransaction.commitNow();
         }
 
         /**
@@ -195,7 +203,7 @@ public class NavigationControllerFragment extends NavigationFragment {
          * @param fragment
          * @return
          */
-        public ControllerTransaction dismiss(NavigationFragment fragment) {
+        public NavigationControllerTransaction dismiss(NavigationFragment fragment) {
             mOps.add(new NavigationOp(OP_DISMISS, fragment));
             return this;
         }
@@ -206,7 +214,7 @@ public class NavigationControllerFragment extends NavigationFragment {
          *
          * @return
          */
-        public ControllerTransaction navigateBack() {
+        public NavigationControllerTransaction navigateBack() {
             mOps.add(new NavigationOp(OP_NAVIGATE_BACK, null));
             return this;
         }
@@ -219,14 +227,14 @@ public class NavigationControllerFragment extends NavigationFragment {
          * @param fragment
          * @return
          */
-        public ControllerTransaction navigateTo(NavigationFragment fragment) {
+        public NavigationControllerTransaction navigateTo(NavigationFragment fragment) {
             mOps.add(new NavigationOp(OP_NAVIGATE_TO, fragment));
             return this;
         }
 
         final NavigationControllerFragment mController;
 
-        ControllerTransaction(NavigationControllerFragment controller) {
+        NavigationControllerTransaction(NavigationControllerFragment controller) {
             mController = controller;
         }
 

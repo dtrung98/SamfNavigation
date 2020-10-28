@@ -1,7 +1,9 @@
-package com.ldt.nav.sample.fragment;
+package com.ldt.nav.sample.embed;
 
+import android.animation.TimeInterpolator;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +14,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.ldt.nav.sample.R;
 import com.ldt.navigation.NavigationControllerFragment;
 import com.ldt.navigation.NavigationFragment;
+import com.ldt.navigation.PresentStyle;
 import com.ldt.navigation.container.SplitNavigatorImpl;
 import com.ldt.navigation.uicontainer.AdaptiveContainer;
 import com.ldt.navigation.uicontainer.AnimatorUIContainer;
-import com.ldt.navigation.uicontainer.DesignBottomSheetContainer;
-import com.ldt.navigation.uicontainer.ExpandContainer;
 import com.ldt.navigation.uicontainer.ModalPresentationContainer;
 import com.ldt.navigation.uicontainer.UIContainer;
 
@@ -56,6 +59,10 @@ public class SamplePage extends NavigationFragment {
 
     @BindView(R.id.back_button)
     ImageView mBackButton;
+
+    @Nullable
+    @BindView(R.id.drawer)
+    DrawerLayout mDrawerLayout;
 
     @OnClick(R.id.back_button)
     void back() {
@@ -102,11 +109,19 @@ public class SamplePage extends NavigationFragment {
                             startButton.setImageResource(R.drawable.ic_home_24dp);
                             startButton.setVisibility(View.INVISIBLE);
                             endButton.setVisibility(View.VISIBLE);
+
+
+                            if(mDrawerLayout != null) {
+                                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+                            }
                         } else {
                             startButton.setVisibility(View.VISIBLE);
                             startButton.setImageResource(R.drawable.ic_arrow_back_24dp);
                             textView.setText("Sample Page " + mIndex);
                             endButton.setVisibility(View.INVISIBLE);
+                            if(mDrawerLayout != null) {
+                                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                            }
                         }
                     }
 
@@ -176,6 +191,32 @@ public class SamplePage extends NavigationFragment {
         size[0] = w;
         size[1] = h;
 
+        DrawerLayout drawerLayout = view.findViewById(R.id.drawer);
+        if(drawerLayout != null) {
+            drawerLayout.openDrawer(Gravity.RIGHT, false);
+            drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override
+                public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+                }
+
+                @Override
+                public void onDrawerOpened(@NonNull View drawerView) {
+
+                }
+
+                @Override
+                public void onDrawerClosed(@NonNull View drawerView) {
+                    getParentNavigator().requestBack();
+                }
+
+                @Override
+                public void onDrawerStateChanged(int newState) {
+
+                }
+            });
+        }
+
        /* if (mIndex == 0 && getNavigationController() != null) {
             //mBackButton.setImageResource(R.drawable.ic_home_24dp);
             mBackButton.setVisibility(View.INVISIBLE);
@@ -191,14 +232,14 @@ public class SamplePage extends NavigationFragment {
 
         int type = mIndex % 3;
         if (type == 0) {
-            mRoot.setBackgroundResource(R.color.FlatPurple);
+        //    mBackColorParent.setBackgroundResource(R.color.FlatPurple);
             mButton.setBackgroundResource(R.drawable.background_round_green);
 
         } else if (type == 1) {
-            mRoot.setBackgroundResource(R.color.focusGreen);
+       //     mBackColorParent.setBackgroundResource(R.color.focusGreen);
             mButton.setBackgroundResource(R.drawable.background_round_dark_blue);
         } else if (type == 2) {
-            mRoot.setBackgroundResource(R.color.FlatOrange);
+         //   mBackColorParent.setBackgroundResource(R.color.FlatOrange);
             mButton.setBackgroundResource(R.drawable.background_round_pink);
         }
 
@@ -213,17 +254,27 @@ public class SamplePage extends NavigationFragment {
     @BindView(R.id.root)
     View mRoot;
 
+    @BindView(R.id.constraintParent)
+    View mConstraintParent;
+
+    @BindView(R.id.backColorParent)
+    View mBackColorParent;
+
     @BindView(R.id.description)
     TextView mDescriptionTextView;
 
     @BindView(R.id.quit_button)
     View mQuitButton;
 
+    @Override
+    public TimeInterpolator defaultInterpolator() {
+        return new FastOutSlowInInterpolator();
+    }
+
     private int defaultP = -1;
 
   /*  @Override
     public int defaultTransition() {
-      
         if(defaultP ==-1) {
             Random r = new Random();
             defaultP = r.nextInt(40) + 1; //exclude NONE present style
@@ -231,6 +282,11 @@ public class SamplePage extends NavigationFragment {
         
         return defaultP;
     }*/
+
+    @Override
+    public int defaultTransition() {
+        return PresentStyle.SLIDE_LEFT;
+    }
 
     @Override
     public void onWindowInsetsChanged(int left, int top, int right, int bottom) {
